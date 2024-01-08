@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
-import 'package:fuzzy_guacamole/settings/start.dart';
+import 'package:fuzzy_guacamole/home/calendar.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Flutter Kalender'),
       ),
       drawer: MyDrawer(),
+      body: Calendar(),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_guacamole/main.dart';
-import 'package:fuzzy_guacamole/settings/start.dart';
+import 'package:fuzzy_guacamole/home/main.dart';
+import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
 
 class MyDrawer extends StatefulWidget {
   @override
