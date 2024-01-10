@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fuzzy_guacamole/calendarviews/calendarviewmonth.dart';
+import 'package:fuzzy_guacamole/calendarviews/calendarviewweek.dart';
 import 'package:fuzzy_guacamole/home/main.dart';
 import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
 
@@ -7,6 +9,9 @@ class MyDrawer extends StatefulWidget {
   _MyDrawerState createState() => _MyDrawerState();
 
 }
+
+List<Widget> bodyWidgets = [CalendarViewWeek() ,CalendarViewMonth()];
+int index = 0;
 
 class _MyDrawerState extends State<MyDrawer>{
 
@@ -81,12 +86,22 @@ class _MyDrawerState extends State<MyDrawer>{
           ListTile(
             leading: const Icon(Icons.calendar_view_week_sharp),
             title: const Text('Woche'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                index = 0;
+                Navigator.pop(context);
+              });
+            },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_month_sharp),
             title: const Text('Monat'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                index = 1;
+                Navigator.pop(context);
+              });
+            },
           ),
           const Divider(color: Colors.grey,),
           CheckboxListTile(
