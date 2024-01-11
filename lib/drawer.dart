@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fuzzy_guacamole/calendarviews/calendarviewday.dart';
+import 'package:fuzzy_guacamole/calendarviews/calendarviewmonth.dart';
+import 'package:fuzzy_guacamole/calendarviews/calendarviewweek.dart';
 import 'package:fuzzy_guacamole/home/main.dart';
 import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
 
@@ -64,7 +67,7 @@ class _MyDrawerState extends State<MyDrawer>{
               ],
             ),
           ),
-          ListTile(
+          /*ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Start'),
             onTap: () {
@@ -72,21 +75,33 @@ class _MyDrawerState extends State<MyDrawer>{
                 MaterialPageRoute(builder: (context) => MyHomePage()),
               );
             },
-          ),
+          ),*/
           ListTile(
             leading: const Icon(Icons.calendar_view_day),
             title: const Text('Tag'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewDay()));
+              });
+            },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_week_sharp),
             title: const Text('Woche'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewWeek()));
+              });
+            },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_month_sharp),
             title: const Text('Monat'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewMonth()));
+              });
+            },
           ),
           const Divider(color: Colors.grey,),
           CheckboxListTile(
