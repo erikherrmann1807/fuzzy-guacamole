@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fuzzy_guacamole/calendarviews/calendarviewday.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewmonth.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewweek.dart';
 import 'package:fuzzy_guacamole/home/main.dart';
@@ -9,9 +10,6 @@ class MyDrawer extends StatefulWidget {
   _MyDrawerState createState() => _MyDrawerState();
 
 }
-
-List<Widget> bodyWidgets = [CalendarViewWeek() ,CalendarViewMonth()];
-int index = 0;
 
 class _MyDrawerState extends State<MyDrawer>{
 
@@ -69,7 +67,7 @@ class _MyDrawerState extends State<MyDrawer>{
               ],
             ),
           ),
-          ListTile(
+          /*ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Start'),
             onTap: () {
@@ -77,19 +75,22 @@ class _MyDrawerState extends State<MyDrawer>{
                 MaterialPageRoute(builder: (context) => MyHomePage()),
               );
             },
-          ),
+          ),*/
           ListTile(
             leading: const Icon(Icons.calendar_view_day),
             title: const Text('Tag'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewDay()));
+              });
+            },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_week_sharp),
             title: const Text('Woche'),
             onTap: () {
               setState(() {
-                index = 0;
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewWeek()));
               });
             },
           ),
@@ -98,8 +99,7 @@ class _MyDrawerState extends State<MyDrawer>{
             title: const Text('Monat'),
             onTap: () {
               setState(() {
-                index = 1;
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewMonth()));
               });
             },
           ),

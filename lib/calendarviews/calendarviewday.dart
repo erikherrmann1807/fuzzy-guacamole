@@ -3,14 +3,14 @@ import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-class CalendarViewWeek extends StatefulWidget {
-  const CalendarViewWeek({super.key});
+class CalendarViewDay extends StatefulWidget {
+  const CalendarViewDay({super.key});
 
   @override
-  State<CalendarViewWeek> createState() => _CalendarViewWeekState();
+  State<CalendarViewDay> createState() => _CalendarViewDayState();
 }
 
-class _CalendarViewWeekState extends State<CalendarViewWeek> {
+class _CalendarViewDayState extends State<CalendarViewDay> {
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +27,11 @@ class _CalendarViewWeekState extends State<CalendarViewWeek> {
         home: Scaffold(
             drawer: MyDrawer(),
             appBar: AppBar(
-              title: const Text('Wochenansicht'),
+              title: const Text('Tagesansicht'),
             ),
             body: Container(
               child: SfCalendar(
-                view: CalendarView.week,
+                view: CalendarView.day,
                 headerStyle: const CalendarHeaderStyle(
                   textAlign: TextAlign.center,
                 ),
