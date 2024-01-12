@@ -14,17 +14,7 @@ class _CalendarViewMonthState extends State<CalendarViewMonth> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('de'),
-      ],
-      locale: const Locale('de'),
-      title: 'Flutter Kalender',
-      home: Scaffold(
+    return Scaffold(
       drawer: MyDrawer(),
       appBar: AppBar(
         title: const Text('Monatsansicht'),
@@ -37,6 +27,7 @@ class _CalendarViewMonthState extends State<CalendarViewMonth> {
           ),
           firstDayOfWeek: 1, //Montag
           todayHighlightColor: Colors.red,
+          initialSelectedDate: DateTime.now(),
           weekNumberStyle: const WeekNumberStyle(
             backgroundColor: Colors.red,
             textStyle: TextStyle(color: Colors.white, fontSize: 15),
@@ -44,6 +35,7 @@ class _CalendarViewMonthState extends State<CalendarViewMonth> {
           showNavigationArrow: true,
           showTodayButton: true,
           dataSource: MeetingDataSource(_getDataSource()),
+          appointmentTimeTextFormat: 'HH:mm',
           monthViewSettings: const MonthViewSettings(
             appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
             showAgenda: true,
@@ -66,7 +58,6 @@ class _CalendarViewMonthState extends State<CalendarViewMonth> {
               )
               )
             )
-          ),
         );
   }
 

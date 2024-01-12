@@ -14,17 +14,7 @@ class _CalendarViewWeekState extends State<CalendarViewWeek> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: [
-          const Locale('de'),
-        ],
-        locale: const Locale('de'),
-        title: 'Flutter Kalender',
-        home: Scaffold(
+    return Scaffold(
             drawer: MyDrawer(),
             appBar: AppBar(
               title: const Text('Wochenansicht'),
@@ -39,9 +29,11 @@ class _CalendarViewWeekState extends State<CalendarViewWeek> {
                 todayHighlightColor: Colors.red,
                 showNavigationArrow: true,
                 dataSource: MeetingDataSource(_getDataSource()),
+                timeSlotViewSettings: const TimeSlotViewSettings(
+                  timeFormat: 'HH:mm'
+                ),
               ),
             )
-        )
     );
   }
 
