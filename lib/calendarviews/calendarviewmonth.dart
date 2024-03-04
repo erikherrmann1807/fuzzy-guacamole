@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class CalendarViewMonth extends StatefulWidget {
   const CalendarViewMonth({super.key});
@@ -15,14 +14,14 @@ class _CalendarViewMonthState extends State<CalendarViewMonth> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(),
+      drawer: const MyDrawer(),
       appBar: AppBar(
         title: const Text('Monatsansicht'),
       ),
       body: Container(
         child: SfCalendar(
           view: CalendarView.month,
-          headerStyle: CalendarHeaderStyle(
+          headerStyle: const CalendarHeaderStyle(
             textAlign: TextAlign.center,
           ),
           firstDayOfWeek: 1, //Montag

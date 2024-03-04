@@ -40,7 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   table_calendar: ^3.0.9
   intl: ^0.18.1
-  syncfusion_flutter_calendar: ^24.1.45
+  syncfusion_flutter_calendar: ^24.2.8
 
 dev_dependencies:
   flutter_test:

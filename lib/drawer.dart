@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewday.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewmonth.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewweek.dart';
-import 'package:fuzzy_guacamole/home/main.dart';
 import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
 
 class MyDrawer extends StatefulWidget {
+  const MyDrawer({super.key});
+
   @override
   _MyDrawerState createState() => _MyDrawerState();
 
@@ -81,7 +82,7 @@ class _MyDrawerState extends State<MyDrawer>{
             title: const Text('Tag'),
             onTap: () {
               setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewDay()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const CalendarViewDay()));
               });
             },
           ),
@@ -90,7 +91,7 @@ class _MyDrawerState extends State<MyDrawer>{
             title: const Text('Woche'),
             onTap: () {
               setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewWeek()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const CalendarViewWeek()));
               });
             },
           ),
@@ -99,7 +100,7 @@ class _MyDrawerState extends State<MyDrawer>{
             title: const Text('Monat'),
             onTap: () {
               setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewMonth()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const CalendarViewMonth()));
               });
             },
           ),
@@ -144,7 +145,7 @@ class _MyDrawerState extends State<MyDrawer>{
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsMenu()),
+                MaterialPageRoute(builder: (context) => const SettingsMenu()),
               );
             },
           ),

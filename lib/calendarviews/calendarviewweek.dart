@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class CalendarViewWeek extends StatefulWidget {
   const CalendarViewWeek({super.key});
@@ -15,7 +14,7 @@ class _CalendarViewWeekState extends State<CalendarViewWeek> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            drawer: MyDrawer(),
+            drawer: const MyDrawer(),
             appBar: AppBar(
               title: const Text('Wochenansicht'),
             ),
