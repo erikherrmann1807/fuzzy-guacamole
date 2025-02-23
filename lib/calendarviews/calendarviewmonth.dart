@@ -13,12 +13,7 @@ class _CalendarViewMonthState extends State<CalendarViewMonth> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: const MyDrawer(),
-      appBar: AppBar(
-        title: const Text('Monatsansicht'),
-      ),
-      body: Container(
+    return Container(
         child: SfCalendar(
           view: CalendarView.month,
           headerStyle: const CalendarHeaderStyle(
@@ -56,8 +51,7 @@ class _CalendarViewMonthState extends State<CalendarViewMonth> {
               )
               )
               )
-            )
-        );
+            );
   }
 
   List<Meeting> _getDataSource() {

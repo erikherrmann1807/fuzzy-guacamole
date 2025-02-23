@@ -13,12 +13,7 @@ class _CalendarViewDayState extends State<CalendarViewDay> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-            drawer: const MyDrawer(),
-            appBar: AppBar(
-              title: const Text('Tagesansicht'),
-            ),
-            body: Container(
+    return Container(
               child: SfCalendar(
                 view: CalendarView.day,
                 headerStyle: const CalendarHeaderStyle(
@@ -32,8 +27,7 @@ class _CalendarViewDayState extends State<CalendarViewDay> {
                     timeFormat: 'HH:mm'
                 ),
               ),
-            )
-    );
+            );
   }
 
   List<Meeting> _getDataSource() {

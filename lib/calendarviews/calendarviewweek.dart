@@ -13,12 +13,7 @@ class _CalendarViewWeekState extends State<CalendarViewWeek> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-            drawer: const MyDrawer(),
-            appBar: AppBar(
-              title: const Text('Wochenansicht'),
-            ),
-            body: Container(
+    return Container(
               child: SfCalendar(
                 view: CalendarView.week,
                 headerStyle: const CalendarHeaderStyle(
@@ -32,8 +27,7 @@ class _CalendarViewWeekState extends State<CalendarViewWeek> {
                   timeFormat: 'HH:mm'
                 ),
               ),
-            )
-    );
+            );
   }
 
   List<Meeting> _getDataSource() {
