@@ -9,34 +9,27 @@ class CalendarViewWeek extends StatefulWidget {
 }
 
 class _CalendarViewWeekState extends State<CalendarViewWeek> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
-              child: SfCalendar(
-                view: CalendarView.week,
-                headerStyle: const CalendarHeaderStyle(
-                  textAlign: TextAlign.center,
-                ),
-                firstDayOfWeek: 1, //Montag
-                todayHighlightColor: Colors.red,
-                showNavigationArrow: true,
-                dataSource: MeetingDataSource(_getDataSource()),
-                timeSlotViewSettings: const TimeSlotViewSettings(
-                  timeFormat: 'HH:mm'
-                ),
-              ),
-            );
+      child: SfCalendar(
+        view: CalendarView.week,
+        headerStyle: const CalendarHeaderStyle(textAlign: TextAlign.center),
+        firstDayOfWeek: 1, //Montag
+        todayHighlightColor: Colors.red,
+        showNavigationArrow: true,
+        dataSource: MeetingDataSource(_getDataSource()),
+        timeSlotViewSettings: const TimeSlotViewSettings(timeFormat: 'HH:mm'),
+      ),
+    );
   }
 
   List<Meeting> _getDataSource() {
     final List<Meeting> meetings = <Meeting>[];
     final DateTime today = DateTime.now();
-    final DateTime startTime =
-    DateTime(today.year, today.month, today.day, 9, 0, 0);
+    final DateTime startTime = DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting(
-        'Konferenz', startTime, endTime, const Color(0xFF0F8644), false));
+    meetings.add(Meeting('Konferenz', startTime, endTime, const Color(0xFF0F8644), false));
     return meetings;
   }
 }

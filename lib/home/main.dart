@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fuzzy_guacamole/appointments/appointmentmulm.dart';
+import 'package:fuzzy_guacamole/appointments/appointment_create_screen.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewday.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewmonth.dart';
 import 'package:fuzzy_guacamole/calendarviews/calendarviewweek.dart';
@@ -22,9 +24,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        Locale('de'),
-      ],
+      supportedLocales: [Locale('de')],
       locale: Locale('de'),
       home: MyHomePage(),
     );
@@ -35,7 +35,6 @@ class MyHomePage extends StatefulWidget {
   final String initialView;
 
   const MyHomePage({Key? key, this.initialView = 'month'}) : super(key: key);
-
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -59,21 +58,13 @@ class _MyHomePageState extends State<MyHomePage> {
   AppBar getAppBar() {
     switch (currentView) {
       case 'month':
-        return AppBar(
-          title: const Text('Monatsansicht'),
-        );
+        return AppBar(title: const Text('Monatsansicht'));
       case 'day':
-        return AppBar(
-          title: const Text('Tagesansicht'),
-        );
+        return AppBar(title: const Text('Tagesansicht'));
       case 'settings':
-        return AppBar(
-          title: const Text('Einstellungen'),
-        );
+        return AppBar(title: const Text('Einstellungen'));
       default:
-        return AppBar(
-          title: const Text('Flutter Kalender'),
-        );
+        return AppBar(title: const Text('Flutter Kalender'));
     }
   }
 
@@ -98,6 +89,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: getAppBar(),
       drawer: MyDrawer(onViewChanged: changeView),
       body: getBody(),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () => AppointmentMulm().showMyDialog(context),
+          child: Icon(Icons.add),
+      ),
     );
   }
 }

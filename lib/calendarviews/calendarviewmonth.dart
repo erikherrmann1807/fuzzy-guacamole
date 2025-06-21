@@ -9,58 +9,52 @@ class CalendarViewMonth extends StatefulWidget {
 }
 
 class _CalendarViewMonthState extends State<CalendarViewMonth> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: SfCalendar(
-          view: CalendarView.month,
-          headerStyle: const CalendarHeaderStyle(
-            textAlign: TextAlign.center,
+      child: SfCalendar(
+        view: CalendarView.month,
+        headerStyle: const CalendarHeaderStyle(textAlign: TextAlign.center),
+        firstDayOfWeek: 1, //Montag
+        todayHighlightColor: Colors.red,
+        initialSelectedDate: DateTime.now(),
+        weekNumberStyle: const WeekNumberStyle(
+          backgroundColor: Colors.red,
+          textStyle: TextStyle(color: Colors.white, fontSize: 15),
+        ),
+        showNavigationArrow: true,
+        showTodayButton: true,
+        dataSource: MeetingDataSource(_getDataSource()),
+        appointmentTimeTextFormat: 'HH:mm',
+        monthViewSettings: const MonthViewSettings(
+          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+          showAgenda: true,
+          agendaStyle: AgendaStyle(
+            appointmentTextStyle: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
+            dateTextStyle: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontSize: 12,
+              fontWeight: FontWeight.w300,
+              color: Colors.black,
+            ),
+            dayTextStyle: TextStyle(
+              fontStyle: FontStyle.normal,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
           ),
-          firstDayOfWeek: 1, //Montag
-          todayHighlightColor: Colors.red,
-          initialSelectedDate: DateTime.now(),
-          weekNumberStyle: const WeekNumberStyle(
-            backgroundColor: Colors.red,
-            textStyle: TextStyle(color: Colors.white, fontSize: 15),
-          ),
-          showNavigationArrow: true,
-          showTodayButton: true,
-          dataSource: MeetingDataSource(_getDataSource()),
-          appointmentTimeTextFormat: 'HH:mm',
-          monthViewSettings: const MonthViewSettings(
-            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-            showAgenda: true,
-            agendaStyle: AgendaStyle(
-              appointmentTextStyle: TextStyle(
-                fontSize: 14,
-                fontStyle: FontStyle.italic,
-                color: Colors.white),
-              dateTextStyle: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-                color: Colors.black),
-              dayTextStyle: TextStyle(
-                fontStyle: FontStyle.normal,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Colors.black),
-              )
-              )
-              )
-            );
+        ),
+      ),
+    );
   }
 
   List<Meeting> _getDataSource() {
     final List<Meeting> meetings = <Meeting>[];
     final DateTime today = DateTime.now();
-    final DateTime startTime =
-        DateTime(today.year, today.month, today.day, 9, 0, 0);
+    final DateTime startTime = DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting(
-        'Konferenz', startTime, endTime, const Color(0xFF0F8644), false));
+    meetings.add(Meeting('Konferenz', startTime, endTime, const Color(0xFF0F8644), false));
     return meetings;
   }
 }

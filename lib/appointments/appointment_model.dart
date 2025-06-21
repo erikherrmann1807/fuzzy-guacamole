@@ -12,7 +12,7 @@ class Appointment {
     required this.start,
     required this.end,
     required this.backgroundColor,
-    required this.isAllDay
+    required this.isAllDay,
   });
 
   Map<String, dynamic> toJson() => {
@@ -20,16 +20,16 @@ class Appointment {
     'start': start,
     'end': end,
     'backgroundColor': backgroundColor,
-    'isAllDay': isAllDay
+    'isAllDay': isAllDay,
   };
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
-        eventName: json['eventName'],
-        start: json['start'],
-        end: json['end'],
-        backgroundColor: json['backgroundColor'],
-        isAllDay: ['isAllDay'] as bool
+      eventName: json['eventName'],
+      start: json['start'],
+      end: json['end'],
+      backgroundColor: json['backgroundColor'],
+      isAllDay: ['isAllDay'] as bool,
     );
   }
 }

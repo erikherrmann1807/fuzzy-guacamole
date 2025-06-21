@@ -16,46 +16,28 @@ class MyDrawer extends StatelessWidget {
       child: ListView(
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.black26,
-            ),
+            decoration: BoxDecoration(color: Colors.black26),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: EdgeInsets.only(top: 8, bottom: 8),
-                  child: Text(
-                    'Flutter Kalender',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
+                  child: Text('Flutter Kalender', style: TextStyle(color: Colors.white, fontSize: 20)),
                 ),
                 Row(
                   children: [
                     CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
+                      child: Icon(Icons.person, size: 40, color: Colors.grey),
                     ),
-                    SizedBox(width: 10,),
+                    SizedBox(width: 10),
                     Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text(
-                        'Erik',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
+                      child: Text('Erik', style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -92,14 +74,14 @@ class MyDrawer extends StatelessWidget {
               onViewChanged('month');
             },
           ),
-          const Divider(color: Colors.grey,),
+          const Divider(color: Colors.grey),
           CheckboxListTile(
             controlAffinity: ListTileControlAffinity.leading,
             //checkColor: ,
             title: const Text('Label 1'),
             value: checkboxValue1,
             onChanged: (bool? value) {
-                checkboxValue1 = value!;
+              checkboxValue1 = value!;
             },
           ),
           CheckboxListTile(
@@ -108,7 +90,7 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Label 2'),
             value: checkboxValue2,
             onChanged: (bool? value) {
-                checkboxValue2 = value!;
+              checkboxValue2 = value!;
             },
           ),
           CheckboxListTile(
@@ -117,30 +99,20 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Label 3'),
             value: checkboxValue3,
             onChanged: (bool? value) {
-                checkboxValue3 = value!;
+              checkboxValue3 = value!;
             },
           ),
-          const Divider(color: Colors.grey,),
+          const Divider(color: Colors.grey),
           ListTile(
             leading: const Icon(Icons.settings_outlined),
             title: const Text('Einstellung'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsMenu()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsMenu()));
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.help_outline_rounded),
-            title: const Text('Hilfe'),
-            onTap: () {},
-          )
+          ListTile(leading: const Icon(Icons.help_outline_rounded), title: const Text('Hilfe'), onTap: () {}),
         ],
       ),
     );
   }
 }
-
-
-
