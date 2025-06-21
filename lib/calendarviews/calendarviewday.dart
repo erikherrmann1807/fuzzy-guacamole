@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class CalendarViewDay extends StatefulWidget {
   const CalendarViewDay({super.key});
@@ -14,35 +12,21 @@ class _CalendarViewDayState extends State<CalendarViewDay> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: [
-          const Locale('de'),
-        ],
-        locale: const Locale('de'),
-        title: 'Flutter Kalender',
-        home: Scaffold(
-            drawer: MyDrawer(),
-            appBar: AppBar(
-              title: const Text('Tagesansicht'),
-            ),
-            body: Container(
+    return Container(
               child: SfCalendar(
                 view: CalendarView.day,
                 headerStyle: const CalendarHeaderStyle(
                   textAlign: TextAlign.center,
                 ),
-                firstDayOfWeek: 1, //Montag
+                firstDayOfWeek: 1,
                 todayHighlightColor: Colors.red,
                 showNavigationArrow: true,
                 dataSource: MeetingDataSource(_getDataSource()),
+                timeSlotViewSettings: const TimeSlotViewSettings(
+                    timeFormat: 'HH:mm'
+                ),
               ),
-            )
-        )
-    );
+            );
   }
 
   List<Meeting> _getDataSource() {

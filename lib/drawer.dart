@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_guacamole/calendarviews/calendarviewday.dart';
-import 'package:fuzzy_guacamole/calendarviews/calendarviewmonth.dart';
-import 'package:fuzzy_guacamole/calendarviews/calendarviewweek.dart';
-import 'package:fuzzy_guacamole/home/main.dart';
 import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
 
-class MyDrawer extends StatefulWidget {
-  @override
-  _MyDrawerState createState() => _MyDrawerState();
-
-}
-
-class _MyDrawerState extends State<MyDrawer>{
+class MyDrawer extends StatelessWidget {
+  final Function(String) onViewChanged;
+  MyDrawer({required this.onViewChanged, Key? key}) : super(key: key);
 
   bool checkboxValue1 = false;
   bool checkboxValue2 = false;
@@ -80,27 +72,24 @@ class _MyDrawerState extends State<MyDrawer>{
             leading: const Icon(Icons.calendar_view_day),
             title: const Text('Tag'),
             onTap: () {
-              setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewDay()));
-              });
+              Navigator.pop(context);
+              onViewChanged('day');
             },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_week_sharp),
             title: const Text('Woche'),
             onTap: () {
-              setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewWeek()));
-              });
+              Navigator.pop(context);
+              onViewChanged('week');
             },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_month_sharp),
             title: const Text('Monat'),
             onTap: () {
-              setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarViewMonth()));
-              });
+              Navigator.pop(context);
+              onViewChanged('month');
             },
           ),
           const Divider(color: Colors.grey,),
@@ -110,9 +99,7 @@ class _MyDrawerState extends State<MyDrawer>{
             title: const Text('Label 1'),
             value: checkboxValue1,
             onChanged: (bool? value) {
-              setState(() {
                 checkboxValue1 = value!;
-              });
             },
           ),
           CheckboxListTile(
@@ -121,9 +108,7 @@ class _MyDrawerState extends State<MyDrawer>{
             title: const Text('Label 2'),
             value: checkboxValue2,
             onChanged: (bool? value) {
-              setState(() {
                 checkboxValue2 = value!;
-              });
             },
           ),
           CheckboxListTile(
@@ -132,9 +117,7 @@ class _MyDrawerState extends State<MyDrawer>{
             title: const Text('Label 3'),
             value: checkboxValue3,
             onChanged: (bool? value) {
-              setState(() {
                 checkboxValue3 = value!;
-              });
             },
           ),
           const Divider(color: Colors.grey,),
@@ -144,7 +127,7 @@ class _MyDrawerState extends State<MyDrawer>{
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsMenu()),
+                MaterialPageRoute(builder: (context) => const SettingsMenu()),
               );
             },
           ),
@@ -158,3 +141,6 @@ class _MyDrawerState extends State<MyDrawer>{
     );
   }
 }
+
+
+
