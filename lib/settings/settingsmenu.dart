@@ -10,7 +10,7 @@ class SettingsMenu extends StatefulWidget {
 }
 
 class _SettingsMenuState extends State<SettingsMenu> {
-  void onViewChanged(String view) {
+  /*void onViewChanged(String view) {
     switch (view) {
       case 'month':
         Navigator.pushReplacement(
@@ -39,12 +39,12 @@ class _SettingsMenuState extends State<SettingsMenu> {
           MaterialPageRoute(builder: (context) => const MyHomePage(initialView: 'month')),
         );
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(onViewChanged: onViewChanged),
+      //drawer: MyDrawer(onViewChanged: onViewChanged),
       appBar: AppBar(title: const Text('Einstellungen')),
     );
   }

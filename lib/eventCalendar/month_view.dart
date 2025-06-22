@@ -1,0 +1,43 @@
+part of 'calendar_view.dart';
+
+class MonthView extends StatelessWidget {
+  const MonthView({required this.onCalendarLongPressed, super.key});
+  final CalendarLongPressCallback onCalendarLongPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+      child: SafeArea(
+        child: SfCalendar(
+          view: CalendarView.month,
+          firstDayOfWeek: 1,
+          todayHighlightColor: Colors.red,
+          showNavigationArrow: true,
+          dataSource: _events,
+          onLongPress: onCalendarLongPressed,
+          timeSlotViewSettings: TimeSlotViewSettings(timeFormat: 'HH:mm'),
+          monthViewSettings: MonthViewSettings(
+            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+            showAgenda: true,
+            agendaStyle: AgendaStyle(
+              appointmentTextStyle: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
+              dateTextStyle: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: 14,
+                fontWeight: FontWeight.w300,
+                color: Colors.black,
+              ),
+              dayTextStyle: TextStyle(
+                fontStyle: FontStyle.normal,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
