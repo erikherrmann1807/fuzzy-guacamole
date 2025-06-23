@@ -1,35 +1,39 @@
 import 'package:flutter/material.dart';
 
-class Appointment {
+class Meeting {
   String eventName;
+  String description;
   DateTime start;
   DateTime end;
   Color backgroundColor;
   bool isAllDay;
 
-  Appointment({
+  Meeting({
     required this.eventName,
+    required this.description,
     required this.start,
     required this.end,
     required this.backgroundColor,
-    required this.isAllDay
+    required this.isAllDay,
   });
 
   Map<String, dynamic> toJson() => {
     'eventName': eventName,
+    'description': description,
     'start': start,
     'end': end,
     'backgroundColor': backgroundColor,
-    'isAllDay': isAllDay
+    'isAllDay': isAllDay,
   };
 
-  factory Appointment.fromJson(Map<String, dynamic> json) {
-    return Appointment(
-        eventName: json['eventName'],
-        start: json['start'],
-        end: json['end'],
-        backgroundColor: json['backgroundColor'],
-        isAllDay: ['isAllDay'] as bool
+  factory Meeting.fromJson(Map<String, dynamic> json) {
+    return Meeting(
+      eventName: json['eventName'],
+      description: json['description'],
+      start: json['start'],
+      end: json['end'],
+      backgroundColor: json['backgroundColor'],
+      isAllDay: ['isAllDay'] as bool,
     );
   }
 }
