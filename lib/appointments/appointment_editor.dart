@@ -1,13 +1,14 @@
 part of '../eventCalendar/calendar_view.dart';
 
-class AppointmentEditor extends StatefulWidget {
-  const AppointmentEditor({super.key});
+class MeetingEditor extends StatefulWidget {
+  const MeetingEditor({super.key});
 
   @override
-  AppointmentEditorState createState() => AppointmentEditorState();
+  MeetingEditorState createState() => MeetingEditorState();
 }
 
-class AppointmentEditorState extends State<AppointmentEditor> {
+class MeetingEditorState extends State<MeetingEditor> {
+  final DatabaseService _databaseService = DatabaseService();
   Widget _getAppointmentEditor(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -121,7 +122,7 @@ class AppointmentEditorState extends State<AppointmentEditor> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Expanded(
-                  flex: 7,
+                  flex: 5,
                   child: GestureDetector(
                     child: Text(DateFormat('EEE, MMM dd yyyy').format(_endDate), textAlign: TextAlign.left),
                     onTap: () async {
@@ -256,6 +257,8 @@ class AppointmentEditorState extends State<AppointmentEditor> {
 
                 _events.notifyListeners(CalendarDataSourceAction.add, meetings);
                 _selectedAppointment = null;
+
+                _databaseService.addMeeting(meetings[0]);
 
                 Navigator.of(context).pop();
               },

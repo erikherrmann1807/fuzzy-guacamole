@@ -3,6 +3,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
+import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -34,6 +35,8 @@ String _notes = '';
 CalendarView currentView = CalendarView.month;
 
 class _EventCalendarViewState extends State<EventCalendarView> {
+  final DatabaseService _databaseService = DatabaseService();
+
   @override
   void initState() {
     _events = DataSource(getMeetingDetails());
@@ -45,6 +48,12 @@ class _EventCalendarViewState extends State<EventCalendarView> {
     _startDate = DateTime.now();
     _endDate = DateTime.now();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _databaseService.stopListening();
+    super.dispose();
   }
 
   AppBar getAppBar() {
@@ -97,7 +106,7 @@ class _EventCalendarViewState extends State<EventCalendarView> {
     _subject = '';
     _notes = '';
 
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AppointmentEditor()));
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor()));
   }
 
   void onCalendarLongPress(CalendarLongPressDetails calendarLongPressDetails) {
@@ -128,11 +137,11 @@ class _EventCalendarViewState extends State<EventCalendarView> {
     }
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
-    Navigator.push<Widget>(context, MaterialPageRoute(builder: (BuildContext context) => AppointmentEditor()));
+    Navigator.push<Widget>(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor()));
   }
 
   List<Meeting> getMeetingDetails() {
-    final List<Meeting> meetingCollection = <Meeting>[];
+    late List<Meeting> meetingCollection = <Meeting>[];
 
     _colorCollection = <Color>[];
     _colorCollection.add(const Color(0xFF0F8644));
@@ -155,6 +164,12 @@ class _EventCalendarViewState extends State<EventCalendarView> {
     _colorNames.add('Blue');
     _colorNames.add('Peach');
     _colorNames.add('Gray');
+
+    _databaseService.startListening((meetings) {
+      setState(() {
+        meetingCollection.addAll(meetings);
+      });
+    });
 
     return meetingCollection;
   }
