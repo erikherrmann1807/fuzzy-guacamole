@@ -1,4 +1,4 @@
-part of '../eventCalendar/calendar_view.dart';
+part of '../eventCalendar/calendar_screen.dart';
 
 class _ColorPicker extends StatefulWidget {
   @override
@@ -16,15 +16,15 @@ class _ColorPickerState extends State<_ColorPicker> {
         height: MediaQuery.sizeOf(context).height * 0.43,
         child: ListView.builder(
           padding: const EdgeInsets.all(0),
-          itemCount: _colorCollection.length - 1,
+          itemCount: colorCollection.length - 1,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               contentPadding: const EdgeInsets.all(0),
               leading: Icon(
                 index == _selectedColorIndex ? Icons.lens : Icons.trip_origin,
-                color: _colorCollection[index],
+                color: colorCollection[index],
               ),
-              title: Text(_colorNames[index]),
+              title: Text(colorNames[index]),
               onTap: () {
                 setState(() {
                   _selectedColorIndex = index;

@@ -13,7 +13,8 @@ class DatabaseService {
 
   DatabaseService() {
     meetingRef = db.collection(MEETING_COLLECTION_REF).withConverter<Meeting>(
-        fromFirestore: (snapshots, _) => Meeting.fromJson(snapshots.data()!),
+        fromFirestore: (snapshots, _) => Meeting.fromJson(snapshots.data()!,
+        id: snapshots.id),
         toFirestore: (meeting, _) => meeting.toJson());
   }
 
@@ -21,7 +22,7 @@ class DatabaseService {
     _meetingSub = meetingRef.snapshots().listen(
           (snap) {
         final meetings = snap.docs.map((d) => d.data() as Meeting).toList();
-        onData(meetings); // Übergabe der Meetings z. B. an deinen State
+        onData(meetings);
       },
       onError: (e) {
         print('Firestore error: $e');
@@ -35,5 +36,13 @@ class DatabaseService {
 
   void addMeeting(Meeting meeting) async {
     meetingRef.add(meeting);
+  }
+
+  void deleteMeeting(String? meetingId) {
+    meetingRef.doc(meetingId).delete();
+  }
+
+  void updateMeeting(String? meetingId, Meeting meeting) {
+    meetingRef.doc(meetingId).update(meeting.toJson());
   }
 }

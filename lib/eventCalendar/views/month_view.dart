@@ -1,8 +1,9 @@
-part of 'calendar_view.dart';
+part of '../calendar_screen.dart';
 
 class MonthView extends StatelessWidget {
-  const MonthView({required this.onCalendarLongPressed, super.key});
+  const MonthView({required this.onCalendarLongPressed, super.key, required this.dataSource});
   final CalendarLongPressCallback onCalendarLongPressed;
+  final DataSource dataSource;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class MonthView extends StatelessWidget {
           firstDayOfWeek: 1,
           todayHighlightColor: Colors.red,
           showNavigationArrow: true,
-          dataSource: _events,
+          dataSource: dataSource,
           onLongPress: onCalendarLongPressed,
           timeSlotViewSettings: TimeSlotViewSettings(timeFormat: 'HH:mm'),
           monthViewSettings: MonthViewSettings(
