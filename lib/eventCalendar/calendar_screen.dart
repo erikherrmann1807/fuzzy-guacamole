@@ -14,11 +14,11 @@ part 'views/month_view.dart';
 part 'views/day_view.dart';
 part 'views/week_view.dart';
 
-class EventCalendarView extends StatefulWidget {
-  const EventCalendarView({super.key});
+class EventCalendarScreen extends StatefulWidget {
+  const EventCalendarScreen({super.key});
 
   @override
-  State<EventCalendarView> createState() => _EventCalendarViewState();
+  State<EventCalendarScreen> createState() => _EventCalendarScreenState();
 }
 
 int _selectedColorIndex = 0;
@@ -32,7 +32,7 @@ String _subject = '';
 String _notes = '';
 CalendarView currentView = CalendarView.month;
 
-class _EventCalendarViewState extends State<EventCalendarView> {
+class _EventCalendarScreenState extends State<EventCalendarScreen> {
   final DatabaseService _databaseService = DatabaseService();
   late final DataSource _events;
 
@@ -111,8 +111,7 @@ class _EventCalendarViewState extends State<EventCalendarView> {
     _subject = '';
     _notes = '';
 
-    Navigator.push(context, MaterialPageRoute(
-        builder: (BuildContext context) => MeetingEditor(dataSource: _events,)));
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor(dataSource: _events)));
   }
 
   void onCalendarLongPress(CalendarLongPressDetails calendarLongPressDetails) {
@@ -143,8 +142,10 @@ class _EventCalendarViewState extends State<EventCalendarView> {
     }
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
-    Navigator.push<Widget>(context, MaterialPageRoute(
-        builder: (BuildContext context) => MeetingEditor(dataSource: _events,)));
+    Navigator.push<Widget>(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => MeetingEditor(dataSource: _events)),
+    );
   }
 }
 

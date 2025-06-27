@@ -12,7 +12,4 @@ const List<Color> colorCollection = [
   Color(0xFF636363),
 ];
 
-const List<String> colorNames = [
-  'Green', 'Purple', 'Red', 'Orange',
-  'Caramel', 'Magenta', 'Blue', 'Peach', 'Gray',
-];
+const List<String> colorNames = ['Green', 'Purple', 'Red', 'Orange', 'Caramel', 'Magenta', 'Blue', 'Peach', 'Gray'];

@@ -238,21 +238,20 @@ class MeetingEditorState extends State<MeetingEditor> {
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               icon: const Icon(Icons.done, color: Colors.white),
               onPressed: () {
+                var meeting = Meeting(
+                  start: _startDate,
+                  end: _endDate,
+                  backgroundColor: colorCollection[_selectedColorIndex],
+                  description: _notes,
+                  isAllDay: _isAllDay,
+                  eventName: _subject == '' ? '(No title)' : _subject,
+                );
 
-                  var meeting =Meeting(
-                    start: _startDate,
-                    end: _endDate,
-                    backgroundColor: colorCollection[_selectedColorIndex],
-                    description: _notes,
-                    isAllDay: _isAllDay,
-                    eventName: _subject == '' ? '(No title)' : _subject,
-                  );
-
-                  if (_selectedAppointment == null) {
-                    _databaseService.addMeeting(meeting);
-                  }
-                  _databaseService.updateMeeting(_selectedAppointment?.id, meeting);
-                  _selectedAppointment = null;
+                if (_selectedAppointment == null) {
+                  _databaseService.addMeeting(meeting);
+                }
+                _databaseService.updateMeeting(_selectedAppointment?.id, meeting);
+                _selectedAppointment = null;
 
                 Navigator.of(context).pop();
               },

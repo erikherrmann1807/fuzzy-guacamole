@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzy_guacamole/auth/auth_service.dart';
 import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -13,6 +15,19 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void popPage() {
+      Navigator.pop(context);
+    }
+
+    void logout() async {
+      try {
+        await authService.value.signOut();
+        popPage();
+      } on FirebaseAuthException catch (e) {
+        print(e.message);
+      }
+    }
+
     return Drawer(
       backgroundColor: Colors.white,
       child: ListView(
@@ -56,7 +71,7 @@ class MyDrawer extends StatelessWidget {
             leading: const Icon(Icons.calendar_view_day),
             title: const Text('Tag'),
             onTap: () {
-              Navigator.pop(context);
+              popPage();
               onViewChanged(CalendarView.day);
             },
           ),
@@ -64,7 +79,7 @@ class MyDrawer extends StatelessWidget {
             leading: const Icon(Icons.calendar_view_week_sharp),
             title: const Text('Woche'),
             onTap: () {
-              Navigator.pop(context);
+              popPage();
               onViewChanged(CalendarView.week);
             },
           ),
@@ -72,7 +87,7 @@ class MyDrawer extends StatelessWidget {
             leading: const Icon(Icons.calendar_view_month_sharp),
             title: const Text('Monat'),
             onTap: () {
-              Navigator.pop(context);
+              popPage();
               onViewChanged(CalendarView.month);
             },
           ),
@@ -81,10 +96,16 @@ class MyDrawer extends StatelessWidget {
             leading: const Icon(Icons.settings_outlined),
             title: const Text('Einstellung'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsMenu()));
+              Navigator.pushNamed(context, '/settingsScreen');
             },
           ),
           ListTile(leading: const Icon(Icons.help_outline_rounded), title: const Text('Hilfe'), onTap: () {}),
+          const Divider(color: Colors.grey),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout', style: TextStyle(color: Colors.redAccent)),
+            onTap: () => logout(),
+          ),
         ],
       ),
     );
