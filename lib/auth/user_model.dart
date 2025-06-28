@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Member {
   String userName;
   String email;
-  String? createdAt;
+  Timestamp? createdAt;
 
   Member({
     required this.userName,
@@ -21,7 +21,7 @@ class Member {
     return Member(
         userName: json['userName'] as String,
         email: json['email'] as String,
-        createdAt: json['createdAt'] as String,
+        createdAt: json['createdAt'] as Timestamp,
     );
   }
 }

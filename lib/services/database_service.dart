@@ -61,4 +61,10 @@ class DatabaseService {
   void createMember(Member member) async {
     userRef.doc(authService.value.currentUser!.uid).set(member);
   }
+  
+  Future<String> getUsername() async {
+    final documents = await userRef.where('email', isEqualTo: authService.value.currentUser?.email).get();
+    final member = documents.docs.first.data() as Member;
+    return member.userName;
+  }
 }

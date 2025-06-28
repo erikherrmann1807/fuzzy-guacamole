@@ -1,12 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
   final Function(CalendarView) onViewChanged;
+  final String username;
 
-  MyDrawer({super.key, required this.onViewChanged});
+  const MyDrawer({super.key, required this.onViewChanged, required this.username});
+
+  @override
+  State<MyDrawer> createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
 
   bool checkboxValue1 = false;
   bool checkboxValue2 = false;
@@ -14,6 +22,7 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     void popPage() {
       Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
     }
@@ -31,7 +40,7 @@ class MyDrawer extends StatelessWidget {
       backgroundColor: Colors.white,
       child: ListView(
         children: [
-          const DrawerHeader(
+          DrawerHeader(
             decoration: BoxDecoration(color: Colors.black26),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +59,7 @@ class MyDrawer extends StatelessWidget {
                     SizedBox(width: 10),
                     Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text('Erik', style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(widget.username, style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ],
                 ),
@@ -71,7 +80,7 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Tag'),
             onTap: () {
               popPage();
-              onViewChanged(CalendarView.day);
+              widget.onViewChanged(CalendarView.day);
             },
           ),
           ListTile(
@@ -79,7 +88,7 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Woche'),
             onTap: () {
               popPage();
-              onViewChanged(CalendarView.week);
+              widget.onViewChanged(CalendarView.week);
             },
           ),
           ListTile(
@@ -87,7 +96,7 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Monat'),
             onTap: () {
               popPage();
-              onViewChanged(CalendarView.month);
+              widget.onViewChanged(CalendarView.month);
             },
           ),
           const Divider(color: Colors.grey),

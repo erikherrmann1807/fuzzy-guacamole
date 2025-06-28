@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
 import 'package:fuzzy_guacamole/constants/colors.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
-import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -36,9 +35,11 @@ CalendarView currentView = CalendarView.month;
 class _EventCalendarScreenState extends State<EventCalendarScreen> {
   final DatabaseService _databaseService = DatabaseService();
   late final DataSource _events;
+  late String _userName = '';
 
   @override
   void initState() {
+    loadUserName();
     _events = DataSource(<Meeting>[]);
     _databaseService.startListening((meetings) {
       setState(() {
@@ -54,6 +55,14 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     _startDate = DateTime.now();
     _endDate = DateTime.now();
     super.initState();
+  }
+
+  void loadUserName() async {
+    var username = await _databaseService.getUsername();
+
+    setState(() {
+      _userName =  username;
+    });
   }
 
   @override
@@ -98,7 +107,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      drawer: MyDrawer(onViewChanged: changeView),
+      drawer: MyDrawer(onViewChanged: changeView, username: _userName,),
       appBar: getAppBar(),
       body: getBody(),
       floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => onButtonPress()),
