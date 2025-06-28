@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
 import 'package:fuzzy_guacamole/constants/colors.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
+import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';

@@ -250,7 +250,7 @@ class MeetingEditorState extends State<MeetingEditor> {
                 if (_selectedAppointment == null) {
                   _databaseService.addMeeting(meeting);
                 }
-                _databaseService.updateMeeting(_selectedAppointment?.id, meeting);
+                _databaseService.updateMeeting(_selectedAppointment?.meetingId, meeting);
                 _selectedAppointment = null;
 
                 Navigator.of(context).pop();
@@ -267,7 +267,7 @@ class MeetingEditorState extends State<MeetingEditor> {
             : FloatingActionButton(
                 onPressed: () {
                   if (_selectedAppointment != null) {
-                    _databaseService.deleteMeeting(_selectedAppointment?.id);
+                    _databaseService.deleteMeeting(_selectedAppointment?.meetingId);
                     _selectedAppointment = null;
                     Navigator.pop(context);
                   }

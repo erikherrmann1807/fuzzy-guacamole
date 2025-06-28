@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:fuzzy_guacamole/auth/auth_service.dart';
+import 'package:fuzzy_guacamole/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: Container(
+                    child: SizedBox(
                       // margin: EdgeInsets.fromLTRB(200, 20, 50, 0),
                       width: MediaQuery.of(context).size.width,
 
@@ -96,6 +96,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 10),
                 Text(errorMessage, style: TextStyle(color: Colors.redAccent)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Got no Account?', style: TextStyle(color: Colors.black)),
+                    TextButton(
+                      child: Text('You can register here!'),
+                      onPressed: () => Navigator.pushReplacementNamed(context, '/registerScreen'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -116,6 +126,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void popPage() {
-    Navigator.pushNamed(context, '/eventCalendar');
+    Navigator.pushReplacementNamed(context, '/eventCalendar');
   }
 }

@@ -1,18 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:flutter/foundation.dart';
-import 'package:fuzzy_guacamole/auth/auth_service.dart';
+import 'package:fuzzy_guacamole/auth/user_model.dart';
+import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/services/database_service.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final DatabaseService _databaseService = DatabaseService();
   final _formKey = GlobalKey<FormState>();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String errorMessage = '';
@@ -21,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    usernameController.dispose();
     super.dispose();
   }
 
@@ -36,6 +40,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: usernameController,
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'Enter Username'),
+                      PatternValidator(
+                          r"^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",
+                          errorText: 'The Username needs to be 8-20 Characters long.\n'
+                              'No "_" or "." at the beginning.\n'
+                              'No "__" or "_." or "._" or ".." inside.\n'
+                              'No "_" or "." at the end.'),
+                    ]).call,
+                    decoration: InputDecoration(
+                      hintText: 'Username',
+                      labelText: 'Username',
+                      prefixIcon: Icon(Icons.email, color: Colors.lightBlue),
+                      errorStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.all(Radius.circular(9.0)),
+                      ),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
@@ -83,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: Container(
+                    child: SizedBox(
                       // margin: EdgeInsets.fromLTRB(200, 20, 50, 0),
                       width: MediaQuery.of(context).size.width,
 
@@ -112,7 +141,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void register() async {
     try {
-      await authService.value.createAccount(email: emailController.text, password: passwordController.text);
+      await authService.value.createAccount(
+          email: emailController.text,
+          password: passwordController.text
+      );
+      _databaseService.createMember(
+          Member(
+          userName: usernameController.text,
+          email: emailController.text,
+          )
+      );
       popPage();
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -122,6 +160,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void popPage() {
-    Navigator.pushNamed(context, '/eventCalendar');
+    Navigator.pushReplacementNamed(context, '/eventCalendar');
   }
 }

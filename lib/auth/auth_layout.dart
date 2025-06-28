@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/auth/app_loading_page.dart';
-import 'package:fuzzy_guacamole/auth/auth_service.dart';
+import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/auth/login_screen.dart';
 import 'package:fuzzy_guacamole/eventCalendar/calendar_screen.dart';
 

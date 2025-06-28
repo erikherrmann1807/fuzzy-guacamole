@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy_guacamole/auth/auth_service.dart';
-import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
+import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -16,10 +15,10 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void popPage() {
-      Navigator.pop(context);
+      Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
     }
 
-    void logout() async {
+    Future<void> logout() async {
       try {
         await authService.value.signOut();
         popPage();
