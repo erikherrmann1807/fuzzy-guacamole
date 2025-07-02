@@ -1,13 +1,14 @@
-part of '../eventCalendar/calendar_view.dart';
+part of '../eventCalendar/calendar_screen.dart';
 
-class AppointmentEditor extends StatefulWidget {
-  const AppointmentEditor({super.key});
+class MeetingEditor extends StatefulWidget {
+  const MeetingEditor({super.key});
 
   @override
-  AppointmentEditorState createState() => AppointmentEditorState();
+  MeetingEditorState createState() => MeetingEditorState();
 }
 
-class AppointmentEditorState extends State<AppointmentEditor> {
+class MeetingEditorState extends State<MeetingEditor> {
+  final DatabaseService _databaseService = DatabaseService();
   Widget _getAppointmentEditor(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -121,7 +122,7 @@ class AppointmentEditorState extends State<AppointmentEditor> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Expanded(
-                  flex: 7,
+                  flex: 5,
                   child: GestureDetector(
                     child: Text(DateFormat('EEE, MMM dd yyyy').format(_endDate), textAlign: TextAlign.left),
                     onTap: () async {
@@ -184,8 +185,8 @@ class AppointmentEditorState extends State<AppointmentEditor> {
           const Divider(height: 1.0, thickness: 1),
           ListTile(
             contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-            leading: Icon(Icons.lens, color: _colorCollection[_selectedColorIndex]),
-            title: Text(_colorNames[_selectedColorIndex]),
+            leading: Icon(Icons.lens, color: colorCollection[_selectedColorIndex]),
+            title: Text(colorNames[_selectedColorIndex]),
             onTap: () {
               showDialog<Widget>(
                 context: context,
@@ -224,7 +225,7 @@ class AppointmentEditorState extends State<AppointmentEditor> {
       home: Scaffold(
         appBar: AppBar(
           title: Text(getTitle()),
-          backgroundColor: _colorCollection[_selectedColorIndex],
+          backgroundColor: colorCollection[_selectedColorIndex],
           leading: IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () {
@@ -236,25 +237,19 @@ class AppointmentEditorState extends State<AppointmentEditor> {
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               icon: const Icon(Icons.done, color: Colors.white),
               onPressed: () {
-                final List<Meeting> meetings = <Meeting>[];
-                if (_selectedAppointment != null) {
-                  _events.appointments!.removeAt(_events.appointments!.indexOf(_selectedAppointment));
-                  _events.notifyListeners(CalendarDataSourceAction.remove, <Meeting>[_selectedAppointment!]);
-                }
-                meetings.add(
-                  Meeting(
-                    start: _startDate,
-                    end: _endDate,
-                    backgroundColor: _colorCollection[_selectedColorIndex],
-                    description: _notes,
-                    isAllDay: _isAllDay,
-                    eventName: _subject == '' ? '(No title)' : _subject,
-                  ),
+                var meeting = Meeting(
+                  start: _startDate,
+                  end: _endDate,
+                  backgroundColor: colorCollection[_selectedColorIndex],
+                  description: _notes,
+                  isAllDay: _isAllDay,
+                  eventName: _subject == '' ? '(No title)' : _subject,
                 );
 
-                _events.appointments!.add(meetings[0]);
-
-                _events.notifyListeners(CalendarDataSourceAction.add, meetings);
+                if (_selectedAppointment == null) {
+                  _databaseService.addMeeting(meeting);
+                }
+                _databaseService.updateMeeting(_selectedAppointment?.meetingId, meeting);
                 _selectedAppointment = null;
 
                 Navigator.of(context).pop();
@@ -271,8 +266,7 @@ class AppointmentEditorState extends State<AppointmentEditor> {
             : FloatingActionButton(
                 onPressed: () {
                   if (_selectedAppointment != null) {
-                    _events.appointments!.removeAt(_events.appointments!.indexOf(_selectedAppointment));
-                    _events.notifyListeners(CalendarDataSourceAction.remove, <Meeting>[_selectedAppointment!]);
+                    _databaseService.deleteMeeting(_selectedAppointment?.meetingId);
                     _selectedAppointment = null;
                     Navigator.pop(context);
                   }

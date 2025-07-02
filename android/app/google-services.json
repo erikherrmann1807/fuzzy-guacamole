@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "480122496321",
+    "project_id": "fuzzy-guacamole-dev",
+    "storage_bucket": "fuzzy-guacamole-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480122496321:android:0e49c4acfe54815561edc0",
+        "android_client_info": {
+          "package_name": "com.example.fuzzy_guacamole"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwPX8Fe5Qo3GT07CJxQquz2Sj-EhlmAWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
