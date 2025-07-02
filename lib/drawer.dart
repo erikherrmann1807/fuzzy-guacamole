@@ -15,14 +15,12 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-
   bool checkboxValue1 = false;
   bool checkboxValue2 = false;
   bool checkboxValue3 = false;
 
   @override
   Widget build(BuildContext context) {
-
     void popPage() {
       Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
     }

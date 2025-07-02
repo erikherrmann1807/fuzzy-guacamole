@@ -47,11 +47,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Enter Username'),
                       PatternValidator(
-                          r"^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",
-                          errorText: 'The Username needs to be 8-20 Characters long.\n'
-                              'No "_" or "." at the beginning.\n'
-                              'No "__" or "_." or "._" or ".." inside.\n'
-                              'No "_" or "." at the end.'),
+                        r"^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",
+                        errorText:
+                            'The Username needs to be 8-20 Characters long.\n'
+                            'No "_" or "." at the beginning.\n'
+                            'No "__" or "_." or "._" or ".." inside.\n'
+                            'No "_" or "." at the end.',
+                      ),
                     ]).call,
                     decoration: InputDecoration(
                       hintText: 'Username',
@@ -141,16 +143,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void register() async {
     try {
-      await authService.value.createAccount(
-          email: emailController.text,
-          password: passwordController.text
-      );
-      _databaseService.createMember(
-          Member(
-          userName: usernameController.text,
-          email: emailController.text,
-          )
-      );
+      await authService.value.createAccount(email: emailController.text, password: passwordController.text);
+      _databaseService.createMember(Member(userName: usernameController.text, email: emailController.text));
       popPage();
     } on FirebaseAuthException catch (e) {
       setState(() {

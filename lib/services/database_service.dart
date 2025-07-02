@@ -14,26 +14,27 @@ class DatabaseService {
   StreamSubscription? _meetingSub;
 
   DatabaseService() {
-    meetingRef = db.collection(USER_COLLECTION_REF)
+    meetingRef = db
+        .collection(USER_COLLECTION_REF)
         .doc(authService.value.currentUser?.uid)
         .collection(MEETING_COLLECTION_REF)
         .withConverter<Meeting>(
           fromFirestore: (snapshots, _) => Meeting.fromJson(snapshots.data()!, id: snapshots.id),
           toFirestore: (meeting, _) => meeting.toJson(),
         );
-    
-    userRef = db.collection(USER_COLLECTION_REF)
-    .withConverter<Member>(
-        fromFirestore: (snapshots, _) => Member.fromJson(snapshots.data()!),
-        toFirestore: (user, _) => user.toJson());
+
+    userRef = db
+        .collection(USER_COLLECTION_REF)
+        .withConverter<Member>(
+          fromFirestore: (snapshots, _) => Member.fromJson(snapshots.data()!),
+          toFirestore: (user, _) => user.toJson(),
+        );
   }
 
   void startListening(void Function(List<Meeting>) onData) {
     _meetingSub = meetingRef.snapshots().listen(
       (snap) {
-        final meetings = snap.docs
-            .map((d) => d.data() as Meeting)
-            .toList();
+        final meetings = snap.docs.map((d) => d.data() as Meeting).toList();
         onData(meetings);
       },
       onError: (e) {
@@ -61,7 +62,7 @@ class DatabaseService {
   void createMember(Member member) async {
     userRef.doc(authService.value.currentUser!.uid).set(member);
   }
-  
+
   Future<String> getUsername() async {
     final documents = await userRef.where('email', isEqualTo: authService.value.currentUser?.email).get();
     final member = documents.docs.first.data() as Member;

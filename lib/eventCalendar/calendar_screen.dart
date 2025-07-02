@@ -31,6 +31,7 @@ late bool _isAllDay;
 String _subject = '';
 String _notes = '';
 CalendarView currentView = CalendarView.month;
+CalendarController calendarController = CalendarController();
 
 class _EventCalendarScreenState extends State<EventCalendarScreen> {
   final DatabaseService _databaseService = DatabaseService();
@@ -47,7 +48,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         _events.notifyListeners(CalendarDataSourceAction.reset, meetings);
       });
     });
-    currentView = CalendarView.month;
+    //currentView = CalendarView.month;
     _selectedAppointment = null;
     _selectedColorIndex = 0;
     _subject = '';
@@ -61,7 +62,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     var username = await _databaseService.getUsername();
 
     setState(() {
-      _userName =  username;
+      _userName = username;
     });
   }
 
@@ -84,22 +85,23 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     }
   }
 
-  Widget getBody() {
-    switch (currentView) {
-      case CalendarView.month:
-        return MonthView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-      case CalendarView.day:
-        return DayView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-      case CalendarView.week:
-        return WeekView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-      default:
-        return MonthView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-    }
-  }
+  // Widget getBody() {
+  //   switch (currentView) {
+  //     case CalendarView.month:
+  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
+  //     case CalendarView.day:
+  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
+  //     case CalendarView.week:
+  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
+  //     default:
+  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
+  //   }
+  // }
 
   void changeView(CalendarView view) {
     setState(() {
       currentView = view;
+      calendarController.view = view;
     });
   }
 
@@ -107,9 +109,9 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      drawer: MyDrawer(onViewChanged: changeView, username: _userName,),
+      drawer: MyDrawer(onViewChanged: changeView, username: _userName),
       appBar: getAppBar(),
-      body: getBody(),
+      body: EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events),
       floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => onButtonPress()),
     );
   }
@@ -121,7 +123,13 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     _subject = '';
     _notes = '';
 
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor(dataSource: _events)));
+    _startDate = DateTime.now();
+    _endDate = _startDate.add(Duration(hours: 1));
+
+    _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
+    _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
+
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor()));
   }
 
   void onCalendarLongPress(CalendarLongPressDetails calendarLongPressDetails) {
@@ -152,10 +160,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     }
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
-    Navigator.push<Widget>(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => MeetingEditor(dataSource: _events)),
-    );
+    Navigator.push<Widget>(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor()));
   }
 }
 

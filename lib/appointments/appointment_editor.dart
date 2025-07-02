@@ -1,8 +1,7 @@
 part of '../eventCalendar/calendar_screen.dart';
 
 class MeetingEditor extends StatefulWidget {
-  const MeetingEditor({super.key, required this.dataSource});
-  final DataSource dataSource;
+  const MeetingEditor({super.key});
 
   @override
   MeetingEditorState createState() => MeetingEditorState();
