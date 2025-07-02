@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Meeting {
+  String? meetingId;
   String eventName;
   String description;
   DateTime start;
@@ -9,6 +10,7 @@ class Meeting {
   bool isAllDay;
 
   Meeting({
+    this.meetingId,
     required this.eventName,
     required this.description,
     required this.start,
@@ -20,20 +22,21 @@ class Meeting {
   Map<String, dynamic> toJson() => {
     'eventName': eventName,
     'description': description,
-    'start': start,
-    'end': end,
-    'backgroundColor': backgroundColor,
+    'start': start.toString(),
+    'end': end.toString(),
+    'backgroundColor': backgroundColor.toARGB32(),
     'isAllDay': isAllDay,
   };
 
-  factory Meeting.fromJson(Map<String, dynamic> json) {
+  factory Meeting.fromJson(Map<String, dynamic> json, {String? id}) {
     return Meeting(
-      eventName: json['eventName'],
-      description: json['description'],
-      start: json['start'],
-      end: json['end'],
-      backgroundColor: json['backgroundColor'],
-      isAllDay: ['isAllDay'] as bool,
+      meetingId: id,
+      eventName: json['eventName'] as String,
+      description: json['description'] as String,
+      start: DateTime.parse(json['start'].toString()),
+      end: DateTime.parse(json['end'].toString()),
+      backgroundColor: Color(json['backgroundColor']),
+      isAllDay: json['isAllDay'] as bool,
     );
   }
 }

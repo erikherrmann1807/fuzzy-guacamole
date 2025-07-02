@@ -1,11 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
+import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
   final Function(CalendarView) onViewChanged;
+  final String username;
 
-  MyDrawer({super.key, required this.onViewChanged});
+  const MyDrawer({super.key, required this.onViewChanged, required this.username});
+
+  @override
+  State<MyDrawer> createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
 
   bool checkboxValue1 = false;
   bool checkboxValue2 = false;
@@ -13,11 +22,25 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    void popPage() {
+      Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
+    }
+
+    Future<void> logout() async {
+      try {
+        await authService.value.signOut();
+        popPage();
+      } on FirebaseAuthException catch (e) {
+        print(e.message);
+      }
+    }
+
     return Drawer(
       backgroundColor: Colors.white,
       child: ListView(
         children: [
-          const DrawerHeader(
+          DrawerHeader(
             decoration: BoxDecoration(color: Colors.black26),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +59,7 @@ class MyDrawer extends StatelessWidget {
                     SizedBox(width: 10),
                     Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text('Erik', style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(widget.username, style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ],
                 ),
@@ -56,24 +79,24 @@ class MyDrawer extends StatelessWidget {
             leading: const Icon(Icons.calendar_view_day),
             title: const Text('Tag'),
             onTap: () {
-              Navigator.pop(context);
-              onViewChanged(CalendarView.day);
+              popPage();
+              widget.onViewChanged(CalendarView.day);
             },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_week_sharp),
             title: const Text('Woche'),
             onTap: () {
-              Navigator.pop(context);
-              onViewChanged(CalendarView.week);
+              popPage();
+              widget.onViewChanged(CalendarView.week);
             },
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_month_sharp),
             title: const Text('Monat'),
             onTap: () {
-              Navigator.pop(context);
-              onViewChanged(CalendarView.month);
+              popPage();
+              widget.onViewChanged(CalendarView.month);
             },
           ),
           const Divider(color: Colors.grey),
@@ -81,10 +104,16 @@ class MyDrawer extends StatelessWidget {
             leading: const Icon(Icons.settings_outlined),
             title: const Text('Einstellung'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsMenu()));
+              Navigator.pushNamed(context, '/settingsScreen');
             },
           ),
           ListTile(leading: const Icon(Icons.help_outline_rounded), title: const Text('Hilfe'), onTap: () {}),
+          const Divider(color: Colors.grey),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout', style: TextStyle(color: Colors.redAccent)),
+            onTap: () => logout(),
+          ),
         ],
       ),
     );
