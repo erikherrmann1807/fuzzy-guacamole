@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fuzzy_guacamole/accountmanagement/account_management_screen.dart';
 import 'package:fuzzy_guacamole/auth/auth_layout.dart';
 import 'package:fuzzy_guacamole/auth/login_screen.dart';
 import 'package:fuzzy_guacamole/auth/register_screen.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/eventCalendar': (context) => EventCalendarScreen(),
         '/registerScreen': (context) => RegisterScreen(),
         '/authLayout': (context) => AuthLayout(),
+        '/accountManagementScreen': (context) => AccountManagementScreen(),
       },
     );
   }

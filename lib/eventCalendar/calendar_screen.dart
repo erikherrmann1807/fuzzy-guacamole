@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
 import 'package:fuzzy_guacamole/constants/colors.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
+import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -48,7 +49,6 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
         _events.notifyListeners(CalendarDataSourceAction.reset, meetings);
       });
     });
-    //currentView = CalendarView.month;
     _selectedAppointment = null;
     _selectedColorIndex = 0;
     _subject = '';
@@ -58,11 +58,11 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     super.initState();
   }
 
-  void loadUserName() async {
-    var username = await _databaseService.getUsername();
+  void loadUserName() {
+    var username = authService.value.currentUser?.displayName;
 
     setState(() {
-      _userName = username;
+      _userName = username!;
     });
   }
 

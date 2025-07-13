@@ -58,7 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Username',
                       labelText: 'Username',
-                      prefixIcon: Icon(Icons.email, color: Colors.lightBlue),
+                      prefixIcon: Icon(Icons.person, color: Colors.lightBlue),
                       errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.red),
@@ -143,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void register() async {
     try {
-      await authService.value.createAccount(email: emailController.text, password: passwordController.text);
+      await authService.value.createAccount(email: emailController.text, password: passwordController.text, displayName: usernameController.text);
       _databaseService.createMember(Member(userName: usernameController.text, email: emailController.text));
       popPage();
     } on FirebaseAuthException catch (e) {

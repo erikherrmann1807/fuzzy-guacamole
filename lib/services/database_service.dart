@@ -63,6 +63,14 @@ class DatabaseService {
     userRef.doc(authService.value.currentUser!.uid).set(member);
   }
 
+  void deleteMember() {
+    userRef.doc(authService.value.currentUser!.uid).delete();
+  }
+
+  void updateMemberName(String userName) async {
+    userRef.doc(authService.value.currentUser!.uid).update({'userName': userName});
+  }
+
   Future<String> getUsername() async {
     final documents = await userRef.where('email', isEqualTo: authService.value.currentUser?.email).get();
     final member = documents.docs.first.data() as Member;
