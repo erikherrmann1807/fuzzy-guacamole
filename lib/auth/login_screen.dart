@@ -58,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    obscureText: true,
                     controller: passwordController,
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Enter password'),

@@ -105,6 +105,11 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.pushNamed(context, '/settingsScreen');
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.manage_accounts_outlined),
+            title: const Text('Account Management'),
+            onTap: () => Navigator.pushNamed(context, '/accountManagementScreen'),
+          ),
           ListTile(leading: const Icon(Icons.help_outline_rounded), title: const Text('Hilfe'), onTap: () {}),
           const Divider(color: Colors.grey),
           ListTile(
