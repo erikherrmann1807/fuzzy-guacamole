@@ -6,7 +6,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MyDrawer extends StatefulWidget {
   final Function(CalendarView) onViewChanged;
-  final String username;
+  final String? username;
 
   const MyDrawer({super.key, required this.onViewChanged, required this.username});
 
@@ -57,7 +57,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     SizedBox(width: 10),
                     Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text(widget.username, style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(widget.username!, style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ],
                 ),

@@ -1,10 +1,13 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
+import 'package:fuzzy_guacamole/appointments/datasource.dart';
+import 'package:fuzzy_guacamole/auth/app_loading_page.dart';
 import 'package:fuzzy_guacamole/constants/colors.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
-import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -15,11 +18,11 @@ part 'views/month_view.dart';
 part 'views/day_view.dart';
 part 'views/week_view.dart';
 
-class EventCalendarScreen extends StatefulWidget {
+class EventCalendarScreen extends ConsumerStatefulWidget {
   const EventCalendarScreen({super.key});
 
   @override
-  State<EventCalendarScreen> createState() => _EventCalendarScreenState();
+  ConsumerState<EventCalendarScreen> createState() => _EventCalendarScreenState();
 }
 
 int _selectedColorIndex = 0;
@@ -34,42 +37,38 @@ String _notes = '';
 CalendarView currentView = CalendarView.month;
 CalendarController calendarController = CalendarController();
 
-class _EventCalendarScreenState extends State<EventCalendarScreen> {
-  final DatabaseService _databaseService = DatabaseService();
-  late final DataSource _events;
-  late String _userName = '';
+class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
+  final DataSource _events = DataSource(<Meeting>[]);
 
   @override
   void initState() {
-    loadUserName();
-    _events = DataSource(<Meeting>[]);
-    _databaseService.startListening((meetings) {
-      setState(() {
-        _events.appointments = meetings;
-        _events.notifyListeners(CalendarDataSourceAction.reset, meetings);
-      });
-    });
+    super.initState();
     _selectedAppointment = null;
     _selectedColorIndex = 0;
     _subject = '';
     _notes = '';
     _startDate = DateTime.now();
     _endDate = DateTime.now();
-    super.initState();
-  }
-
-  void loadUserName() {
-    var username = authService.value.currentUser?.displayName;
-
-    setState(() {
-      _userName = username!;
-    });
   }
 
   @override
-  void dispose() {
-    _databaseService.stopListening();
-    super.dispose();
+  Widget build(BuildContext context) {
+    final username = ref.watch(usernameProvider).value;
+    final allMeetings = ref.watch(meetingsProvider);
+    return allMeetings.when(
+      data: (meetings) {
+        _events.appointments = meetings;
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          drawer: MyDrawer(onViewChanged: changeView, username: username),
+          appBar: getAppBar(),
+          body: EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events),
+          floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => onButtonPress()),
+        );
+      },
+      loading: () => AppLoadingPage(),
+      error: (err, stack) => Center(child: Text('Fehler: $err')),
+    );
   }
 
   AppBar getAppBar() {
@@ -85,35 +84,11 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     }
   }
 
-  // Widget getBody() {
-  //   switch (currentView) {
-  //     case CalendarView.month:
-  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-  //     case CalendarView.day:
-  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-  //     case CalendarView.week:
-  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-  //     default:
-  //       return EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events);
-  //   }
-  // }
-
   void changeView(CalendarView view) {
     setState(() {
       currentView = view;
       calendarController.view = view;
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      drawer: MyDrawer(onViewChanged: changeView, username: _userName),
-      appBar: getAppBar(),
-      body: EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events),
-      floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => onButtonPress()),
-    );
   }
 
   void onButtonPress() {
@@ -162,28 +137,4 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
     Navigator.push<Widget>(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor()));
   }
-}
-
-class DataSource extends CalendarDataSource {
-  DataSource(List<Meeting> source) {
-    appointments = source;
-  }
-
-  @override
-  bool isAllDay(int index) => appointments![index].isAllDay;
-
-  @override
-  String getSubject(int index) => appointments![index].eventName;
-
-  @override
-  String getNotes(int index) => appointments![index].description;
-
-  @override
-  Color getColor(int index) => appointments![index].backgroundColor;
-
-  @override
-  DateTime getStartTime(int index) => appointments![index].start;
-
-  @override
-  DateTime getEndTime(int index) => appointments![index].end;
 }
