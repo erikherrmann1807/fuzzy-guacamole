@@ -26,20 +26,21 @@ class AccountManagementScreen extends StatelessWidget {
           child: Column(
             children: [
               TextButton(
-                  child: Text('Passwort zurücksetzen'),
-                  onPressed: () => ResetPassword().resetPasswordDialog(context)),
+                child: Text('Passwort zurücksetzen'),
+                onPressed: () => ResetPassword().resetPasswordDialog(context),
+              ),
               SizedBox(height: 20.0),
               TextButton(
-                  child: Text('Update Username'),
-                  onPressed: () => UpdateUsername().updateUsernameDialog(context)),
+                child: Text('Update Username'),
+                onPressed: () => UpdateUsername().updateUsernameDialog(context),
+              ),
+              SizedBox(height: 20.0),
+              TextButton(child: Text('Delete Account'), onPressed: () => DeleteAccount().deleteAccountDialog(context)),
               SizedBox(height: 20.0),
               TextButton(
-                  child: Text('Delete Account'),
-                  onPressed: () => DeleteAccount().deleteAccountDialog(context)),
-              SizedBox(height: 20.0),
-              TextButton(
-                  child: Text('Passwort ändern'),
-                  onPressed: () => UpdatePassword().updatePasswordDialog(context)),
+                child: Text('Passwort ändern'),
+                onPressed: () => UpdatePassword().updatePasswordDialog(context),
+              ),
             ],
           ),
         ),

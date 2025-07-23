@@ -8,11 +8,8 @@ class SettingsMenu extends StatefulWidget {
 }
 
 class _SettingsMenuState extends State<SettingsMenu> {
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Einstellungen')),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Einstellungen')));
   }
 }
