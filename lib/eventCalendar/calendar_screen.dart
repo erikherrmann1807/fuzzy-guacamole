@@ -41,7 +41,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
 
   @override
   void initState() {
-    loadUserName();
+    //loadUserName();
     _events = DataSource(<Meeting>[]);
     _databaseService.startListening((meetings) {
       setState(() {
