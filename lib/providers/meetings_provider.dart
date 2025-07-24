@@ -19,6 +19,6 @@ Future<List<Meeting>> meetings(ref) async {
 
 @riverpod
 Future<String> username(ref) async {
-  final username = _databaseService.getUsername();
-  return await username;
+  final username = await _databaseService.getUsername();
+  return username;
 }
