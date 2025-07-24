@@ -1,6 +1,6 @@
+import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter/material.dart';
-import 'appointment_model.dart';
 
 class DataSource extends CalendarDataSource {
   DataSource(List<Meeting> source) {

@@ -1,24 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
-import 'package:fuzzy_guacamole/services/database_service.dart';
+import 'package:fuzzy_guacamole/models/appointment_model.dart';
+import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
 
-part 'meetings_provider.g.dart';
-
-DatabaseService _databaseService = DatabaseService();
-
-@riverpod
-Future<List<Meeting>> meetings(ref) async {
-  List<Meeting> allMeetings = [];
-  _databaseService.startListening((meetings) {
-    allMeetings.clear();
-    allMeetings.addAll(meetings);
-  });
-  return allMeetings;
-}
-
-@riverpod
-Future<String> username(ref) async {
-  final username = await _databaseService.getUsername();
-  return username;
-}
+final meetingStreamProvider =
+    StreamProvider.autoDispose<List<Meeting>>((ref) {
+      final database = ref.watch(firestoreProvider)!;
+      return database.meetingsStream;
+    });

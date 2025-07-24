@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fuzzy_guacamole/accountmanagement/account_management_screen.dart';
 import 'package:fuzzy_guacamole/auth/auth_layout.dart';
 import 'package:fuzzy_guacamole/auth/login_screen.dart';
 import 'package:fuzzy_guacamole/auth/register_screen.dart';
-import 'package:fuzzy_guacamole/eventCalendar/calendar_screen.dart';
-import 'package:fuzzy_guacamole/settings/settingsmenu.dart';
+import 'package:fuzzy_guacamole/views/settingsmenu.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:fuzzy_guacamole/firebase/firebase_options.dart';
+import 'package:fuzzy_guacamole/views/accountmanagement/account_management_screen.dart';
+import 'package:fuzzy_guacamole/views/eventCalendar/calendar_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/registerScreen': (context) => RegisterScreen(),
         '/authLayout': (context) => AuthLayout(),
         '/accountManagementScreen': (context) => AccountManagementScreen(),
+        '/meetingEditor': (context) => MeetingEditor(),
       },
     );
   }

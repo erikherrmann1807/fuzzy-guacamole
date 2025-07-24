@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
-import 'package:fuzzy_guacamole/auth/user_model.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:fuzzy_guacamole/models/appointment_model.dart';
+import 'package:fuzzy_guacamole/models/user_model.dart';
 import 'package:fuzzy_guacamole/constants/database_refs.dart';
 
 import 'auth_service.dart';
@@ -41,6 +42,14 @@ class DatabaseService {
         print('Firestore error: $e');
       },
     );
+  }
+
+  Stream<List<Meeting>> get meetingsStream {
+    return meetingRef.snapshots().map((snap) {
+      return snap.docs
+          .map((d) => d.data() as Meeting)
+          .toList();
+    });
   }
 
   void stopListening() {

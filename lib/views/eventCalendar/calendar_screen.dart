@@ -1,19 +1,24 @@
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fuzzy_guacamole/appointments/appointment_model.dart';
-import 'package:fuzzy_guacamole/appointments/datasource.dart';
+import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/auth/app_loading_page.dart';
 import 'package:fuzzy_guacamole/constants/colors.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
+import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
+import 'package:fuzzy_guacamole/views/appointments/datasource.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-part 'package:fuzzy_guacamole/appointments/appointment_editor.dart';
-part 'package:fuzzy_guacamole/appointments/color_picker.dart';
+import '../../providers/users_provider.dart';
+
+part 'package:fuzzy_guacamole/views/appointments/appointment_editor.dart';
+part 'package:fuzzy_guacamole/views/appointments/color_picker.dart';
 part 'views/month_view.dart';
 part 'views/day_view.dart';
 part 'views/week_view.dart';
@@ -53,8 +58,9 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: correct rebuild after closing meeting editor
     final username = ref.watch(usernameProvider).value;
-    final allMeetings = ref.watch(meetingsProvider);
+    final allMeetings = ref.watch(meetingStreamProvider);
     return allMeetings.when(
       data: (meetings) {
         _events.appointments = meetings;
@@ -104,7 +110,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
 
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor()));
+    Navigator.pushNamed(context, '/meetingEditor');
   }
 
   void onCalendarLongPress(CalendarLongPressDetails calendarLongPressDetails) {
@@ -135,6 +141,6 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     }
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
-    Navigator.push<Widget>(context, MaterialPageRoute(builder: (BuildContext context) => MeetingEditor()));
+    Navigator.pushNamed(context, '/meetingEditor');
   }
 }

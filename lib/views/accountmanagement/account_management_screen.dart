@@ -3,8 +3,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
-
-import '../services/database_service.dart';
+import 'package:fuzzy_guacamole/services/database_service.dart';
 
 part 'reset_password.dart';
 part 'update_username.dart';
