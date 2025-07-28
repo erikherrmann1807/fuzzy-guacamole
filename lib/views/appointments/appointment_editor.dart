@@ -1,14 +1,14 @@
 part of '../eventCalendar/calendar_screen.dart';
 
-class MeetingEditor extends StatefulWidget {
+class MeetingEditor extends  ConsumerStatefulWidget {
   const MeetingEditor({super.key});
 
   @override
-  MeetingEditorState createState() => MeetingEditorState();
+  ConsumerState<MeetingEditor> createState() => _MeetingEditorState();
 }
 
-class MeetingEditorState extends State<MeetingEditor> {
-  final DatabaseService _databaseService = DatabaseService();
+class _MeetingEditorState extends ConsumerState<MeetingEditor> {
+
   Widget _getAppointmentEditor(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -220,6 +220,7 @@ class MeetingEditorState extends State<MeetingEditor> {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -247,12 +248,12 @@ class MeetingEditorState extends State<MeetingEditor> {
                 );
 
                 if (_selectedAppointment == null) {
-                  _databaseService.addMeeting(meeting);
+                  _addMeeting(meeting);
                 }
-                _databaseService.updateMeeting(_selectedAppointment?.meetingId, meeting);
+                _updateMeeting(_selectedAppointment?.meetingId, meeting);
                 _selectedAppointment = null;
 
-                Navigator.of(context).pop();
+                Navigator.pop(context);
               },
             ),
           ],
@@ -266,7 +267,7 @@ class MeetingEditorState extends State<MeetingEditor> {
             : FloatingActionButton(
                 onPressed: () {
                   if (_selectedAppointment != null) {
-                    _databaseService.deleteMeeting(_selectedAppointment?.meetingId);
+                    _deleteMeeting(_selectedAppointment?.meetingId);
                     _selectedAppointment = null;
                     Navigator.pop(context);
                   }
@@ -280,5 +281,20 @@ class MeetingEditorState extends State<MeetingEditor> {
 
   String getTitle() {
     return _subject.isEmpty ? 'New event' : 'Event details';
+  }
+
+  void _deleteMeeting(String? meetingId) {
+      final database = ref.read(firestoreProvider)!;
+      database.deleteMeeting(meetingId);
+  }
+
+  void _addMeeting(Meeting meeting) {
+    final database = ref.read(firestoreProvider)!;
+    database.addMeeting(meeting);
+  }
+
+  void _updateMeeting(String? meetingId, Meeting meeting) {
+    final database = ref.read(firestoreProvider)!;
+    database.updateMeeting(meetingId, meeting);
   }
 }
