@@ -21,7 +21,7 @@ class ResetPassword {
             TextButton(
               child: const Text('Passwort zurücksetzen', style: TextStyle(color: Colors.red)),
               onPressed: () {
-                authService.value.resetPassword(email: authService.value.currentUser!.email!);
+                authServiceGlobal.value.resetPassword(email: authServiceGlobal.value.currentUser!.email!);
                 Navigator.of(context).pop();
               },
             ),

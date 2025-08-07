@@ -51,7 +51,7 @@ class UpdateUsername {
             TextButton(
               child: const Text('Update Username', style: TextStyle(color: Colors.red)),
               onPressed: () {
-                authService.value.updateUsername(username: usernameController.text);
+                authServiceGlobal.value.updateUsername(username: usernameController.text);
                 _databaseService.updateMemberName(usernameController.text);
                 Navigator.of(context).pop();
               },

@@ -14,7 +14,7 @@ class AuthLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: authService,
+        valueListenable: authServiceGlobal,
         builder: (context, authService, child) {
           return StreamBuilder(
               stream: authService.authStateChanges,

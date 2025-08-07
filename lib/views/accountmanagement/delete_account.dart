@@ -73,10 +73,10 @@ class DeleteAccount {
                 TextButton(
                   child: const Text('Delete Account', style: TextStyle(color: Colors.red)),
                   onPressed: () async {
-                    _isPasswordValid = await authService.value.validatePassword(passwordController.text);
+                    _isPasswordValid = await authServiceGlobal.value.validatePassword(passwordController.text);
                     setState(() {});
                     if (_isPasswordValid) {
-                      authService.value.deleteAccount(email: emailController.text, password: passwordController.text);
+                      authServiceGlobal.value.deleteAccount(email: emailController.text, password: passwordController.text);
                       _databaseService.deleteMember();
                       Navigator.of(context).pop();
                     }
