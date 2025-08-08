@@ -17,7 +17,7 @@ class DatabaseService {
       : db   = fireStore ?? FirebaseFirestore.instance,
         auth = authService ?? authServiceGlobal.value {
 
-    final uid = auth.currentUser!.uid;
+    final uid = auth.currentUser?.uid;
     meetingRef = db
         .collection(USER_COLLECTION_REF)
         .doc(uid)
@@ -59,16 +59,16 @@ class DatabaseService {
   //   _meetingSub?.cancel();
   // }
 
-  void addMeeting(Meeting meeting) async {
-    meetingRef.add(meeting);
+  Future<void> addMeeting(Meeting meeting) async {
+    await meetingRef.add(meeting);
   }
 
-  void deleteMeeting(String? meetingId) {
-    meetingRef.doc(meetingId).delete();
+  Future<void> deleteMeeting(String? meetingId) async {
+    await meetingRef.doc(meetingId).delete();
   }
 
-  void updateMeeting(String? meetingId, Meeting meeting) {
-    meetingRef.doc(meetingId).update(meeting.toJson());
+  Future<void> updateMeeting(String? meetingId, Meeting meeting) async {
+    await meetingRef.doc(meetingId).update(meeting.toJson());
   }
 
   void createMember(Member member) async {
