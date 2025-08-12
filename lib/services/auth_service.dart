@@ -4,27 +4,29 @@ import 'package:flutter/foundation.dart';
 ValueNotifier<AuthService> authServiceGlobal = ValueNotifier(AuthService());
 
 class AuthService {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth firebaseAuthentication;
 
-  User? get currentUser => firebaseAuth.currentUser;
+  AuthService({FirebaseAuth? firebaseAuth}) : firebaseAuthentication = firebaseAuth ?? FirebaseAuth.instance;
 
-  Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
+  User? get currentUser => firebaseAuthentication.currentUser;
+
+  Stream<User?> get authStateChanges => firebaseAuthentication.authStateChanges();
 
   Future<UserCredential> signIn({required String email, required String password}) async {
-    return await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    return await firebaseAuthentication.signInWithEmailAndPassword(email: email, password: password);
   }
 
   Future<void> createAccount({required String email, required String password, required String displayName}) async {
-    await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-    await firebaseAuth.currentUser?.updateDisplayName(displayName);
+    await firebaseAuthentication.createUserWithEmailAndPassword(email: email, password: password);
+    await updateUsername(username: displayName);
   }
 
   Future<void> signOut() async {
-    await firebaseAuth.signOut();
+    await firebaseAuthentication.signOut();
   }
 
   Future<void> resetPassword({required String email}) async {
-    await firebaseAuth.sendPasswordResetEmail(email: email);
+    await firebaseAuthentication.sendPasswordResetEmail(email: email);
   }
 
   Future<void> updateUsername({required username}) async {
@@ -35,7 +37,7 @@ class AuthService {
     AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
     await currentUser!.reauthenticateWithCredential(credential);
     await currentUser!.delete();
-    await firebaseAuth.signOut();
+    await firebaseAuthentication.signOut();
   }
 
   Future<void> updateUserPassword({required String newPassword}) async {

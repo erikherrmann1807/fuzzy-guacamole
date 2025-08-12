@@ -106,7 +106,7 @@ void main() {
       expect(updatedMeetings, isEmpty);
     });
 
-    test('Delete an existing Meeting', () async {
+    test('Update an existing Meeting', () async {
       final originalMeeting = Meeting(
         eventName: 'New Meeting',
         description: 'New Meeting added',
