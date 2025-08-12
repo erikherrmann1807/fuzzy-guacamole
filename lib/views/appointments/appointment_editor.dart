@@ -61,7 +61,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                 Expanded(
                   flex: 7,
                   child: GestureDetector(
-                    child: Text(DateFormat('EEE, MMM dd yyyy').format(_startDate), textAlign: TextAlign.left),
+                    child: Text(DateFormat('EEE, dd. MMM yyyy', 'de').format(_startDate), textAlign: TextAlign.left),
                     onTap: () async {
                       final DateTime? date = await showDatePicker(
                         context: context,
@@ -86,7 +86,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                   child: _isAllDay
                       ? const Text('')
                       : GestureDetector(
-                          child: Text(DateFormat('hh:mm a').format(_startDate), textAlign: TextAlign.right),
+                          child: Text(DateFormat('HH:mm').format(_startDate), textAlign: TextAlign.right),
                           onTap: () async {
                             final TimeOfDay? time = await showTimePicker(
                               context: context,
@@ -124,7 +124,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                 Expanded(
                   flex: 5,
                   child: GestureDetector(
-                    child: Text(DateFormat('EEE, MMM dd yyyy').format(_endDate), textAlign: TextAlign.left),
+                    child: Text(DateFormat('EEE, dd. MMM yyyy', 'de').format(_endDate), textAlign: TextAlign.left),
                     onTap: () async {
                       final DateTime? date = await showDatePicker(
                         context: context,
@@ -151,7 +151,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                   child: _isAllDay
                       ? const Text('')
                       : GestureDetector(
-                          child: Text(DateFormat('hh:mm a').format(_endDate), textAlign: TextAlign.right),
+                          child: Text(DateFormat('HH:mm').format(_endDate), textAlign: TextAlign.right),
                           onTap: () async {
                             final TimeOfDay? time = await showTimePicker(
                               context: context,

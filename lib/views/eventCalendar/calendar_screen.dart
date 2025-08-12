@@ -20,8 +20,6 @@ import '../../providers/users_provider.dart';
 part 'package:fuzzy_guacamole/views/appointments/appointment_editor.dart';
 part 'package:fuzzy_guacamole/views/appointments/color_picker.dart';
 part 'views/month_view.dart';
-part 'views/day_view.dart';
-part 'views/week_view.dart';
 
 class EventCalendarScreen extends ConsumerStatefulWidget {
   const EventCalendarScreen({super.key});
@@ -69,7 +67,10 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
           drawer: MyDrawer(onViewChanged: changeView, username: username),
           appBar: getAppBar(),
           body: EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events),
-          floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => onButtonPress()),
+          floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.blueAccent,
+              onPressed: () => onButtonPress(),
+              child: Icon(Icons.add, color: Colors.black,)),
         );
       },
       loading: () => AppLoadingPage(),
