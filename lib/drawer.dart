@@ -27,7 +27,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
     Future<void> logout() async {
       try {
-        await authService.value.signOut();
+        await authServiceGlobal.value.signOut();
         popPage();
       } on FirebaseAuthException catch (e) {
         print(e.message);

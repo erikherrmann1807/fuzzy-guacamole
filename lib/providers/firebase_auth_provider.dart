@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
 
 final firebaseAuthProvider =
-    Provider<FirebaseAuth>((ref) => authService.value.firebaseAuth);
+    Provider<FirebaseAuth>((ref) => authServiceGlobal.value.firebaseAuthentication);
 
 final authStateChangesProvider = StreamProvider<User?>(
     (ref) => ref.watch(firebaseAuthProvider).authStateChanges());

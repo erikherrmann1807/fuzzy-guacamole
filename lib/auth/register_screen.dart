@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void register() async {
     try {
-      await authService.value.createAccount(
+      await authServiceGlobal.value.createAccount(
         email: emailController.text,
         password: passwordController.text,
         displayName: usernameController.text,

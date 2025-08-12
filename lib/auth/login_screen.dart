@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void signIn() async {
     try {
-      await authService.value.signIn(email: emailController.text, password: passwordController.text);
+      await authServiceGlobal.value.signIn(email: emailController.text, password: passwordController.text);
       popPage();
     } on FirebaseAuthException catch (e) {
       setState(() {

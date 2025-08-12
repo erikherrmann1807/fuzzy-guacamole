@@ -84,10 +84,10 @@ class UpdatePassword {
                 TextButton(
                   child: const Text('Update Password', style: TextStyle(color: Colors.red)),
                   onPressed: () async {
-                    _isPasswordValid = await authService.value.validatePassword(oldPasswordController.text);
+                    _isPasswordValid = await authServiceGlobal.value.validatePassword(oldPasswordController.text);
                     setState(() {});
                     if (_isPasswordValid) {
-                      authService.value.updateUserPassword(newPassword: newPasswordController.text);
+                      authServiceGlobal.value.updateUserPassword(newPassword: newPasswordController.text);
                       Navigator.pop(context);
                     }
                   },
