@@ -13,3 +13,6 @@ const List<Color> colorCollection = [
 ];
 
 const List<String> colorNames = ['Green', 'Purple', 'Red', 'Orange', 'Caramel', 'Magenta', 'Blue', 'Peach', 'Gray'];
+
+const String MEETING_COLLECTION_REF = "meetings";
+const String USER_COLLECTION_REF = "users";

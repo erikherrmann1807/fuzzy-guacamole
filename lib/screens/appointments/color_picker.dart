@@ -1,4 +1,4 @@
-part of '../eventCalendar/calendar_screen.dart';
+part of '../../screens/calendar/calendar_screen.dart';
 
 class _ColorPicker extends StatefulWidget {
   @override

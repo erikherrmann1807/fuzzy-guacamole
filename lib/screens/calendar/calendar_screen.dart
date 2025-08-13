@@ -4,22 +4,21 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/models/appointment_model.dart';
-import 'package:fuzzy_guacamole/auth/app_loading_page.dart';
-import 'package:fuzzy_guacamole/constants/colors.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
-import 'package:fuzzy_guacamole/services/database_service.dart';
-import 'package:fuzzy_guacamole/views/appointments/datasource.dart';
+import 'package:fuzzy_guacamole/screens/auth/app_loading_page.dart';
+import 'package:fuzzy_guacamole/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../providers/users_provider.dart';
 
-part 'package:fuzzy_guacamole/views/appointments/appointment_editor.dart';
-part 'package:fuzzy_guacamole/views/appointments/color_picker.dart';
-part 'views/month_view.dart';
+part '../appointments/appointment_editor.dart';
+part '../appointments/color_picker.dart';
+part 'month_view.dart';
 
 class EventCalendarScreen extends ConsumerStatefulWidget {
   const EventCalendarScreen({super.key});

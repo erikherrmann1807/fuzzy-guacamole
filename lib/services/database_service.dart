@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/models/user_model.dart';
-import 'package:fuzzy_guacamole/constants/database_refs.dart';
 
 import 'auth_service.dart';
 

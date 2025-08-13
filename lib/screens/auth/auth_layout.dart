@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy_guacamole/auth/app_loading_page.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
-import 'package:fuzzy_guacamole/auth/login_screen.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
-import 'package:fuzzy_guacamole/views/eventCalendar/calendar_screen.dart';
+import 'package:fuzzy_guacamole/screens/calendar/calendar_screen.dart';
+
+import 'app_loading_page.dart';
+import 'login_screen.dart';
 
 class AuthLayout extends StatelessWidget {
   AuthLayout({super.key, this.pageIfNotConnected});

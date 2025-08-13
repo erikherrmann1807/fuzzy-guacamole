@@ -1,4 +1,4 @@
-part of '../calendar_screen.dart';
+part of 'calendar_screen.dart';
 
 class EventCalendarView extends StatelessWidget {
   const EventCalendarView({required this.onCalendarLongPressed, super.key, required this.dataSource});

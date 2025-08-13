@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzy_guacamole/constants/database_refs.dart';
+import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
