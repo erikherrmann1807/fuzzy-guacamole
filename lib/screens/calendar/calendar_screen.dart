@@ -10,6 +10,8 @@ import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
 import 'package:fuzzy_guacamole/screens/auth/app_loading_page.dart';
+import 'package:fuzzy_guacamole/styles/colors.dart';
+import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -67,7 +69,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
           appBar: getAppBar(),
           body: EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events),
           floatingActionButton: FloatingActionButton(
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: MyColors.buttonColor,
               onPressed: () => onButtonPress(),
               child: Icon(Icons.add, color: Colors.black,)),
         );
@@ -80,7 +82,11 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   AppBar getAppBar() {
     switch (currentView) {
       case CalendarView.month:
-        return AppBar(title: const Text('Monatsansicht'));
+        return AppBar(
+            title: const Text('Monatsansicht'),
+          backgroundColor: MyColors.appBarColor,
+          titleTextStyle: agendaText,
+        );
       case CalendarView.day:
         return AppBar(title: const Text('Tagesansicht'));
       case CalendarView.week:

@@ -7,43 +7,45 @@ class EventCalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
-      child: SafeArea(
+    return SafeArea(
         child: SfCalendar(
           view: CalendarView.month,
           controller: calendarController,
           firstDayOfWeek: 1,
-          todayHighlightColor: Colors.red,
+          viewHeaderStyle: ViewHeaderStyle(
+              backgroundColor: MyColors.viewHeader,
+            dayTextStyle: viewHeaderText
+          ),
+          todayHighlightColor: MyColors.todayColor,
+          todayTextStyle: todayText,
           cellBorderColor: Colors.grey,
           dataSource: dataSource,
           onLongPress: onCalendarLongPressed,
           showTodayButton: true,
-          timeSlotViewSettings: TimeSlotViewSettings(timeFormat: 'HH:mm'),
           appointmentTimeTextFormat: 'HH:mm',
-          selectionDecoration: BoxDecoration(border: BoxBorder.all(color: Colors.blueAccent)),
-          headerStyle: CalendarHeaderStyle(backgroundColor: Colors.white),
+          selectionDecoration: BoxDecoration(border: BoxBorder.all(color: MyColors.cellBorderColor)),
+          headerStyle: CalendarHeaderStyle(
+              backgroundColor: MyColors.appBarColor,
+            textStyle: viewHeaderText
+          ),
           monthViewSettings: MonthViewSettings(
             appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
             showAgenda: true,
+            monthCellStyle: MonthCellStyle(
+                backgroundColor: MyColors.calendarBackground,
+              leadingDatesBackgroundColor: MyColors.inactiveCells,
+              trailingDatesBackgroundColor: MyColors.inactiveCells
+            ),
+            agendaViewHeight: 250,
             agendaStyle: AgendaStyle(
-              appointmentTextStyle: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
-              dateTextStyle: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 14,
-                fontWeight: FontWeight.w300,
-                color: Colors.black,
-              ),
-              dayTextStyle: TextStyle(
-                fontStyle: FontStyle.normal,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
+              appointmentTextStyle: agendaText,
+              dateTextStyle: agendaDateText,
+              dayTextStyle: agendaDateText,
+              backgroundColor: MyColors.agendaBackground,
+                placeholderTextStyle: agendaText
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
