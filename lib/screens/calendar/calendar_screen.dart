@@ -10,11 +10,13 @@ import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
 import 'package:fuzzy_guacamole/screens/auth/app_loading_page.dart';
+import 'package:fuzzy_guacamole/screens/calendar/views/calendar_month.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 import '../../providers/users_provider.dart';
 
@@ -43,6 +45,7 @@ CalendarController calendarController = CalendarController();
 
 class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   final DataSource _events = DataSource(<Meeting>[]);
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -53,6 +56,12 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     _notes = '';
     _startDate = DateTime.now();
     _endDate = DateTime.now();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -67,11 +76,22 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
           resizeToAvoidBottomInset: false,
           drawer: MyDrawer(onViewChanged: changeView, username: username),
           appBar: getAppBar(),
-          body: EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events),
+          body: MonthlyScreen(),
+          //body: EventCalendarView(onCalendarLongPressed: onCalendarLongPress, dataSource: _events),
+          bottomNavigationBar: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: "Rollstuhl"),
+                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: "Rollstuhl"),
+                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: "Rollstuhl"),
+              ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: MyColors.raisinBlack,
+            onTap: _onItemTapped,
+          ),
           floatingActionButton: FloatingActionButton(
-              backgroundColor: MyColors.buttonColor,
+              backgroundColor: MyColors.raisinBlack,
               onPressed: () => onButtonPress(),
-              child: Icon(Icons.add, color: Colors.black,)),
+              child: Icon(Icons.add, color: MyColors.white,)),
         );
       },
       loading: () => AppLoadingPage(),
@@ -84,7 +104,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
       case CalendarView.month:
         return AppBar(
             title: const Text('Monatsansicht'),
-          backgroundColor: MyColors.appBarColor,
+          backgroundColor: MyColors.white,
           titleTextStyle: agendaText,
         );
       case CalendarView.day:

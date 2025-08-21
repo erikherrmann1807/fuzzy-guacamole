@@ -7,45 +7,48 @@ class EventCalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: SfCalendar(
-          view: CalendarView.month,
-          controller: calendarController,
-          firstDayOfWeek: 1,
-          viewHeaderStyle: ViewHeaderStyle(
-              backgroundColor: MyColors.viewHeader,
-            dayTextStyle: viewHeaderText
-          ),
+    return SfCalendarTheme(
+        data: SfCalendarThemeData(
           todayHighlightColor: MyColors.todayColor,
-          todayTextStyle: todayText,
-          cellBorderColor: Colors.grey,
-          dataSource: dataSource,
-          onLongPress: onCalendarLongPressed,
-          showTodayButton: true,
-          appointmentTimeTextFormat: 'HH:mm',
-          selectionDecoration: BoxDecoration(border: BoxBorder.all(color: MyColors.cellBorderColor)),
-          headerStyle: CalendarHeaderStyle(
-              backgroundColor: MyColors.appBarColor,
-            textStyle: viewHeaderText
-          ),
-          monthViewSettings: MonthViewSettings(
-            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-            showAgenda: true,
-            monthCellStyle: MonthCellStyle(
-                backgroundColor: MyColors.calendarBackground,
-              leadingDatesBackgroundColor: MyColors.inactiveCells,
-              trailingDatesBackgroundColor: MyColors.inactiveCells
-            ),
-            agendaViewHeight: 250,
-            agendaStyle: AgendaStyle(
-              appointmentTextStyle: agendaText,
-              dateTextStyle: agendaDateText,
-              dayTextStyle: agendaDateText,
-              backgroundColor: MyColors.agendaBackground,
-                placeholderTextStyle: agendaText
-            ),
-          ),
+          todayBackgroundColor: MyColors.grey,
+          viewHeaderDayTextStyle: viewHeaderText,
+          viewHeaderBackgroundColor: MyColors.white,
+          viewHeaderDateTextStyle: viewHeaderText,
         ),
-      );
+        child: SafeArea(
+          child: SfCalendar(
+            view: CalendarView.month,
+            controller: calendarController,
+            firstDayOfWeek: 1,
+            todayTextStyle: todayText,
+            cellBorderColor: Colors.grey,
+            dataSource: dataSource,
+            onLongPress: onCalendarLongPressed,
+            showTodayButton: true,
+            appointmentTimeTextFormat: 'HH:mm',
+            selectionDecoration: BoxDecoration(border: BoxBorder.all(color: Colors.grey)),
+            headerStyle: CalendarHeaderStyle(
+                backgroundColor: MyColors.white,
+                textStyle: viewHeaderText
+            ),
+            monthViewSettings: MonthViewSettings(
+              appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+              showAgenda: true,
+              showTrailingAndLeadingDates: false,
+              monthCellStyle: MonthCellStyle(
+                backgroundColor: MyColors.grey,
+              ),
+              agendaViewHeight: 250,
+              agendaStyle: AgendaStyle(
+                  appointmentTextStyle: agendaText,
+                  dateTextStyle: agendaDateText,
+                  dayTextStyle: agendaDateText,
+                  backgroundColor: MyColors.white,
+                  placeholderTextStyle: agendaText
+              ),
+            ),
+          ),
+        )
+    );
   }
 }
