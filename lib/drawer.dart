@@ -2,13 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MyDrawer extends StatefulWidget {
-  final Function(CalendarView) onViewChanged;
   final String? username;
 
-  const MyDrawer({super.key, required this.onViewChanged, required this.username});
+  const MyDrawer({super.key, required this.username});
 
   @override
   State<MyDrawer> createState() => _MyDrawerState();
@@ -78,7 +76,7 @@ class _MyDrawerState extends State<MyDrawer> {
             title: const Text('Tag'),
             onTap: () {
               popPage();
-              widget.onViewChanged(CalendarView.day);
+
             },
           ),
           ListTile(
@@ -86,7 +84,7 @@ class _MyDrawerState extends State<MyDrawer> {
             title: const Text('Woche'),
             onTap: () {
               popPage();
-              widget.onViewChanged(CalendarView.week);
+
             },
           ),
           ListTile(
@@ -94,7 +92,7 @@ class _MyDrawerState extends State<MyDrawer> {
             title: const Text('Monat'),
             onTap: () {
               popPage();
-              widget.onViewChanged(CalendarView.month);
+
             },
           ),
           const Divider(color: Colors.grey),
