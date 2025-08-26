@@ -86,6 +86,7 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
   @override
   Widget build(BuildContext context) {
     final meetingsAsync = ref.watch(meetingStreamProvider);
+    Size size = MediaQuery.sizeOf(context);
 
     return meetingsAsync.when(
       data: (meetings) {
@@ -94,168 +95,199 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
           return dyn.start as DateTime;
         });
 
-        return Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios),
-                  onPressed: () => _changeMonth(-1),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back_ios),
+                      onPressed: () => _changeMonth(-1),
+                    ),
+                    Text(
+                      '${_monthName(currentMonth.month)} ${currentMonth.year}',
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios),
+                      onPressed: () => _changeMonth(1),
+                    ),
+                  ],
                 ),
-                Text(
-                  '${_monthName(currentMonth.month)} ${currentMonth.year}',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                //const Gap(5),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: List.generate(
+                      7,
+                          (index) => Text(
+                        ['Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.', 'So.'][index],
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            color: Colors.blueGrey),
+                      ),
+                    ),
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios),
-                  onPressed: () => _changeMonth(1),
+                //const Gap(12),
+                Expanded(
+                    child: GridView.builder(
+                      //physics: AlwaysScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7),
+                      itemCount: datesGrid.length,
+                      itemBuilder: (context, index) {
+                        DateTime date = datesGrid[index];
+                        bool isCurrentMonth = date.month == currentMonth.month;
+                        bool isSelected = selectedDate.year == date.year &&
+                            selectedDate.month == date.month &&
+                            selectedDate.day == date.day;
+                        final key = DateTime(date.year, date.month, date.day);
+                        final todayMeetings = meetingsByDay[key] ?? [];
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedDate = date;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Stack(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: isSelected
+                                      ? MyColors.raisinBlack
+                                      : (isCurrentMonth ? MyColors.grey : Colors.transparent),
+                                  child: Text(
+                                    date.day.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : (isCurrentMonth ? Colors.black : Colors.grey),
+                                    ),
+                                  ),
+                                ),
+                                if (todayMeetings.isNotEmpty)
+                                  Positioned(
+                                    bottom: 7,
+                                    right: 7,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.redAccent,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        todayMeetings.length.toString(),
+                                        style: const TextStyle(color: Colors.white, fontSize: 10),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                ),
+                const Divider(),
+                SizedBox(
+                  height: size.height * 0.3,
+                  child: Container(
+                    width: size.width,
+                    //margin: const EdgeInsets.all(6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(1.5, 2),
+                            spreadRadius: 2,
+                            blurStyle: BlurStyle.solid),
+                      ],
+                    ),
+                    constraints: const BoxConstraints(maxHeight: 260),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Agenda für ${selectedDate.day}.${selectedDate.month}.${selectedDate.year}',
+                          style: agendaDateText,
+                        ),
+                        const Gap(4),
+                        Expanded(
+                          child: Builder(builder: (_) {
+                            final key = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+                            final today = meetingsByDay[key] ?? [];
+                            if (today.isEmpty) {
+                              return const Center(child: Text('Keine Termine'));
+                            }
+                            return ListView.separated(
+                              itemCount: today.length,
+                              separatorBuilder: (_, __) => const Divider(),
+                              itemBuilder: (context, idx) {
+                                final mt = today[idx];
+                                final startTime = _formatTime(mt.start);
+                                final endTime = _formatTime(mt.end);
+                                final description = mt.description;
+                                final backgroundColor = mt.backgroundColor;
+                                return SizedBox(
+                                  height: 60,
+                                  child: Container(
+                                    color: backgroundColor,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Icon(Icons.snowboarding),
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Text(mt.eventName),
+                                            Text('$startTime-$endTime${description.isNotEmpty ? ' • $description' : ''}'),
+                                          ],
+                                        ),
+                                        Icon(Icons.flag)
+                                      ],
+                                    ),
+                                  )
+                                  /*
+                                  Card(
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        child: Icon(Icons.ac_unit),
+                                      ),
+                                      tileColor: backgroundColor,
+                                      title: Text(mt.eventName),
+                                      subtitle: Text('$startTime-$endTime${description.isNotEmpty ? ' • $description' : ''}'),
+                                      onTap: () {
+                                        //TODO: Implement opening editor with current values
+                                      },
+                                    ),
+                                  ),
+
+                                   */
+                                );
+                              },
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
-            const Gap(12),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(
-                  7,
-                      (index) => Text(
-                    ['Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.', 'So.'][index],
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                        color: Colors.blueGrey),
-                  ),
-                ),
-              ),
-            ),
-            const Gap(12),
-            Flexible(
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7),
-                itemCount: datesGrid.length,
-                itemBuilder: (context, index) {
-                  DateTime date = datesGrid[index];
-                  bool isCurrentMonth = date.month == currentMonth.month;
-                  bool isSelected = selectedDate.year == date.year &&
-                      selectedDate.month == date.month &&
-                      selectedDate.day == date.day;
-                  final key = DateTime(date.year, date.month, date.day);
-                  final todayMeetings = meetingsByDay[key] ?? [];
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedDate = date;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Stack(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: isSelected
-                                ? MyColors.raisinBlack
-                                : (isCurrentMonth ? MyColors.grey : Colors.transparent),
-                            child: Text(
-                              date.day.toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                                color: isSelected
-                                    ? Colors.white
-                                    : (isCurrentMonth ? Colors.black : Colors.grey),
-                              ),
-                            ),
-                          ),
-                          if (todayMeetings.isNotEmpty)
-                            Positioned(
-                              bottom: 15,
-                              right: 15,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.redAccent,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  todayMeetings.length.toString(),
-                                  style: const TextStyle(color: Colors.white, fontSize: 10),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const Divider(),
-            Container(
-              margin: const EdgeInsets.all(6),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              decoration: BoxDecoration(
-                border: Border.all(),
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(1.5, 2),
-                      spreadRadius: 2,
-                      blurStyle: BlurStyle.solid),
-                ],
-              ),
-              constraints: const BoxConstraints(maxHeight: 260),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Agenda für ${selectedDate.day}.${selectedDate.month}.${selectedDate.year}',
-                    style: agendaDateText,
-                  ),
-                  const Gap(8),
-                  Expanded(
-                    child: Builder(builder: (_) {
-                      final key = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-                      final today = meetingsByDay[key] ?? [];
-                      if (today.isEmpty) {
-                        return const Center(child: Text('Keine Termine'));
-                      }
-                      return ListView.separated(
-                        itemCount: today.length,
-                        separatorBuilder: (_, __) => const Divider(),
-                        itemBuilder: (context, idx) {
-                          final mt = today[idx];
-                          final startTime = _formatTime(mt.start);
-                          final endTime = _formatTime(mt.end);
-                          final description = mt.description;
-                          final backgroundColor = mt.backgroundColor;
-                          return Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                child: Icon(Icons.ac_unit),
-                              ),
-                              tileColor: backgroundColor,
-                              title: Text(mt.eventName),
-                              subtitle: Text('$startTime-$endTime${description.isNotEmpty ? ' • $description' : ''}'),
-                              onTap: () {
-                                //TODO: Implement opening editor with current values
-                              },
-                            ),
-                          );
-                        },
-                      );
-                    }),
-                  ),
-                ],
-              ),
-            ),
-          ],
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),

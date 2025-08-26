@@ -67,19 +67,28 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
           ),
           body: MonthlyScreen(),
           bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: MyColors.raisinBlack,
               items: [
                 BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
+                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
+                BottomNavigationBarItem(icon: Icon(null), label: ''),
                 BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
                 BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
               ],
             currentIndex: _selectedIndex,
-            selectedItemColor: MyColors.raisinBlack,
+            selectedItemColor: MyColors.white,
+            unselectedItemColor: MyColors.white,
+            showUnselectedLabels: false,
             onTap: _onItemTapped,
           ),
           floatingActionButton: FloatingActionButton(
-              backgroundColor: MyColors.raisinBlack,
+            shape: CircleBorder(),
+              backgroundColor: MyColors.white ,
               onPressed: () => onButtonPress(),
-              child: Icon(Icons.add, color: MyColors.white,)),
+              child: Icon(Icons.add, color: MyColors.raisinBlack,)
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         );
       },
       loading: () => AppLoadingPage(),
