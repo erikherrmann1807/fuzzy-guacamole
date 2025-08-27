@@ -15,36 +15,36 @@ class AuthLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: authServiceGlobal,
-        builder: (context, authService, child) {
-          return StreamBuilder(
-              stream: authService.authStateChanges,
-              builder: (context, snapshot) {
-                final user = snapshot.data;
+      valueListenable: authServiceGlobal,
+      builder: (context, authService, child) {
+        return StreamBuilder(
+          stream: authService.authStateChanges,
+          builder: (context, snapshot) {
+            final user = snapshot.data;
 
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const AppLoadingPage();
+            }
+
+            if (user == null) {
+              return LoginScreen();
+            }
+
+            return FutureBuilder<DocumentSnapshot>(
+              future: databaseService.userRef.doc(user.uid).get(),
+              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const AppLoadingPage();
                 }
-
-                if(user == null) {
-                  return LoginScreen();
+                if (snapshot.hasError) {
+                  return const Text('Fehler beim Laden');
                 }
-
-                return FutureBuilder<DocumentSnapshot>(
-                  future: databaseService.userRef.doc(user.uid).get(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const AppLoadingPage();
-                    }
-                    if (snapshot.hasError) {
-                      return const Text('Fehler beim Laden');
-                    }
-                    return EventCalendarScreen();
-                  },
-                );
-              }
-          );
-        }
+                return EventCalendarScreen();
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

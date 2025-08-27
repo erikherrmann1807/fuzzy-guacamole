@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
-import 'package:fuzzy_guacamole/services/database_service.dart';
 
 class MyDrawer extends StatefulWidget {
   final String? username;
@@ -28,7 +27,7 @@ class _MyDrawerState extends State<MyDrawer> {
         await authServiceGlobal.value.signOut();
         popPage();
       } on FirebaseAuthException catch (e) {
-        print(e.message);
+        Text(e.message!);
       }
     }
 
@@ -76,7 +75,6 @@ class _MyDrawerState extends State<MyDrawer> {
             title: const Text('Tag'),
             onTap: () {
               popPage();
-
             },
           ),
           ListTile(
@@ -84,7 +82,6 @@ class _MyDrawerState extends State<MyDrawer> {
             title: const Text('Woche'),
             onTap: () {
               popPage();
-
             },
           ),
           ListTile(
@@ -92,7 +89,6 @@ class _MyDrawerState extends State<MyDrawer> {
             title: const Text('Monat'),
             onTap: () {
               popPage();
-
             },
           ),
           const Divider(color: Colors.grey),

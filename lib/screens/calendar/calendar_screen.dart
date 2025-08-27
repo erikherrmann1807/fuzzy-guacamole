@@ -9,8 +9,11 @@ import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/providers/users_provider.dart';
+import 'package:fuzzy_guacamole/screens/accountmanagement/account_management_screen.dart';
 import 'package:fuzzy_guacamole/screens/auth/app_loading_page.dart';
 import 'package:fuzzy_guacamole/screens/calendar/views/calendar_month.dart';
+import 'package:fuzzy_guacamole/screens/home/home_screen.dart';
+import 'package:fuzzy_guacamole/screens/settings/settingsmenu.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -35,7 +38,7 @@ String _subject = '';
 String _notes = '';
 
 class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   @override
   void initState() {
@@ -49,6 +52,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   }
 
   void _onItemTapped(int index) {
+    if (index == 2) return;
     setState(() {
       _selectedIndex = index;
     });
@@ -56,37 +60,74 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
     final username = ref.watch(usernameProvider);
+    //TODO: Refresh username, when changed
     return username.when(
       data: (username) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           drawer: MyDrawer(username: username),
-          appBar: AppBar(
-            title: Text('Monatsansicht'),
-          ),
-          body: MonthlyScreen(),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: MyColors.raisinBlack,
-              items: [
-                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
-                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
-                BottomNavigationBarItem(icon: Icon(null), label: ''),
-                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
-                BottomNavigationBarItem(icon: Icon(Icons.wheelchair_pickup), label: 'Rollstuhl'),
+          appBar: AppBar(title: Text('Hallo👋, $username!')),
+          body: _getCurrentScreen(),
+          bottomNavigationBar: BottomAppBar(
+            height: size.height * 0.07,
+            shape: CircularNotchedRectangle(),
+            notchMargin: 10.0,
+            color: MyColors.raisinBlack,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.home),
+                        color: _selectedIndex == 0 ? MyColors.white : MyColors.white,
+                        onPressed: () => _onItemTapped(0),
+                      ),
+                      SizedBox(width: size.width * 0.06),
+                      IconButton(
+                        icon: Icon(Icons.calendar_month),
+                        color: _selectedIndex == 1 ? MyColors.white : MyColors.white,
+                        onPressed: () => _onItemTapped(1),
+                      ),
+                      SizedBox(width: size.width * 0.08),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 40),
+                Expanded(
+                  child: Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(width: size.width * 0.08),
+                      IconButton(
+                        icon: Icon(Icons.person),
+                        color: _selectedIndex == 3 ? MyColors.white : MyColors.white,
+                        onPressed: () => _onItemTapped(3),
+                      ),
+                      SizedBox(width: size.width * 0.06),
+                      IconButton(
+                        icon: Icon(Icons.settings),
+                        color: _selectedIndex == 4 ? MyColors.white : MyColors.white,
+                        onPressed: () => _onItemTapped(4),
+                      ),
+                    ],
+                  ),
+                ),
               ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: MyColors.white,
-            unselectedItemColor: MyColors.white,
-            showUnselectedLabels: false,
-            onTap: _onItemTapped,
+            ),
           ),
-          floatingActionButton: FloatingActionButton(
-            shape: CircleBorder(),
-              backgroundColor: MyColors.white ,
+          floatingActionButton: Transform.translate(
+            offset: Offset(0, 5),
+            child: FloatingActionButton(
+              shape: CircleBorder(),
+              backgroundColor: MyColors.raisinBlack,
               onPressed: () => onButtonPress(),
-              child: Icon(Icons.add, color: MyColors.raisinBlack,)
+              child: Icon(Icons.add, color: MyColors.white),
+            ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         );
@@ -110,5 +151,20 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
 
     Navigator.pushNamed(context, '/meetingEditor');
+  }
+
+  Widget _getCurrentScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        return HomeScreen();
+      case 1:
+        return MonthlyScreen();
+      case 3:
+        return AccountManagementScreen();
+      case 4:
+        return SettingsMenu();
+      default:
+        return MonthlyScreen();
+    }
   }
 }

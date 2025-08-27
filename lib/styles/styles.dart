@@ -8,13 +8,8 @@ class Font {
   static const specialElite = 'Special Elite';
 }
 
-const meetingNameCalendar =
-    TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w500, fontSize: 13);
-const todayText =
-    TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w400, fontSize: 11);
-const agendaText =
-    TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w500, fontSize: 12);
-const viewHeaderText =
-    TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w800, fontSize: 11);
-const agendaDateText =
-    TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w600, fontSize: 14);
+const calendarHeader = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w500, fontSize: 20);
+const todayText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w400, fontSize: 11);
+const agendaText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w500, fontSize: 12);
+const viewHeaderText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w400, fontSize: 17);
+const agendaDateText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w600, fontSize: 14);

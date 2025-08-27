@@ -5,8 +5,6 @@ class UpdatePassword {
 
   TextEditingController oldPasswordController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
-
   bool _isPasswordValid = false;
 
   Future<void> updatePasswordDialog(BuildContext ctx) async {
@@ -88,7 +86,7 @@ class UpdatePassword {
                     setState(() {});
                     if (_isPasswordValid) {
                       authServiceGlobal.value.updateUserPassword(newPassword: newPasswordController.text);
-                      Navigator.pop(context);
+                      Navigator.pop;
                     }
                   },
                 ),

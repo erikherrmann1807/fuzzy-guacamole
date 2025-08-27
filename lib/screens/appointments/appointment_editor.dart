@@ -1,6 +1,6 @@
 part of '../../screens/calendar/calendar_screen.dart';
 
-class MeetingEditor extends  ConsumerStatefulWidget {
+class MeetingEditor extends ConsumerStatefulWidget {
   const MeetingEditor({super.key});
 
   @override
@@ -8,7 +8,6 @@ class MeetingEditor extends  ConsumerStatefulWidget {
 }
 
 class _MeetingEditorState extends ConsumerState<MeetingEditor> {
-
   Widget _getAppointmentEditor(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -220,7 +219,6 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -284,17 +282,17 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
   }
 
   void _deleteMeeting(String? meetingId) {
-      final database = ref.read(firestoreProvider)!;
-      database.deleteMeeting(meetingId);
+    final database = ref.read(fireStoreProvider)!;
+    database.deleteMeeting(meetingId);
   }
 
   void _addMeeting(Meeting meeting) {
-    final database = ref.read(firestoreProvider)!;
+    final database = ref.read(fireStoreProvider)!;
     database.addMeeting(meeting);
   }
 
   void _updateMeeting(String? meetingId, Meeting meeting) {
-    final database = ref.read(firestoreProvider)!;
+    final database = ref.read(fireStoreProvider)!;
     database.updateMeeting(meetingId, meeting);
   }
 }

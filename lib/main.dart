@@ -15,12 +15,15 @@ import 'package:fuzzy_guacamole/screens/calendar/calendar_screen.dart';
 void main() async {
   await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: FirebaseOptions(
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
       apiKey: dotenv.get('API_KEY'),
       appId: dotenv.get('APP_ID'),
       messagingSenderId: dotenv.get('MESSAGING_SENDER_ID'),
       projectId: dotenv.get('PROJECT_ID'),
-      storageBucket: dotenv.get('STORAGE_BUCKET')));
+      storageBucket: dotenv.get('STORAGE_BUCKET'),
+    ),
+  );
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
   runApp(const ProviderScope(child: MyApp()));
 }

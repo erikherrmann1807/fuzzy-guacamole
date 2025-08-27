@@ -30,7 +30,7 @@ class _ColorPickerState extends State<_ColorPicker> {
                   _selectedColorIndex = index;
                 });
                 Future.delayed(const Duration(milliseconds: 200), () {
-                  Navigator.pop(context);
+                  Navigator.pop;
                 });
               },
             );

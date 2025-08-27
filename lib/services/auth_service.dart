@@ -50,7 +50,6 @@ class AuthService {
       var authResult = await currentUser!.reauthenticateWithCredential(credential);
       return authResult.user != null;
     } catch (e) {
-      print(e);
       return false;
     }
   }

@@ -76,9 +76,12 @@ class DeleteAccount {
                     _isPasswordValid = await authServiceGlobal.value.validatePassword(passwordController.text);
                     setState(() {});
                     if (_isPasswordValid) {
-                      authServiceGlobal.value.deleteAccount(email: emailController.text, password: passwordController.text);
+                      authServiceGlobal.value.deleteAccount(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
                       _databaseService.deleteMember();
-                      Navigator.of(context).pop();
+                      Navigator.pop;
                     }
                   },
                 ),
