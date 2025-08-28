@@ -1,13 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fuzzy_guacamole/main.dart';
-import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
-import 'package:fuzzy_guacamole/styles/styles.dart';
-import 'package:gap/gap.dart';
-import 'package:fuzzy_guacamole/styles/colors.dart';
+part of '../calendar_screen.dart';
 
 class MonthlyScreen extends ConsumerStatefulWidget {
-  const MonthlyScreen({super.key});
+  const MonthlyScreen({super.key, required this.function});
+  final VoidCallback function;
 
   @override
   ConsumerState<MonthlyScreen> createState() => _MonthlyScreenState();
@@ -80,6 +75,10 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     final h = dt.hour.toString().padLeft(2, '0');
     final m = dt.minute.toString().padLeft(2, '0');
     return '$h:$m';
+  }
+
+  void editMeeting() {
+    
   }
 
   @override
@@ -225,41 +224,12 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                                 final endTime = _formatTime(mt.end);
                                 final description = mt.description;
                                 final backgroundColor = mt.backgroundColor;
-                                return SizedBox(
-                                  height: 60,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(),
-                                      color: MyColors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.black,
-                                          offset: Offset(1.5, 2),
-                                          spreadRadius: 1,
-                                          blurStyle: BlurStyle.solid,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        //TODO: Create Custom Widget with onTap Event
-                                        Icon(Icons.snowboarding),
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Text(mt.eventName),
-                                            Text(
-                                              '$startTime-$endTime${description.isNotEmpty ? ' • $description' : ''}',
-                                            ),
-                                          ],
-                                        ),
-                                        Icon(Icons.flag),
-                                      ],
-                                    ),
-                                  ),
+                                return EventWidget(
+                                    startTime: startTime,
+                                    endTime: endTime,
+                                    description: description,
+                                    eventName: mt.eventName,
+                                  function: widget.function,
                                 );
                               },
                             );

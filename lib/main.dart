@@ -7,7 +7,6 @@ import 'package:fuzzy_guacamole/screens/accountmanagement/account_management_scr
 import 'package:fuzzy_guacamole/screens/auth/auth_layout.dart';
 import 'package:fuzzy_guacamole/screens/auth/login_screen.dart';
 import 'package:fuzzy_guacamole/screens/auth/register_screen.dart';
-import 'package:fuzzy_guacamole/screens/calendar/views/calendar_month.dart';
 import 'package:fuzzy_guacamole/screens/settings/settingsmenu.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fuzzy_guacamole/screens/calendar/calendar_screen.dart';
@@ -47,7 +46,7 @@ class MyApp extends StatelessWidget {
         '/loginScreen': (context) => LoginScreen(),
         '/settingsScreen': (context) => SettingsMenu(),
         '/eventCalendar': (context) => EventCalendarScreen(),
-        '/calendarMonth': (context) => MonthlyScreen(),
+        //'/calendarMonth': (context) => MonthlyScreen(),
         '/registerScreen': (context) => RegisterScreen(),
         '/authLayout': (context) => AuthLayout(),
         '/accountManagementScreen': (context) => AccountManagementScreen(),

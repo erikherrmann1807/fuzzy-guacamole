@@ -8,17 +8,22 @@ import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
 import 'package:fuzzy_guacamole/providers/users_provider.dart';
 import 'package:fuzzy_guacamole/screens/accountmanagement/account_management_screen.dart';
 import 'package:fuzzy_guacamole/screens/auth/app_loading_page.dart';
-import 'package:fuzzy_guacamole/screens/calendar/views/calendar_month.dart';
 import 'package:fuzzy_guacamole/screens/home/home_screen.dart';
 import 'package:fuzzy_guacamole/screens/settings/settingsmenu.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
+import 'package:fuzzy_guacamole/styles/styles.dart';
+import 'package:fuzzy_guacamole/widgets/event_widget.dart';
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+
 
 part '../appointments/appointment_editor.dart';
 part '../appointments/color_picker.dart';
+part 'views/calendar_month.dart';
 
 class EventCalendarScreen extends ConsumerStatefulWidget {
   const EventCalendarScreen({super.key});
@@ -137,6 +142,21 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     );
   }
 
+  Widget _getCurrentScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        return HomeScreen();
+      case 1:
+        return MonthlyScreen(function: onButtonPress);
+      case 3:
+        return AccountManagementScreen();
+      case 4:
+        return SettingsMenu();
+      default:
+        return MonthlyScreen(function: onButtonPress);
+    }
+  }
+
   void onButtonPress() {
     _selectedAppointment = null;
     _isAllDay = false;
@@ -151,20 +171,5 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
 
     Navigator.pushNamed(context, '/meetingEditor');
-  }
-
-  Widget _getCurrentScreen() {
-    switch (_selectedIndex) {
-      case 0:
-        return HomeScreen();
-      case 1:
-        return MonthlyScreen();
-      case 3:
-        return AccountManagementScreen();
-      case 4:
-        return SettingsMenu();
-      default:
-        return MonthlyScreen();
-    }
   }
 }
