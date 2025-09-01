@@ -39,6 +39,8 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Switch(
+                      activeColor: MyColors.raisinBlack,
+                      inactiveTrackColor: MyColors.grey,
                       value: _isAllDay,
                       onChanged: (bool value) {
                         setState(() {
@@ -184,14 +186,19 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
           const Divider(height: 1.0, thickness: 1),
           ListTile(
             contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-            leading: Icon(Icons.lens, color: colorCollection[_selectedColorIndex]),
-            title: Text(colorNames[_selectedColorIndex]),
+            leading: Chip(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+              label: Text(labelNames[_selectedColorIndex], style: tagText),
+              backgroundColor: labelColors[_selectedColorIndex],
+              side: BorderSide.none,
+              shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+            ),
             onTap: () {
               showDialog<Widget>(
                 context: context,
                 barrierDismissible: true,
                 builder: (BuildContext context) {
-                  return _ColorPicker();
+                  return _PriorityPicker();
                 },
               ).then((dynamic value) => setState(() {}));
             },
@@ -223,8 +230,8 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text(getTitle()),
-          backgroundColor: colorCollection[_selectedColorIndex],
+          title: Text(getTitle(), style: editorAppBarText),
+          backgroundColor: MyColors.raisinBlack,
           leading: IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () {
@@ -239,10 +246,11 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                 var meeting = Meeting(
                   start: _startDate,
                   end: _endDate,
-                  backgroundColor: colorCollection[_selectedColorIndex],
                   description: _notes,
                   isAllDay: _isAllDay,
                   eventName: _subject == '' ? '(No title)' : _subject,
+                  labelColor: labelColors[_selectedColorIndex],
+                  priority: labelNames[_selectedColorIndex],
                 );
 
                 if (_selectedAppointment == null) {

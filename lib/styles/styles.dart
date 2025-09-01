@@ -13,3 +13,6 @@ const todayText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.
 const agendaText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w500, fontSize: 12);
 const viewHeaderText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w400, fontSize: 17);
 const agendaDateText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w600, fontSize: 14);
+const tagText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w500, fontSize: 13);
+const editorAppBarText = TextStyle(color: MyColors.white, fontWeight: FontWeight.w400, fontSize: 20);
+

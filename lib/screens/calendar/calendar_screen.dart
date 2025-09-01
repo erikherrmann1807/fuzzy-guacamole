@@ -20,9 +20,8 @@ import 'package:fuzzy_guacamole/widgets/event_widget.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
-
 part '../appointments/appointment_editor.dart';
-part '../appointments/color_picker.dart';
+part '../appointments/priority_picker.dart';
 part 'views/calendar_month.dart';
 
 class EventCalendarScreen extends ConsumerStatefulWidget {
@@ -72,7 +71,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
       data: (username) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          drawer: MyDrawer(username: username),
+          //drawer: MyDrawer(username: username),
           appBar: AppBar(title: Text('Hallo👋, $username!')),
           body: _getCurrentScreen(),
           bottomNavigationBar: BottomAppBar(
@@ -147,13 +146,13 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
       case 0:
         return HomeScreen();
       case 1:
-        return MonthlyScreen(function: onButtonPress);
+        return MonthlyScreen();
       case 3:
         return AccountManagementScreen();
       case 4:
         return SettingsMenu();
       default:
-        return MonthlyScreen(function: onButtonPress);
+        return MonthlyScreen();
     }
   }
 

@@ -18,19 +18,6 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    void popPage() {
-      Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
-    }
-
-    Future<void> logout() async {
-      try {
-        await authServiceGlobal.value.signOut();
-        popPage();
-      } on FirebaseAuthException catch (e) {
-        Text(e.message!);
-      }
-    }
-
     return Drawer(
       backgroundColor: Colors.white,
       child: ListView(
@@ -70,27 +57,9 @@ class _MyDrawerState extends State<MyDrawer> {
               );
             },
           ),*/
-          ListTile(
-            leading: const Icon(Icons.calendar_view_day),
-            title: const Text('Tag'),
-            onTap: () {
-              popPage();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.calendar_view_week_sharp),
-            title: const Text('Woche'),
-            onTap: () {
-              popPage();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.calendar_view_month_sharp),
-            title: const Text('Monat'),
-            onTap: () {
-              popPage();
-            },
-          ),
+          ListTile(leading: const Icon(Icons.calendar_view_day), title: const Text('Tag'), onTap: () {}),
+          ListTile(leading: const Icon(Icons.calendar_view_week_sharp), title: const Text('Woche'), onTap: () {}),
+          ListTile(leading: const Icon(Icons.calendar_view_month_sharp), title: const Text('Monat'), onTap: () {}),
           const Divider(color: Colors.grey),
           ListTile(
             leading: const Icon(Icons.settings_outlined),
@@ -106,11 +75,6 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           ListTile(leading: const Icon(Icons.help_outline_rounded), title: const Text('Hilfe'), onTap: () {}),
           const Divider(color: Colors.grey),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout', style: TextStyle(color: Colors.redAccent)),
-            onTap: () => logout(),
-          ),
         ],
       ),
     );

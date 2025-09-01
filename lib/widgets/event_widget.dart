@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
+import 'package:fuzzy_guacamole/styles/styles.dart';
 
 class EventWidget extends StatefulWidget {
-  const EventWidget({super.key, required this.startTime, required this.endTime, required this.description, required this.eventName, required this.function});
+  const EventWidget({
+    super.key,
+    required this.startTime,
+    required this.endTime,
+    required this.description,
+    required this.eventName,
+    required this.function,
+    required this.priority,
+    required this.labelColor,
+  });
   final String startTime;
   final String endTime;
   final String description;
   final String eventName;
+  final String priority;
+  final Color labelColor;
   final VoidCallback function;
 
   @override
@@ -26,19 +38,12 @@ class _EventWidgetState extends State<EventWidget> {
             color: MyColors.white,
             borderRadius: BorderRadius.circular(8),
             boxShadow: const [
-              BoxShadow(
-                color: Colors.black,
-                offset: Offset(1.5, 2),
-                spreadRadius: 1,
-                blurStyle: BlurStyle.solid,
-              ),
+              BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 1, blurStyle: BlurStyle.solid),
             ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              //TODO: Create Custom Widget with onTap Event
-              Icon(Icons.snowboarding),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,7 +54,13 @@ class _EventWidgetState extends State<EventWidget> {
                   ),
                 ],
               ),
-              Icon(Icons.flag),
+              Chip(
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                label: Text(widget.priority, style: tagText),
+                backgroundColor: widget.labelColor,
+                side: BorderSide.none,
+                shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+              ),
             ],
           ),
         ),

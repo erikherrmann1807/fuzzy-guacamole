@@ -1,9 +1,11 @@
 library;
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
+import 'package:fuzzy_guacamole/widgets/default_button.dart';
 
 part 'reset_password.dart';
 part 'update_username.dart';
@@ -16,6 +18,19 @@ class AccountManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void popPage() {
+      Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
+    }
+
+    Future<void> logout() async {
+      try {
+        await authServiceGlobal.value.signOut();
+        popPage();
+      } on FirebaseAuthException catch (e) {
+        Text(e.message!);
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Account Management')),
       body: SingleChildScrollView(
@@ -24,21 +39,30 @@ class AccountManagementScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              TextButton(
-                child: Text('Passwort zurücksetzen'),
-                onPressed: () => ResetPassword().resetPasswordDialog(context),
+              DefaultButton(
+                  onTap: () => ResetPassword().resetPasswordDialog(context),
+                  title: 'Passwort zurücksetzen'
               ),
               SizedBox(height: 20.0),
-              TextButton(
-                child: Text('Update Username'),
-                onPressed: () => UpdateUsername().updateUsernameDialog(context),
+              DefaultButton(
+                  onTap: () => UpdateUsername().updateUsernameDialog(context),
+                  title: 'Update Username'
               ),
               SizedBox(height: 20.0),
-              TextButton(child: Text('Delete Account'), onPressed: () => DeleteAccount().deleteAccountDialog(context)),
+              DefaultButton(
+                  onTap: () => DeleteAccount().deleteAccountDialog(context),
+                  title: 'Delete Account'
+              ),
               SizedBox(height: 20.0),
-              TextButton(
-                child: Text('Passwort ändern'),
-                onPressed: () => UpdatePassword().updatePasswordDialog(context),
+              DefaultButton(
+                  onTap: () => UpdatePassword().updatePasswordDialog(context),
+                  title: 'Change Password'
+              ),
+              SizedBox(height: 20.0),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout', style: TextStyle(color: Colors.redAccent)),
+                onTap: () => logout(),
               ),
             ],
           ),

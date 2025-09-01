@@ -6,7 +6,8 @@ class Meeting {
   String description;
   DateTime start;
   DateTime end;
-  Color backgroundColor;
+  Color labelColor;
+  String priority;
   bool isAllDay;
 
   Meeting({
@@ -15,7 +16,8 @@ class Meeting {
     required this.description,
     required this.start,
     required this.end,
-    required this.backgroundColor,
+    required this.labelColor,
+    required this.priority,
     required this.isAllDay,
   });
 
@@ -24,7 +26,8 @@ class Meeting {
     'description': description,
     'start': start.toString(),
     'end': end.toString(),
-    'backgroundColor': backgroundColor.toARGB32(),
+    'labelColor': labelColor.toARGB32(),
+    'priority': priority,
     'isAllDay': isAllDay,
   };
 
@@ -35,7 +38,8 @@ class Meeting {
       description: json['description'] as String,
       start: DateTime.parse(json['start'].toString()),
       end: DateTime.parse(json['end'].toString()),
-      backgroundColor: Color(json['backgroundColor']),
+      labelColor: Color(json['labelColor']),
+      priority: json['priority'] as String,
       isAllDay: json['isAllDay'] as bool,
     );
   }

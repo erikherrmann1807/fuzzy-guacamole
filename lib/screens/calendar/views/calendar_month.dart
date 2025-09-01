@@ -1,8 +1,8 @@
 part of '../calendar_screen.dart';
 
 class MonthlyScreen extends ConsumerStatefulWidget {
-  const MonthlyScreen({super.key, required this.function});
-  final VoidCallback function;
+  const MonthlyScreen({super.key});
+  //final VoidCallback function;
 
   @override
   ConsumerState<MonthlyScreen> createState() => _MonthlyScreenState();
@@ -77,8 +77,18 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     return '$h:$m';
   }
 
-  void editMeeting() {
-    
+  void editMeeting({required Meeting meeting}) {
+    _selectedAppointment = meeting;
+    _isAllDay = meeting.isAllDay;
+    _selectedColorIndex = labelColors.indexOf(meeting.labelColor);
+    _subject = meeting.eventName;
+    _notes = meeting.description;
+    _startDate = meeting.start;
+    _endDate = meeting.end;
+    _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
+    _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
+
+    Navigator.pushNamed(context, '/meetingEditor');
   }
 
   @override
@@ -223,13 +233,16 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                                 final startTime = _formatTime(mt.start);
                                 final endTime = _formatTime(mt.end);
                                 final description = mt.description;
-                                final backgroundColor = mt.backgroundColor;
+                                final labelColor = mt.labelColor;
+                                final priority = mt.priority;
                                 return EventWidget(
-                                    startTime: startTime,
-                                    endTime: endTime,
-                                    description: description,
-                                    eventName: mt.eventName,
-                                  function: widget.function,
+                                  startTime: startTime,
+                                  endTime: endTime,
+                                  description: description,
+                                  eventName: mt.eventName,
+                                  function: () => editMeeting(meeting: mt),
+                                  priority: priority,
+                                  labelColor: labelColor,
                                 );
                               },
                             );
