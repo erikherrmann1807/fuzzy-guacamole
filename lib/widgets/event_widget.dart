@@ -12,6 +12,7 @@ class EventWidget extends StatefulWidget {
     required this.function,
     required this.priority,
     required this.labelColor,
+    required this.isAllDay
   });
   final String startTime;
   final String endTime;
@@ -19,6 +20,7 @@ class EventWidget extends StatefulWidget {
   final String eventName;
   final String priority;
   final Color labelColor;
+  final bool isAllDay;
   final VoidCallback function;
 
   @override
@@ -50,10 +52,11 @@ class _EventWidgetState extends State<EventWidget> {
                 children: [
                   Text(widget.eventName),
                   Text(
-                    '${widget.startTime}-${widget.endTime}${widget.description.isNotEmpty ? ' • ${widget.description}' : ''}',
+                    '${widget.startTime}${widget.endTime}${widget.description.isNotEmpty ? ' • ${widget.description}' : ''}',
                   ),
                 ],
               ),
+              widget.isAllDay ? Icon(Icons.event_repeat) : Text(""),
               Chip(
                 padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 label: Text(widget.priority, style: tagText),
