@@ -71,7 +71,7 @@ class _TodayAgendaCard extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text(
                     '${_weekdayShortDe(today.weekday)} ${today.day}',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: currentTasksDateText,
                   ),
                   const Spacer(),
                   const _RoundBtn(icon: Icons.add),

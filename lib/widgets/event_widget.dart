@@ -50,9 +50,10 @@ class _EventWidgetState extends State<EventWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(widget.eventName),
+                  Text(widget.eventName, style: eventText),
                   Text(
                     '${widget.startTime}${widget.endTime}${widget.description.isNotEmpty ? ' • ${widget.description}' : ''}',
+                    style: eventText,
                   ),
                 ],
               ),

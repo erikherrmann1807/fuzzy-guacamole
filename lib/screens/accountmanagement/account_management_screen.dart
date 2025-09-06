@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
+import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/widgets/default_button.dart';
 
 part 'reset_password.dart';
@@ -44,7 +45,7 @@ class AccountManagementScreen extends StatelessWidget {
             SizedBox(height: 20.0),
             DefaultButton(onTap: () => DeleteAccount().deleteAccountDialog(context), title: 'Delete Account'),
             SizedBox(height: 20.0),
-            DefaultButton(onTap: () => UpdatePassword().updatePasswordDialog(context), title: 'Change Password'),
+            DefaultButton(onTap: () => UpdatePassword().updatePasswordDialog(context), title: 'Update Password'),
             SizedBox(height: 20.0),
             DefaultButton(onTap: () => logout(), title: "Logout"),
           ],

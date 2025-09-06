@@ -64,12 +64,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                   child: GestureDetector(
                     child: Text(DateFormat('EEE, dd. MMM yyyy', 'de').format(_startDate), textAlign: TextAlign.left),
                     onTap: () async {
-                      final DateTime? date = await showDatePicker(
-                        context: context,
-                        initialDate: _startDate,
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100),
-                      );
+                      final DateTime? date = await _showCustomDatePicker(context, _startDate);
 
                       if (date != null && date != _startDate) {
                         setState(() {
@@ -89,10 +84,8 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                       : GestureDetector(
                           child: Text(DateFormat('HH:mm').format(_startDate), textAlign: TextAlign.right),
                           onTap: () async {
-                            final TimeOfDay? time = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay(hour: _startTime.hour, minute: _startTime.minute),
-                            );
+                            final TimeOfDay? time = await _showCustomTimePicker(
+                                context, TimeOfDay(hour: _startTime.hour, minute: _startTime.minute));
 
                             if (time != null && time != _startTime) {
                               setState(() {
@@ -127,12 +120,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                   child: GestureDetector(
                     child: Text(DateFormat('EEE, dd. MMM yyyy', 'de').format(_endDate), textAlign: TextAlign.left),
                     onTap: () async {
-                      final DateTime? date = await showDatePicker(
-                        context: context,
-                        initialDate: _endDate,
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100),
-                      );
+                      final DateTime? date = await _showCustomDatePicker(context, _endDate);
 
                       if (date != null && date != _endDate) {
                         setState(() {
@@ -154,10 +142,8 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                       : GestureDetector(
                           child: Text(DateFormat('HH:mm').format(_endDate), textAlign: TextAlign.right),
                           onTap: () async {
-                            final TimeOfDay? time = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay(hour: _endTime.hour, minute: _endTime.minute),
-                            );
+                            final TimeOfDay? time = await _showCustomTimePicker(
+                                context, TimeOfDay(hour: _endTime.hour, minute: _endTime.minute));
 
                             if (time != null && time != _endTime) {
                               setState(() {
@@ -282,6 +268,130 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                 child: const Icon(Icons.delete_outline, color: Colors.white),
               ),
       ),
+    );
+  }
+
+  // Custom Date Picker
+  Future<DateTime?> _showCustomDatePicker(BuildContext context, DateTime initialDate) async {
+    return showDialog<DateTime>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(),
+              color: MyColors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black,
+                  offset: Offset(1.5, 2),
+                  spreadRadius: 2,
+                  blurStyle: BlurStyle.solid,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Datum auswählen',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 20),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: Theme.of(context).colorScheme.copyWith(
+                      primary: MyColors.raisinBlack,
+                      onPrimary: Colors.grey,
+                      surface: MyColors.white,
+                      onSurface: MyColors.raisinBlack,
+                    ),
+                  ),
+                  child: CalendarDatePicker(
+                    initialDate: initialDate,
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                    onDateChanged: (DateTime date) {
+                      Navigator.of(context).pop(date);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+// Custom Time Picker
+  Future<TimeOfDay?> _showCustomTimePicker(BuildContext context, TimeOfDay initialTime) async {
+    Size size = MediaQuery.sizeOf(context);
+
+    return showDialog<TimeOfDay>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            width: size.width,
+            decoration: BoxDecoration(
+              border: Border.all(),
+              color: MyColors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black,
+                  offset: Offset(1.5, 2),
+                  spreadRadius: 2,
+                  blurStyle: BlurStyle.solid,
+                ),
+              ],
+            ),
+            constraints: const BoxConstraints(maxHeight: 550),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: MyColors.raisinBlack,
+                  onPrimary: Colors.white,
+                  surface: MyColors.white,
+                  onSurface: MyColors.raisinBlack,
+                ),
+                timePickerTheme: TimePickerThemeData(
+                  backgroundColor: Colors.transparent,
+                  hourMinuteTextColor: MyColors.raisinBlack,
+                  dayPeriodTextColor: MyColors.raisinBlack,
+                  dialHandColor: MyColors.raisinBlack,
+                  dialBackgroundColor: Colors.grey.shade100,
+                  entryModeIconColor: MyColors.raisinBlack,
+                  hourMinuteColor: MyColors.white,
+                ),
+                textButtonTheme: TextButtonThemeData(
+                  style: TextButton.styleFrom(
+                    backgroundColor: MyColors.white,
+                    foregroundColor: MyColors.raisinBlack,
+                    padding: EdgeInsets.all(10),
+                    textStyle: defaultButtonText,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.black, width: 1),
+                    ),
+                    shadowColor: Colors.black,
+                    elevation: 3
+                  ),
+                )
+              ),
+              child: TimePickerDialog(
+                initialTime: initialTime,
+                initialEntryMode: TimePickerEntryMode.dialOnly,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -16,6 +16,7 @@ import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
 import 'package:fuzzy_guacamole/widgets/app_bar.dart';
+import 'package:fuzzy_guacamole/widgets/default_button.dart';
 import 'package:fuzzy_guacamole/widgets/event_widget.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';

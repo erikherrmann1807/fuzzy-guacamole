@@ -22,7 +22,7 @@ class DefaultButton extends StatelessWidget {
               BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 1, blurStyle: BlurStyle.solid),
             ],
           ),
-          child: title == "Logout" ? Text(title, style: logoutText) : Text(title),
+          child: title == "Logout" ? Text(title, style: logoutText) : Text(title, style: defaultButtonText),
         ),
       ),
     );
