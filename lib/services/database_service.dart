@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/models/user_model.dart';
-import 'package:fuzzy_guacamole/constants/database_refs.dart';
 
 import 'auth_service.dart';
 
@@ -11,28 +11,27 @@ class DatabaseService {
   final FirebaseFirestore db;
   final AuthService auth;
   late final CollectionReference<Meeting> meetingRef;
-  late final CollectionReference<Member>   userRef;
+  late final CollectionReference<Member> userRef;
 
   DatabaseService({FirebaseFirestore? fireStore, AuthService? authService})
-      : db   = fireStore ?? FirebaseFirestore.instance,
-        auth = authService ?? authServiceGlobal.value {
-
+    : db = fireStore ?? FirebaseFirestore.instance,
+      auth = authService ?? authServiceGlobal.value {
     final uid = auth.currentUser?.uid;
     meetingRef = db
         .collection(USER_COLLECTION_REF)
         .doc(uid)
         .collection(MEETING_COLLECTION_REF)
         .withConverter<Meeting>(
-      fromFirestore: (snap, _) => Meeting.fromJson(snap.data()!, id: snap.id),
-      toFirestore:   (meet, _) => meet.toJson(),
-    );
+          fromFirestore: (snap, _) => Meeting.fromJson(snap.data()!, id: snap.id),
+          toFirestore: (meet, _) => meet.toJson(),
+        );
 
     userRef = db
         .collection(USER_COLLECTION_REF)
         .withConverter<Member>(
-      fromFirestore: (snap, _) => Member.fromJson(snap.data()!),
-      toFirestore:   (user, _) => user.toJson(),
-    );
+          fromFirestore: (snap, _) => Member.fromJson(snap.data()!),
+          toFirestore: (user, _) => user.toJson(),
+        );
   }
 
   // void startListening(void Function(List<Meeting>) onData) {
@@ -49,9 +48,7 @@ class DatabaseService {
 
   Stream<List<Meeting>> get meetingsStream {
     return meetingRef.snapshots().map((snap) {
-      return snap.docs
-          .map((d) => d.data())
-          .toList();
+      return snap.docs.map((d) => d.data()).toList();
     });
   }
 
@@ -85,11 +82,8 @@ class DatabaseService {
 
   Future<String> getUsername() async {
     final uid = authServiceGlobal.value.currentUser!.uid;
-    final doc = await userRef
-        .doc(uid)
-        .get();
+    final doc = await userRef.doc(uid).get();
     final member = doc.data()!;
     return member.userName;
   }
-
 }

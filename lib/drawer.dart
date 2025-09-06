@@ -1,14 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
-import 'package:fuzzy_guacamole/services/database_service.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MyDrawer extends StatefulWidget {
-  final Function(CalendarView) onViewChanged;
   final String? username;
 
-  const MyDrawer({super.key, required this.onViewChanged, required this.username});
+  const MyDrawer({super.key, required this.username});
 
   @override
   State<MyDrawer> createState() => _MyDrawerState();
@@ -21,19 +18,6 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    void popPage() {
-      Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
-    }
-
-    Future<void> logout() async {
-      try {
-        await authServiceGlobal.value.signOut();
-        popPage();
-      } on FirebaseAuthException catch (e) {
-        print(e.message);
-      }
-    }
-
     return Drawer(
       backgroundColor: Colors.white,
       child: ListView(
@@ -73,30 +57,9 @@ class _MyDrawerState extends State<MyDrawer> {
               );
             },
           ),*/
-          ListTile(
-            leading: const Icon(Icons.calendar_view_day),
-            title: const Text('Tag'),
-            onTap: () {
-              popPage();
-              widget.onViewChanged(CalendarView.day);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.calendar_view_week_sharp),
-            title: const Text('Woche'),
-            onTap: () {
-              popPage();
-              widget.onViewChanged(CalendarView.week);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.calendar_view_month_sharp),
-            title: const Text('Monat'),
-            onTap: () {
-              popPage();
-              widget.onViewChanged(CalendarView.month);
-            },
-          ),
+          ListTile(leading: const Icon(Icons.calendar_view_day), title: const Text('Tag'), onTap: () {}),
+          ListTile(leading: const Icon(Icons.calendar_view_week_sharp), title: const Text('Woche'), onTap: () {}),
+          ListTile(leading: const Icon(Icons.calendar_view_month_sharp), title: const Text('Monat'), onTap: () {}),
           const Divider(color: Colors.grey),
           ListTile(
             leading: const Icon(Icons.settings_outlined),
@@ -112,11 +75,6 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           ListTile(leading: const Icon(Icons.help_outline_rounded), title: const Text('Hilfe'), onTap: () {}),
           const Divider(color: Colors.grey),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout', style: TextStyle(color: Colors.redAccent)),
-            onTap: () => logout(),
-          ),
         ],
       ),
     );

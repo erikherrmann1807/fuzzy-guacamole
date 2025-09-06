@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzy_guacamole/constants/database_refs.dart';
+import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
@@ -44,7 +45,8 @@ void main() {
         'description': 'description',
         'start': DateTime(2025, 8, 21, 10, 30).toString(),
         'end': DateTime(2025, 8, 21, 11, 30).toString(),
-        'backgroundColor': Colors.blue.toARGB32(),
+        'labelColor': MyColors.lowLabel.toARGB32(),
+        'priority': 'Low',
         'isAllDay': false,
       });
 
@@ -53,7 +55,8 @@ void main() {
         'description': 'Hilfe',
         'start': DateTime(2025, 8, 23, 10, 30).toString(),
         'end': DateTime(2025, 8, 23, 11, 30).toString(),
-        'backgroundColor': Colors.red.toARGB32(),
+        'labelColor': MyColors.lowLabel.toARGB32(),
+        'priority': 'Low',
         'isAllDay': true,
       });
 
@@ -75,7 +78,8 @@ void main() {
         description: 'New Meeting added',
         start: DateTime(2025, 8, 8, 11, 30),
         end: DateTime(2025, 8, 8, 13, 30),
-        backgroundColor: Colors.black,
+        labelColor: MyColors.highLabel,
+        priority: 'High',
         isAllDay: false,
       );
 
@@ -93,7 +97,8 @@ void main() {
         description: 'New Meeting added',
         start: DateTime(2025, 8, 8, 11, 30),
         end: DateTime(2025, 8, 8, 13, 30),
-        backgroundColor: Colors.black,
+        labelColor: MyColors.highLabel,
+        priority: 'High',
         isAllDay: false,
       );
 
@@ -112,7 +117,8 @@ void main() {
         description: 'New Meeting added',
         start: DateTime(2025, 8, 8, 11, 30),
         end: DateTime(2025, 8, 8, 13, 30),
-        backgroundColor: Colors.black,
+        labelColor: MyColors.highLabel,
+        priority: 'High',
         isAllDay: false,
       );
 
@@ -124,7 +130,8 @@ void main() {
         description: 'Meeting updated',
         start: DateTime(2025, 8, 9, 12, 30),
         end: DateTime(2025, 8, 9, 15, 30),
-        backgroundColor: Colors.blue,
+        labelColor: MyColors.lowLabel,
+        priority: 'Low',
         isAllDay: false,
       );
 
