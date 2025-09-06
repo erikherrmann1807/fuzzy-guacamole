@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/models/appointment_model.dart';
-import 'package:fuzzy_guacamole/drawer.dart';
 import 'package:fuzzy_guacamole/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/providers/meetings_provider.dart';
 import 'package:fuzzy_guacamole/providers/users_provider.dart';
 import 'package:fuzzy_guacamole/screens/accountmanagement/account_management_screen.dart';
 import 'package:fuzzy_guacamole/screens/auth/app_loading_page.dart';
-import 'package:fuzzy_guacamole/screens/home/home_screen.dart';
 import 'package:fuzzy_guacamole/screens/settings/settingsmenu.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
+import 'package:fuzzy_guacamole/utils/utils.dart';
+import 'package:fuzzy_guacamole/widgets/app_bar.dart';
 import 'package:fuzzy_guacamole/widgets/event_widget.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
@@ -23,6 +23,7 @@ import 'package:intl/intl.dart';
 part '../appointments/appointment_editor.dart';
 part '../appointments/priority_picker.dart';
 part 'views/calendar_month.dart';
+part '../home/home_screen.dart';
 
 class EventCalendarScreen extends ConsumerStatefulWidget {
   const EventCalendarScreen({super.key});
@@ -42,7 +43,7 @@ String _subject = '';
 String _notes = '';
 
 class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -72,7 +73,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           //drawer: MyDrawer(username: username),
-          appBar: AppBar(title: Text('Hallo👋, $username!')),
+          appBar: _getCurrentAppBar(username),
           body: _getCurrentScreen(),
           bottomNavigationBar: BottomAppBar(
             height: size.height * 0.07,
@@ -153,6 +154,21 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
         return SettingsMenu();
       default:
         return MonthlyScreen();
+    }
+  }
+
+  AppBar _getCurrentAppBar(String username) {
+    switch (_selectedIndex) {
+      case 0:
+        return customAppBar('Hallo👋, $username!');
+      case 1:
+        return customAppBar('Hallo👋, $username!');
+      case 3:
+        return customAppBar('Account Management');
+      case 4:
+        return customAppBar('Settings');
+      default:
+        return customAppBar('Hallo👋, $username!');
     }
   }
 

@@ -21,53 +21,8 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     selectedDate = DateTime.now();
   }
 
-  DateTime _d(DateTime x) => DateTime(x.year, x.month, x.day); // nur Datum
   DateTime _startOfDay(DateTime x) => DateTime(x.year, x.month, x.day);
   DateTime _endOfDay(DateTime x) => DateTime(x.year, x.month, x.day, 23, 59, 59, 999);
-
-  bool _sameDate(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
-
-  /// Falls ein Event genau um 00:00 endet (exklusives Ende), zähle den letzten Tag nicht doppelt.
-  DateTime _effectiveLastDay(DateTime start, DateTime end) {
-    final endDate = _d(end);
-    final endsAtMidnight =
-        end.hour == 0 && end.minute == 0 && end.second == 0 && end.millisecond == 0 && end.microsecond == 0;
-    if (endsAtMidnight && !_sameDate(start, end)) {
-      return endDate.subtract(const Duration(days: 1));
-    }
-    return endDate;
-  }
-
-  Map<DateTime, List<T>> _buildMeetingsMapSpanning<T>(
-      List<T> meetings,
-      DateTime Function(T) getStart,
-      DateTime Function(T) getEnd,
-      ) {
-    final map = <DateTime, List<T>>{};
-
-    for (final m in meetings) {
-      var s = getStart(m);
-      var e = getEnd(m);
-      if (e.isBefore(s)) {
-        final tmp = s; s = e; e = tmp;
-      }
-
-      DateTime day = _d(s);
-      final lastDay = _effectiveLastDay(s, e);
-
-      while (!day.isAfter(lastDay)) {
-        map.putIfAbsent(day, () => []).add(m);
-        day = day.add(const Duration(days: 1));
-      }
-    }
-
-    for (final list in map.values) {
-      list.sort((a, b) => getStart(a).compareTo(getStart(b)));
-    }
-    return map;
-  }
-
 
   List<DateTime> _generateDatesGrid(DateTime month) {
     int numDays = DateTime(month.year, month.month + 1, 0).day;
@@ -102,29 +57,6 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     });
   }
 
-  Map<DateTime, List<T>> _buildMeetingsMap<T extends Object>(List<T> meetings, DateTime Function(T) getStartDate) {
-    final Map<DateTime, List<T>> map = {};
-    for (final m in meetings) {
-      final start = getStartDate(m);
-      final key = DateTime(start.year, start.month, start.day);
-      map.putIfAbsent(key, () => []).add(m);
-    }
-    for (final list in map.values) {
-      list.sort((a, b) {
-        final aDt = getStartDate(a);
-        final bDt = getStartDate(b);
-        return aDt.compareTo(bDt);
-      });
-    }
-    return map;
-  }
-
-  String _formatTime(DateTime dt) {
-    final h = dt.hour.toString().padLeft(2, '0');
-    final m = dt.minute.toString().padLeft(2, '0');
-    return '$h:$m';
-  }
-
   void editMeeting({required Meeting meeting}) {
     _selectedAppointment = meeting;
     _isAllDay = meeting.isAllDay;
@@ -146,11 +78,7 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
 
     return meetingsAsync.when(
       data: (meetings) {
-        final meetingsByDay = _buildMeetingsMapSpanning(
-            meetings,
-            (m) => m.start,
-            (m) => m.end
-        );
+        final meetingsByDay = CalendarUtils.buildMeetingsMapSpanning(meetings, (m) => m.start, (m) => m.end);
 
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -164,20 +92,18 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                   IconButton(icon: const Icon(Icons.arrow_forward_ios), onPressed: () => _changeMonth(1)),
                 ],
               ),
-              //const Gap(5),
               Row(
                 children: ['Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.', 'So.']
                     .map(
                       (day) => Expanded(
                         child: Container(
-                          padding: const EdgeInsets.all(4.0), // Gleiches Padding wie GridView Items
+                          padding: const EdgeInsets.all(4.0),
                           child: Center(child: Text(day, style: viewHeaderText)),
                         ),
                       ),
                     )
                     .toList(),
               ),
-              //const Gap(12),
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
@@ -200,38 +126,51 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: isSelected
-                                  ? MyColors.raisinBlack
-                                  : (isCurrentMonth ? MyColors.grey : Colors.transparent),
-                              child: Text(
-                                date.day.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                  color: isSelected ? Colors.white : (isCurrentMonth ? Colors.black : Colors.grey),
-                                ),
-                              ),
-                            ),
-                            if (todayMeetings.isNotEmpty)
-                              Positioned(
-                                bottom: 7,
-                                right: 7,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final size = constraints.maxWidth;
+                            final badgeSize = size * 0.4;
+                            final offset = size * 0.05;
+
+                            return Stack(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: isSelected
+                                      ? MyColors.raisinBlack
+                                      : (isCurrentMonth ? MyColors.grey : Colors.transparent),
                                   child: Text(
-                                    todayMeetings.length.toString(),
-                                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                                    date.day.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                      color: isSelected ? Colors.white : (isCurrentMonth ? Colors.black : Colors.grey),
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
+                                if (todayMeetings.isNotEmpty)
+                                  Positioned(
+                                    bottom: offset,
+                                    right: offset,
+                                    child: Container(
+                                      width: badgeSize,
+                                      height: badgeSize,
+                                      decoration: BoxDecoration(
+                                        color: Colors.redAccent,
+                                        borderRadius: BorderRadius.circular(badgeSize / 2),
+                                      ),
+                                      child: Center(
+                                        child: FittedBox(
+                                          child: Text(
+                                            todayMeetings.length.toString(),
+                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     );
@@ -280,22 +219,14 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                               itemBuilder: (context, idx) {
                                 final mt = today[idx];
 
-                                // Zeiten auf den ausgewählten Tag zuschneiden:
-                                final dayStart = _startOfDay(selectedDate);
-                                final dayEnd = _endOfDay(selectedDate);
-                                final displayStart = mt.start.isAfter(dayStart) ? mt.start : dayStart;
-                                final displayEnd   = mt.end.isBefore(dayEnd)   ? mt.end   : dayEnd;
-
-                                // Darstellung: Ganztägig, wenn All-Day ODER der Tag komplett belegt ist
-                                final fillsFullDay = (displayStart.isAtSameMomentAs(dayStart) &&
-                                    displayEnd.isAtSameMomentAs(dayEnd));
-
-                                final startTime = (mt.isAllDay || fillsFullDay) ? 'Ganztägig' : '${_formatTime(displayStart)}-';
-                                final endTime   = (mt.isAllDay || fillsFullDay) ? ''          : _formatTime(displayEnd);
-
-                                final totalDays = _effectiveLastDay(mt.start, mt.end).difference(_d(mt.start)).inDays + 1;
-                                final dayIndex = _d(selectedDate).difference(_d(mt.start)).inDays + 1;
-                                final suffix = totalDays > 1 ? ' (Tag $dayIndex/$totalDays)' : '';
+                                final clamp = CalendarUtils.clampToDay(mt.start, mt.end, selectedDate);
+                                final startTime = (mt.isAllDay || clamp.fillsFullDay)
+                                    ? 'Ganztägig'
+                                    : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
+                                final endTime = (mt.isAllDay || clamp.fillsFullDay)
+                                    ? ''
+                                    : CalendarUtils.formatHHmm(clamp.displayEnd);
+                                final suffix = CalendarUtils.multiDaySuffix(mt.start, mt.end, selectedDate);
 
                                 return EventWidget(
                                   startTime: startTime,
@@ -307,7 +238,6 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                                   labelColor: mt.labelColor,
                                   isAllDay: mt.isAllDay,
                                 );
-
                               },
                             );
                           },

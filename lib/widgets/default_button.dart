@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
+import 'package:fuzzy_guacamole/styles/styles.dart';
 
 class DefaultButton extends StatelessWidget {
   const DefaultButton({super.key, required this.onTap, required this.title});
@@ -21,7 +22,7 @@ class DefaultButton extends StatelessWidget {
               BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 1, blurStyle: BlurStyle.solid),
             ],
           ),
-          child: Text(title)
+          child: title == "Logout" ? Text(title, style: logoutText) : Text(title),
         ),
       ),
     );

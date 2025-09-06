@@ -12,7 +12,7 @@ class EventWidget extends StatefulWidget {
     required this.function,
     required this.priority,
     required this.labelColor,
-    required this.isAllDay
+    required this.isAllDay,
   });
   final String startTime;
   final String endTime;

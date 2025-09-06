@@ -15,4 +15,4 @@ const viewHeaderText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWe
 const agendaDateText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w600, fontSize: 14);
 const tagText = TextStyle(color: MyColors.raisinBlack, fontWeight: FontWeight.w500, fontSize: 13);
 const editorAppBarText = TextStyle(color: MyColors.white, fontWeight: FontWeight.w400, fontSize: 20);
-
+const logoutText = TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w400, fontSize: 14);
