@@ -4,7 +4,7 @@ import 'package:fuzzy_guacamole/styles/styles.dart';
 
 AppBar customAppBar(String title) {
   return AppBar(
-      title: Text(title, style: appBarText),
+    title: Text(title, style: appBarText),
     backgroundColor: MyColors.raisinBlack,
   );
 }

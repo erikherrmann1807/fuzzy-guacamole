@@ -4,6 +4,8 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/models/user_model.dart';
 import 'package:fuzzy_guacamole/services/auth_service.dart';
 import 'package:fuzzy_guacamole/services/database_service.dart';
+import 'package:fuzzy_guacamole/styles/colors.dart';
+import 'package:fuzzy_guacamole/widgets/default_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -58,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Username',
                       labelText: 'Username',
-                      prefixIcon: Icon(Icons.person, color: Colors.lightBlue),
+                      prefixIcon: Icon(Icons.person, color: MyColors.raisinBlack),
                       errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.red),
@@ -78,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Email',
                       labelText: 'Email',
-                      prefixIcon: Icon(Icons.email, color: Colors.lightBlue),
+                      prefixIcon: Icon(Icons.email, color: MyColors.raisinBlack),
                       errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.red),
@@ -104,7 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       hintText: 'Password',
                       labelText: 'Password',
-                      prefixIcon: Icon(Icons.password, color: Colors.grey),
+                      prefixIcon: Icon(Icons.password, color: MyColors.raisinBlack),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.red),
                         borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -115,20 +117,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: SizedBox(
-                      // margin: EdgeInsets.fromLTRB(200, 20, 50, 0),
-                      width: MediaQuery.of(context).size.width,
-
-                      height: 50,
-                      // margin: EdgeInsets.fromLTRB(200, 20, 50, 0),
-                      child: ElevatedButton(
-                        child: Text('Register', style: TextStyle(color: Colors.black, fontSize: 22)),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            register();
-                          }
-                        },
-                      ),
+                    child: DefaultButton(
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          register();
+                        }
+                      },
+                      title: "Register",
                     ),
                   ),
                 ),

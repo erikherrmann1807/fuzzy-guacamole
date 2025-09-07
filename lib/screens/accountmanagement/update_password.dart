@@ -38,8 +38,8 @@ class UpdatePassword {
                           children: [
                             Text(
                               'Um Ihr Passwort zu ändern benötigen Sie '
-                                  'ein neues Passwort, das aktuelle Passwort '
-                                  'und Ihre E-Mail Adresse.',
+                              'ein neues Passwort, das aktuelle Passwort '
+                              'und Ihre E-Mail Adresse.',
                             ),
                             SizedBox(height: 16),
                             Padding(
@@ -54,7 +54,7 @@ class UpdatePassword {
                                     errorText: _isPasswordValid
                                         ? ''
                                         : 'Password muss contain minimum eight characters, '
-                                        'at least one letter and one number',
+                                              'at least one letter and one number',
                                   ),
                                 ]).call,
                                 cursorColor: MyColors.raisinBlack,
@@ -84,7 +84,7 @@ class UpdatePassword {
                                   PatternValidator(
                                     r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
                                     errorText:
-                                    'Password muss contain minimum eight characters, '
+                                        'Password muss contain minimum eight characters, '
                                         'at least one letter and one number',
                                   ),
                                 ]).call,
@@ -111,10 +111,14 @@ class UpdatePassword {
                               children: [
                                 DefaultButton(
                                   onTap: () async {
-                                    _isPasswordValid = await authServiceGlobal.value.validatePassword(oldPasswordController.text);
+                                    _isPasswordValid = await authServiceGlobal.value.validatePassword(
+                                      oldPasswordController.text,
+                                    );
                                     setState(() {});
                                     if (_isPasswordValid) {
-                                      authServiceGlobal.value.updateUserPassword(newPassword: newPasswordController.text);
+                                      authServiceGlobal.value.updateUserPassword(
+                                        newPassword: newPasswordController.text,
+                                      );
                                       Navigator.of(context).pop();
                                     }
                                   },

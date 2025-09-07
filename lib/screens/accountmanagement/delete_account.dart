@@ -39,7 +39,7 @@ class DeleteAccount {
                           children: [
                             Text(
                               'Um Ihren Account zu löschen müssen Sie '
-                                  'Ihre E-Mail und Ihr Passwort angeben.',
+                              'Ihre E-Mail und Ihr Passwort angeben.',
                             ),
                             SizedBox(height: 16),
                             Padding(
@@ -78,7 +78,7 @@ class DeleteAccount {
                                   PatternValidator(
                                     r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
                                     errorText:
-                                    'Password muss contain minimum eight characters, '
+                                        'Password muss contain minimum eight characters, '
                                         'at least one letter and one number',
                                   ),
                                 ]).call,
@@ -105,7 +105,9 @@ class DeleteAccount {
                               children: [
                                 DefaultButton(
                                   onTap: () async {
-                                    _isPasswordValid = await authServiceGlobal.value.validatePassword(passwordController.text);
+                                    _isPasswordValid = await authServiceGlobal.value.validatePassword(
+                                      passwordController.text,
+                                    );
                                     setState(() {});
                                     if (_isPasswordValid) {
                                       authServiceGlobal.value.deleteAccount(

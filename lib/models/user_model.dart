@@ -10,10 +10,11 @@ class Member {
   Map<String, dynamic> toJson() => {'userName': userName, 'email': email, 'createdAt': FieldValue.serverTimestamp()};
 
   factory Member.fromJson(Map<String, dynamic> json) {
+    final createdAt = json['createdAt'];
     return Member(
       userName: json['userName'] as String,
       email: json['email'] as String,
-      createdAt: json['createdAt'] as Timestamp,
+      createdAt: createdAt is Timestamp ? createdAt : null,
     );
   }
 }

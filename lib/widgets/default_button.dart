@@ -13,6 +13,9 @@ class DefaultButton extends StatelessWidget {
       onTap: onTap,
       child: Expanded(
         child: Container(
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.height * 0.05,
+          alignment: Alignment.center,
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
             border: Border.all(),
