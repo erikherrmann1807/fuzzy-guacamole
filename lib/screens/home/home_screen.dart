@@ -13,6 +13,8 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
+              WeatherCard(ref: ref),
+              const SizedBox(height: 16),
               _SectionTitle('Current tasks'),
               const SizedBox(height: 8),
               _TodayAgendaCard(ref: ref),

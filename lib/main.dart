@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
         '/loginScreen': (context) => LoginScreen(),
         '/settingsScreen': (context) => SettingsMenu(),
         '/eventCalendar': (context) => EventCalendarScreen(),
-        //'/calendarMonth': (context) => MonthlyScreen(),
         '/registerScreen': (context) => RegisterScreen(),
         '/authLayout': (context) => AuthLayout(),
         '/accountManagementScreen': (context) => AccountManagementScreen(),

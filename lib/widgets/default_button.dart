@@ -11,8 +11,7 @@ class DefaultButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Expanded(
-        child: Container(
+      child: Container(
           width: MediaQuery.of(context).size.width * 0.5,
           height: MediaQuery.of(context).size.height * 0.05,
           alignment: Alignment.center,
@@ -27,7 +26,6 @@ class DefaultButton extends StatelessWidget {
           ),
           child: title == "Logout" ? Text(title, style: logoutText) : Text(title, style: defaultButtonText),
         ),
-      ),
     );
   }
 }
