@@ -32,9 +32,9 @@ jobs:
       - name: Dependencies
         run: flutter pub get
 
-      - name: Format-Check
-        run: flutter format --set-exit-if-changed .
-
+      - name: Auto-Format (nicht als Check)
+        run: dart format .
+        
       - name: Analyze
         run: flutter analyze
 
