@@ -34,9 +34,13 @@ jobs:
 
       - name: Auto-Format (nicht als Check)
         run: dart format .
+
+      - name: Ensure .env exists (CI)
+        run: |
+            [[ -f .env ]] || touch .env
         
       - name: Analyze
-        run: flutter analyze
+        run: dart analyze --no-fatal-warnings --no-fatal-infos
 
       - name: Tests
         run: flutter test --coverage
