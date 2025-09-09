@@ -18,6 +18,7 @@ import 'package:fuzzy_guacamole/utils/utils.dart';
 import 'package:fuzzy_guacamole/widgets/app_bar.dart';
 import 'package:fuzzy_guacamole/widgets/default_button.dart';
 import 'package:fuzzy_guacamole/widgets/event_widget.dart';
+import 'package:fuzzy_guacamole/widgets/home_widgets/weather_widget.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
@@ -42,6 +43,7 @@ late TimeOfDay _endTime;
 late bool _isAllDay;
 String _subject = '';
 String _notes = '';
+late DateTime selectedDate;
 
 class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   int _selectedIndex = 0;
@@ -161,16 +163,22 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   AppBar _getCurrentAppBar(String username) {
     switch (_selectedIndex) {
       case 0:
-        return customAppBar('Hallo👋, $username!');
+        return customAppBar('Hallo👋, $username!', _selectedIndex, () => {});
       case 1:
-        return customAppBar('Hallo👋, $username!');
+        return customAppBar('Hallo👋, $username!', _selectedIndex, () => resetSelectedDate());
       case 3:
-        return customAppBar('Account Management');
+        return customAppBar('Account Management', _selectedIndex, () => {});
       case 4:
-        return customAppBar('Settings');
+        return customAppBar('Settings', _selectedIndex, () => {});
       default:
-        return customAppBar('Hallo👋, $username!');
+        return customAppBar('Hallo👋, $username!', _selectedIndex, () => {});
     }
+  }
+
+  void resetSelectedDate() {
+    setState(() {
+      selectedDate = DateTime.now();
+    });
   }
 
   void onButtonPress() {

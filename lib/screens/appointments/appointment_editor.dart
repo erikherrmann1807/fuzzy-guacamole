@@ -85,7 +85,9 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                           child: Text(DateFormat('HH:mm').format(_startDate), textAlign: TextAlign.right),
                           onTap: () async {
                             final TimeOfDay? time = await _showCustomTimePicker(
-                                context, TimeOfDay(hour: _startTime.hour, minute: _startTime.minute));
+                              context,
+                              TimeOfDay(hour: _startTime.hour, minute: _startTime.minute),
+                            );
 
                             if (time != null && time != _startTime) {
                               setState(() {
@@ -143,7 +145,9 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                           child: Text(DateFormat('HH:mm').format(_endDate), textAlign: TextAlign.right),
                           onTap: () async {
                             final TimeOfDay? time = await _showCustomTimePicker(
-                                context, TimeOfDay(hour: _endTime.hour, minute: _endTime.minute));
+                              context,
+                              TimeOfDay(hour: _endTime.hour, minute: _endTime.minute),
+                            );
 
                             if (time != null && time != _endTime) {
                               setState(() {
@@ -285,21 +289,13 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
               color: MyColors.white,
               borderRadius: BorderRadius.circular(8),
               boxShadow: const [
-                BoxShadow(
-                  color: Colors.black,
-                  offset: Offset(1.5, 2),
-                  spreadRadius: 2,
-                  blurStyle: BlurStyle.solid,
-                ),
+                BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 2, blurStyle: BlurStyle.solid),
               ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Datum auswählen',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                Text('Datum auswählen', style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 20),
                 Theme(
                   data: Theme.of(context).copyWith(
@@ -327,7 +323,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
     );
   }
 
-// Custom Time Picker
+  // Custom Time Picker
   Future<TimeOfDay?> _showCustomTimePicker(BuildContext context, TimeOfDay initialTime) async {
     Size size = MediaQuery.sizeOf(context);
 
@@ -343,12 +339,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
               color: MyColors.white,
               borderRadius: BorderRadius.circular(8),
               boxShadow: const [
-                BoxShadow(
-                  color: Colors.black,
-                  offset: Offset(1.5, 2),
-                  spreadRadius: 2,
-                  blurStyle: BlurStyle.solid,
-                ),
+                BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 2, blurStyle: BlurStyle.solid),
               ],
             ),
             constraints: const BoxConstraints(maxHeight: 550),
@@ -380,14 +371,11 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
                       side: BorderSide(color: Colors.black, width: 1),
                     ),
                     shadowColor: Colors.black,
-                    elevation: 3
+                    elevation: 3,
                   ),
-                )
+                ),
               ),
-              child: TimePickerDialog(
-                initialTime: initialTime,
-                initialEntryMode: TimePickerEntryMode.dialOnly,
-              ),
+              child: TimePickerDialog(initialTime: initialTime, initialEntryMode: TimePickerEntryMode.dialOnly),
             ),
           ),
         );

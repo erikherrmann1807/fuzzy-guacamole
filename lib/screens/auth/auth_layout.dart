@@ -39,6 +39,9 @@ class AuthLayout extends StatelessWidget {
                 if (snapshot.hasError) {
                   return const Text('Fehler beim Laden');
                 }
+                if (!snapshot.data!.exists) {
+                  return const Text("Nuterprofil wird erstellt...");
+                }
                 return EventCalendarScreen();
               },
             );

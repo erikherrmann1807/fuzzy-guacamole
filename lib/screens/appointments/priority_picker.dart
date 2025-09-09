@@ -26,12 +26,7 @@ class _PriorityPickerState extends State<_PriorityPicker> {
           color: MyColors.white,
           borderRadius: BorderRadius.circular(8),
           boxShadow: const [
-            BoxShadow(
-              color: Colors.black,
-              offset: Offset(1.5, 2),
-              spreadRadius: 2,
-              blurStyle: BlurStyle.solid,
-            ),
+            BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 2, blurStyle: BlurStyle.solid),
           ],
         ),
         child: SizedBox(
@@ -45,10 +40,7 @@ class _PriorityPickerState extends State<_PriorityPicker> {
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(
-                  index == _selectedColorIndex ? Icons.lens : Icons.trip_origin,
-                  color: labelColors[index],
-                ),
+                leading: Icon(index == _selectedColorIndex ? Icons.lens : Icons.trip_origin, color: labelColors[index]),
                 title: Text(labelNames[index]),
                 onTap: () {
                   setState(() => _selectedColorIndex = index);

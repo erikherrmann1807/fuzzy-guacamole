@@ -11,7 +11,7 @@ class MonthlyScreen extends ConsumerStatefulWidget {
 class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
   late DateTime currentMonth;
   late List<DateTime> datesGrid;
-  late DateTime selectedDate;
+  late DateTime today;
 
   @override
   void initState() {
@@ -19,10 +19,8 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     currentMonth = DateTime.now();
     datesGrid = _generateDatesGrid(currentMonth);
     selectedDate = DateTime.now();
+    today = DateTime.now();
   }
-
-  DateTime _startOfDay(DateTime x) => DateTime(x.year, x.month, x.day);
-  DateTime _endOfDay(DateTime x) => DateTime(x.year, x.month, x.day, 23, 59, 59, 999);
 
   List<DateTime> _generateDatesGrid(DateTime month) {
     int numDays = DateTime(month.year, month.month + 1, 0).day;
@@ -110,11 +108,11 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                   itemCount: datesGrid.length,
                   itemBuilder: (context, index) {
                     DateTime date = datesGrid[index];
-                    bool isCurrentMonth = date.month == currentMonth.month;
-                    bool isSelected =
-                        selectedDate.year == date.year &&
-                        selectedDate.month == date.month &&
-                        selectedDate.day == date.day;
+                    final bool isCurrentMonth = date.month == currentMonth.month;
+                    final bool isSelected = DateUtils.isSameDay(selectedDate, date);
+                    final bool isTodayCell = DateUtils.isSameDay(date, today);
+
+
                     final key = DateTime(date.year, date.month, date.day);
                     final todayMeetings = meetingsByDay[key] ?? [];
 
@@ -135,15 +133,21 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                             return Stack(
                               children: [
                                 CircleAvatar(
-                                  backgroundColor: isSelected
+                                  backgroundColor:
+                                  isSelected
                                       ? MyColors.raisinBlack
-                                      : (isCurrentMonth ? MyColors.grey : Colors.transparent),
+                                      : (isTodayCell
+                                          ? MyColors.todayColor
+                                          : (isCurrentMonth ? MyColors.grey : Colors.transparent)),
                                   child: Text(
                                     date.day.toString(),
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16,
-                                      color: isSelected ? Colors.white : (isCurrentMonth ? Colors.black : Colors.grey),
+                                      color:
+                                      isSelected
+                                          ? Colors.white
+                                          : (isCurrentMonth ? Colors.black : Colors.grey),
                                     ),
                                   ),
                                 ),

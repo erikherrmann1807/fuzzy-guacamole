@@ -13,6 +13,8 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
+              WeatherCard(ref: ref),
+              const SizedBox(height: 16),
               _SectionTitle('Current tasks'),
               const SizedBox(height: 8),
               _TodayAgendaCard(ref: ref),
@@ -69,10 +71,7 @@ class _TodayAgendaCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.calendar_today_outlined, size: 16),
                   const SizedBox(width: 6),
-                  Text(
-                    '${_weekdayShortDe(today.weekday)} ${today.day}',
-                    style: currentTasksDateText,
-                  ),
+                  Text('${_weekdayShortDe(today.weekday)} ${today.day}', style: currentTasksDateText),
                   const Spacer(),
                   const _RoundBtn(icon: Icons.add),
                 ],
@@ -80,7 +79,7 @@ class _TodayAgendaCard extends StatelessWidget {
               const SizedBox(height: 10),
 
               if (todays.isEmpty)
-                const Text('Keine Termine für heute', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700))
+                const Text('Keine Termine für Heute', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700))
               else ...[
                 Row(
                   children: [
