@@ -3,7 +3,7 @@ name: Flutter CI
 on:
   push:
     branches: [ main ]   # läuft bei Push & Merge auf main
-  workflow_dispatch:      # manuell auslösbar
+  workflow_dispatch:      
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -40,7 +40,7 @@ jobs:
             [[ -f .env ]] || touch .env
         
       - name: Analyze
-        run: dart analyze --no-fatal-warnings --no-fatal-infos
+        run: dart analyze --no-fatal-warnings
 
       - name: Tests
         run: flutter test --coverage
