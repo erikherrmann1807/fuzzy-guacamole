@@ -30,5 +30,3 @@ final weatherProvider = FutureProvider<WeatherInfo>((ref) async {
 final positionProvider = FutureProvider<Position>((ref) async {
   return LocationService.currentPosition();
 });
-
-

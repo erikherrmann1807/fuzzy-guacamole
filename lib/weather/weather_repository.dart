@@ -13,8 +13,9 @@ class WeatherApiComRepo {
   WeatherApiComRepo(this.apiKey);
 
   Future<WeatherInfo> currentByQuery(String q, {String lang = 'de'}) async {
-    final uri = Uri.parse('https://api.weatherapi.com/v1/current.json')
-        .replace(queryParameters: {'key': apiKey, 'q': q, 'lang': lang});
+    final uri = Uri.parse(
+      'https://api.weatherapi.com/v1/current.json',
+    ).replace(queryParameters: {'key': apiKey, 'q': q, 'lang': lang});
     final res = await http.get(uri);
     if (res.statusCode != 200) {
       throw Exception('HTTP ${res.statusCode}: ${res.body}');

@@ -19,6 +19,7 @@ import 'package:fuzzy_guacamole/widgets/app_bar.dart';
 import 'package:fuzzy_guacamole/widgets/default_button.dart';
 import 'package:fuzzy_guacamole/widgets/event_widget.dart';
 import 'package:fuzzy_guacamole/widgets/home_widgets/weather_widget.dart';
+import 'package:fuzzy_guacamole/widgets/month_view_widgets/month_year_dialog.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
@@ -44,6 +45,8 @@ late bool _isAllDay;
 String _subject = '';
 String _notes = '';
 late DateTime selectedDate;
+DateTime currentMonth = DateTime.now();
+late List<DateTime> datesGrid;
 
 class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   int _selectedIndex = 0;
@@ -75,7 +78,6 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
       data: (username) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          //drawer: MyDrawer(username: username),
           appBar: _getCurrentAppBar(username),
           body: _getCurrentScreen(),
           bottomNavigationBar: BottomAppBar(
@@ -108,7 +110,6 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
                 SizedBox(width: 40),
                 Expanded(
                   child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(width: size.width * 0.08),
                       IconButton(
@@ -178,6 +179,8 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   void resetSelectedDate() {
     setState(() {
       selectedDate = DateTime.now();
+      currentMonth = DateTime.now();
+      datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
     });
   }
 
@@ -188,7 +191,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     _subject = '';
     _notes = '';
 
-    _startDate = DateTime.now();
+    _startDate = selectedDate;
     _endDate = _startDate.add(Duration(hours: 1));
 
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);

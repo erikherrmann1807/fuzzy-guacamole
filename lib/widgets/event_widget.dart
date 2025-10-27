@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
+import 'package:gap/gap.dart';
 
 class EventWidget extends StatefulWidget {
   const EventWidget({
@@ -33,7 +34,7 @@ class _EventWidgetState extends State<EventWidget> {
     return GestureDetector(
       onTap: () => widget.function(),
       child: SizedBox(
-        height: 60,
+        height: 115,
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(),
@@ -43,29 +44,52 @@ class _EventWidgetState extends State<EventWidget> {
               BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 1, blurStyle: BlurStyle.solid),
             ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(widget.eventName, style: eventText),
-                  Text(
-                    '${widget.startTime}${widget.endTime}${widget.description.isNotEmpty ? ' • ${widget.description}' : ''}',
-                    style: eventText,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(widget.eventName, style: eventTitle, overflow: TextOverflow.ellipsis),
+                      Text(
+                        widget.description.isNotEmpty ? widget.description : '',
+                        style: eventText,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                      Gap(5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '${widget.startTime}${widget.endTime}',
+                                style: eventText,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              widget.isAllDay ? Icon(Icons.event_repeat) : Text(""),
+                            ],
+                          ),
+                          Chip(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                            label: Text(widget.priority, style: tagText),
+                            backgroundColor: widget.labelColor,
+                            side: BorderSide.none,
+                            shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              widget.isAllDay ? Icon(Icons.event_repeat) : Text(""),
-              Chip(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                label: Text(widget.priority, style: tagText),
-                backgroundColor: widget.labelColor,
-                side: BorderSide.none,
-                shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
