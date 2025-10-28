@@ -81,7 +81,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
           appBar: _getCurrentAppBar(username),
           body: _getCurrentScreen(),
           bottomNavigationBar: BottomAppBar(
-            height: size.height * 0.07,
+            height: size.height * 0.08,
             shape: CircularNotchedRectangle(),
             notchMargin: 10.0,
             color: MyColors.raisinBlack,
@@ -97,7 +97,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
                         color: _selectedIndex == 0 ? MyColors.white : MyColors.white,
                         onPressed: () => _onItemTapped(0),
                       ),
-                      SizedBox(width: size.width * 0.06),
+                      SizedBox(width: size.width * 0.05),
                       IconButton(
                         icon: Icon(Icons.calendar_month),
                         color: _selectedIndex == 1 ? MyColors.white : MyColors.white,
@@ -117,7 +117,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
                         color: _selectedIndex == 3 ? MyColors.white : MyColors.white,
                         onPressed: () => _onItemTapped(3),
                       ),
-                      SizedBox(width: size.width * 0.06),
+                      SizedBox(width: size.width * 0.05),
                       IconButton(
                         icon: Icon(Icons.settings),
                         color: _selectedIndex == 4 ? MyColors.white : MyColors.white,

@@ -169,7 +169,7 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
               SizedBox(
                 child: Container(
                   width: size.width,
-                  height: size.height * 0.4,
+                  height: size.height * 0.3,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
                     border: Border.all(),
