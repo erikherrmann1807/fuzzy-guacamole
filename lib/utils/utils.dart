@@ -1,5 +1,3 @@
-// lib/utils/calendar_utils.dart
-
 import 'package:flutter/material.dart';
 
 /// Hilfsfunktionen rund um Kalendertage, Meetings und Agenda.
@@ -104,9 +102,74 @@ class CalendarUtils {
     const map = {1: 'Mo', 2: 'Di', 3: 'Mi', 4: 'Do', 5: 'Fr', 6: 'Sa', 7: 'So'};
     return map[weekday] ?? '';
   }
+
+  static List<DateTime> generateDatesGrid(DateTime month) {
+    int numDays = DateTime(month.year, month.month + 1, 0).day;
+    int firstWeekday = DateTime(month.year, month.month, 1).weekday;
+    int prevDaysToShow = (firstWeekday - 1);
+    List<DateTime> dates = [];
+
+    DateTime previousMonth = DateTime(month.year, month.month - 1);
+    int previousMonthLastDay = DateTime(previousMonth.year, previousMonth.month + 1, 0).day;
+    for (int i = prevDaysToShow; i > 0; i--) {
+      dates.add(
+        DateTime(
+          previousMonth.year,
+          previousMonth.month,
+          previousMonthLastDay - i + 1,
+          DateTime.now().hour,
+          DateTime.now().minute,
+        ),
+      );
+    }
+
+    for (int day = 1; day <= numDays; day++) {
+      dates.add(DateTime(month.year, month.month, day, DateTime.now().hour, DateTime.now().minute));
+    }
+
+    int remainingBoxes = 42 - dates.length; // 6 weeks * 7 days
+    for (int day = 1; day <= remainingBoxes; day++) {
+      dates.add(DateTime(month.year, month.month + 1, day, DateTime.now().hour, DateTime.now().minute));
+    }
+
+    return dates;
+  }
+
+  static String monthName(int monthNumber) {
+    return [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ][monthNumber - 1];
+  }
+
+  static List<String> allMonths() {
+    return [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+  }
 }
 
-/// Ergebnis des Zuschneidens auf einen Tag.
 class DayClamp {
   final DateTime displayStart;
   final DateTime displayEnd;

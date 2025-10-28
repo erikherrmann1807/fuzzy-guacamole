@@ -2,58 +2,44 @@ part of '../calendar_screen.dart';
 
 class MonthlyScreen extends ConsumerStatefulWidget {
   const MonthlyScreen({super.key});
-  //final VoidCallback function;
 
   @override
   ConsumerState<MonthlyScreen> createState() => _MonthlyScreenState();
 }
 
 class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
-  late DateTime currentMonth;
-  late List<DateTime> datesGrid;
   late DateTime today;
 
   @override
   void initState() {
     super.initState();
-    currentMonth = DateTime.now();
-    datesGrid = _generateDatesGrid(currentMonth);
+    datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
     selectedDate = DateTime.now();
     today = DateTime.now();
-  }
-
-  List<DateTime> _generateDatesGrid(DateTime month) {
-    int numDays = DateTime(month.year, month.month + 1, 0).day;
-    // In Dart: weekday 1 = Monday ... 7 = Sunday. Wir wollen Anzahl "Vortage" (Montag-start)
-    int firstWeekday = DateTime(month.year, month.month, 1).weekday; // 1..7
-    // Convert to how many previous days to show: if firstWeekday == 1 (Mon) -> 0
-    int prevDaysToShow = (firstWeekday - 1);
-    List<DateTime> dates = [];
-
-    DateTime previousMonth = DateTime(month.year, month.month - 1);
-    int previousMonthLastDay = DateTime(previousMonth.year, previousMonth.month + 1, 0).day;
-    for (int i = prevDaysToShow; i > 0; i--) {
-      dates.add(DateTime(previousMonth.year, previousMonth.month, previousMonthLastDay - i + 1));
-    }
-
-    for (int day = 1; day <= numDays; day++) {
-      dates.add(DateTime(month.year, month.month, day));
-    }
-
-    int remainingBoxes = 42 - dates.length; // 6 weeks * 7 days
-    for (int day = 1; day <= remainingBoxes; day++) {
-      dates.add(DateTime(month.year, month.month + 1, day));
-    }
-
-    return dates;
   }
 
   void _changeMonth(int offset) {
     setState(() {
       currentMonth = DateTime(currentMonth.year, currentMonth.month + offset);
-      datesGrid = _generateDatesGrid(currentMonth);
+      datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
     });
   }
+
+  void _selectMonth() async {
+    await showDialog(
+      context: context,
+      builder: (context) => MonthYearDialog(
+        initialMonth: currentMonth,
+        onSelected: (newDate) {
+          setState(() {
+            currentMonth = newDate;
+            datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
+          });
+        },
+      ),
+    );
+  }
+
 
   void editMeeting({required Meeting meeting}) {
     _selectedAppointment = meeting;
@@ -86,7 +72,10 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(icon: const Icon(Icons.arrow_back_ios), onPressed: () => _changeMonth(-1)),
-                  Text('${_monthName(currentMonth.month)} ${currentMonth.year}', style: calendarHeader),
+                  TextButton(
+                    onPressed: () => _selectMonth(),
+                    child: Text('${CalendarUtils.monthName(currentMonth.month)} ${currentMonth.year}', style: calendarHeader),
+                  ),
                   IconButton(icon: const Icon(Icons.arrow_forward_ios), onPressed: () => _changeMonth(1)),
                 ],
               ),
@@ -112,7 +101,6 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                     final bool isSelected = DateUtils.isSameDay(selectedDate, date);
                     final bool isTodayCell = DateUtils.isSameDay(date, today);
 
-
                     final key = DateTime(date.year, date.month, date.day);
                     final todayMeetings = meetingsByDay[key] ?? [];
 
@@ -133,21 +121,17 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                             return Stack(
                               children: [
                                 CircleAvatar(
-                                  backgroundColor:
-                                  isSelected
+                                  backgroundColor: isSelected
                                       ? MyColors.raisinBlack
                                       : (isTodayCell
-                                          ? MyColors.todayColor
-                                          : (isCurrentMonth ? MyColors.grey : Colors.transparent)),
+                                            ? MyColors.todayColor
+                                            : (isCurrentMonth ? MyColors.grey : Colors.transparent)),
                                   child: Text(
                                     date.day.toString(),
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16,
-                                      color:
-                                      isSelected
-                                          ? Colors.white
-                                          : (isCurrentMonth ? Colors.black : Colors.grey),
+                                      color: isSelected ? Colors.white : (isCurrentMonth ? Colors.black : Colors.grey),
                                     ),
                                   ),
                                 ),
@@ -183,9 +167,9 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
               ),
               const Divider(),
               SizedBox(
-                height: size.height * 0.3,
                 child: Container(
                   width: size.width,
+                  height: size.height * 0.3,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
                     border: Border.all(),
@@ -200,7 +184,7 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                       ),
                     ],
                   ),
-                  constraints: const BoxConstraints(maxHeight: 260),
+                  constraints: const BoxConstraints(maxHeight: 300),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -219,13 +203,13 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                             }
                             return ListView.separated(
                               itemCount: today.length,
-                              separatorBuilder: (_, __) => const Divider(),
+                              separatorBuilder: (_, __) => Gap(14),
                               itemBuilder: (context, idx) {
                                 final mt = today[idx];
 
                                 final clamp = CalendarUtils.clampToDay(mt.start, mt.end, selectedDate);
                                 final startTime = (mt.isAllDay || clamp.fillsFullDay)
-                                    ? 'Ganztägig'
+                                    ? 'Ganztägig '
                                     : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
                                 final endTime = (mt.isAllDay || clamp.fillsFullDay)
                                     ? ''
@@ -260,20 +244,5 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     );
   }
 
-  String _monthName(int monthNumber) {
-    return [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ][monthNumber - 1];
-  }
+
 }

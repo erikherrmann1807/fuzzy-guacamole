@@ -331,9 +331,9 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          insetPadding: EdgeInsets.all(size.width * 0.05),
           backgroundColor: Colors.transparent,
           child: Container(
-            width: size.width,
             decoration: BoxDecoration(
               border: Border.all(),
               color: MyColors.white,

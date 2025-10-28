@@ -20,12 +20,7 @@ class WeatherCard extends StatelessWidget {
         color: MyColors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black,
-            offset: Offset(1.5, 2),
-            spreadRadius: 2,
-            blurStyle: BlurStyle.solid,
-          ),
+          BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 2, blurStyle: BlurStyle.solid),
         ],
       ),
       child: weatherAsync.when(

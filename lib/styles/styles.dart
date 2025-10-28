@@ -14,6 +14,12 @@ const calendarHeader = TextStyle(
   fontSize: 20,
   fontFamily: Font.mozillaHeadline,
 );
+const eventTitle = TextStyle(
+  color: MyColors.raisinBlack,
+  fontWeight: FontWeight.bold,
+  fontSize: 14,
+  fontFamily: Font.mozillaHeadline,
+);
 const eventText = TextStyle(
   color: MyColors.raisinBlack,
   fontWeight: FontWeight.w400,
