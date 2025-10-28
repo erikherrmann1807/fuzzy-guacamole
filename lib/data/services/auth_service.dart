@@ -1,0 +1,56 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+
+ValueNotifier<AuthService> authServiceGlobal = ValueNotifier(AuthService());
+
+class AuthService {
+  final FirebaseAuth firebaseAuthentication;
+
+  AuthService({FirebaseAuth? firebaseAuth}) : firebaseAuthentication = firebaseAuth ?? FirebaseAuth.instance;
+
+  User? get currentUser => firebaseAuthentication.currentUser;
+
+  Stream<User?> get authStateChanges => firebaseAuthentication.authStateChanges();
+
+  Future<UserCredential> signIn({required String email, required String password}) async {
+    return await firebaseAuthentication.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  Future<void> signOut() async {
+    await firebaseAuthentication.signOut();
+  }
+
+  Future<void> resetPassword({required String email}) async {
+    await firebaseAuthentication.sendPasswordResetEmail(email: email);
+  }
+
+  Future<void> updateUsername({required String username}) async {
+    await currentUser!.updateDisplayName(username);
+  }
+
+  Future<void> createAccount({required String email, required String password, required String displayName}) async {
+    await firebaseAuthentication.createUserWithEmailAndPassword(email: email, password: password);
+    await updateUsername(username: displayName);
+  }
+
+  Future<void> deleteAccount({required String email, required String password}) async {
+    AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
+    await currentUser!.reauthenticateWithCredential(credential);
+    await currentUser!.delete();
+    await firebaseAuthentication.signOut();
+  }
+
+  Future<void> updateUserPassword({required String newPassword}) async {
+    await currentUser!.updatePassword(newPassword);
+  }
+
+  Future<bool> validatePassword(String password) async {
+    AuthCredential credential = EmailAuthProvider.credential(email: currentUser!.email!, password: password);
+    try {
+      var authResult = await currentUser!.reauthenticateWithCredential(credential);
+      return authResult.user != null;
+    } catch (e) {
+      return false;
+    }
+  }
+}
