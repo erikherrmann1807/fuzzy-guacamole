@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/data/repositories/database/user_repository.dart';
 import 'package:fuzzy_guacamole/data/services/auth_service.dart';
 import 'package:fuzzy_guacamole/data/services/database_service.dart';
 import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/auth_viewmodel.dart';
+import 'package:fuzzy_guacamole/ui/viewmodels/profile_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 
 part 'reset_password.dart';

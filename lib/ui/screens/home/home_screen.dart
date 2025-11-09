@@ -32,8 +32,92 @@ class _TodayAgendaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final meetingsAsync = ref.watch(meetingStreamProvider);
-    Size size = MediaQuery.sizeOf(context);
+    final state = ref.watch(meetingsViewModelProvider);
+    final size = MediaQuery.sizeOf(context);
+
+    Widget content;
+    if (state.loading) {
+      content = Row(
+        children: const [
+          SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+          SizedBox(width: 12),
+          Text('Lade heutige Termine …'),
+        ],
+      );
+    } else if (state.error != null) {
+      content = Text('Fehler beim Laden: ${state.error}');
+    } else {
+      final meetings = state.items; // <- Plain List<Meeting>
+      final byDay = CalendarUtils.buildMeetingsMapSpanning<Meeting>(
+        meetings,
+            (m) => m.start,
+            (m) => m.end,
+      );
+      final today = DateTime.now();
+      final dayKey = CalendarUtils.dateOnly(today);
+      final todayEvents = byDay[dayKey] ?? [];
+
+      content = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.calendar_today_outlined, size: 16),
+              const SizedBox(width: 6),
+              Text('${_weekdayShortDe(today.weekday)} ${today.day}', style: currentTasksDateText),
+              const Spacer(),
+              const _RoundBtn(icon: Icons.add),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          if (todayEvents.isEmpty)
+            const Text('Keine Termine für Heute', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700))
+          else ...[
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Du hast ${todayEvents.length} Termin${todayEvents.length == 1 ? '' : 'e'} Heute',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Flexible(
+              child: ListView.separated(
+                itemCount: todayEvents.length,
+                shrinkWrap: true,
+                separatorBuilder: (_, __) => const Gap(14),
+                itemBuilder: (context, idx) {
+                  final mt = todayEvents[idx];
+                  final clamp = CalendarUtils.clampToDay(mt.start, mt.end, today);
+                  final startTime = (mt.isAllDay || clamp.fillsFullDay)
+                      ? 'Ganztägig '
+                      : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
+                  final endTime = (mt.isAllDay || clamp.fillsFullDay)
+                      ? ''
+                      : CalendarUtils.formatHHmm(clamp.displayEnd);
+                  final suffix = CalendarUtils.multiDaySuffix(mt.start, mt.end, today);
+
+                  return EventWidget(
+                    startTime: startTime,
+                    endTime: endTime,
+                    description: mt.description,
+                    eventName: '${mt.eventName}$suffix',
+                    function: () => editMeeting(meeting: mt, context: context),
+                    priority: mt.priority,
+                    labelColor: mt.labelColor,
+                    isAllDay: mt.isAllDay,
+                  );
+                },
+              ),
+            ),
+          ],
+        ],
+      );
+    }
 
     return Container(
       width: size.width,
@@ -48,85 +132,7 @@ class _TodayAgendaCard extends StatelessWidget {
         ],
       ),
       constraints: const BoxConstraints(maxHeight: 375),
-      child: meetingsAsync.when(
-        loading: () => Row(
-          children: const [
-            SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
-            SizedBox(width: 12),
-            Text('Lade heutige Termine …'),
-          ],
-        ),
-        error: (err, _) => Text('Fehler beim Laden: $err'),
-        data: (meetings) {
-          final byDay = CalendarUtils.buildMeetingsMapSpanning<Meeting>(meetings, (m) => m.start, (m) => m.end);
-          final today = DateTime.now();
-          final dayKey = CalendarUtils.dateOnly(today);
-          final todayEvents = byDay[dayKey] ?? [];
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.calendar_today_outlined, size: 16),
-                  const SizedBox(width: 6),
-                  Text('${_weekdayShortDe(today.weekday)} ${today.day}', style: currentTasksDateText),
-                  const Spacer(),
-                  const _RoundBtn(icon: Icons.add),
-                ],
-              ),
-              const SizedBox(height: 10),
-
-              if (todayEvents.isEmpty)
-                const Text('Keine Termine für Heute', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700))
-              else ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Du hast ${todayEvents.length} Termin${todayEvents.length == 1 ? '' : 'e'} Heute',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Flexible(
-                  child: ListView.separated(
-                    itemCount: todayEvents.length,
-                    shrinkWrap: true,
-                    //physics: const NeverScrollableScrollPhysics(),
-                    separatorBuilder: (_, __) => const Gap(14),
-                    itemBuilder: (context, idx) {
-                      final mt = todayEvents[idx];
-                      final clamp = CalendarUtils.clampToDay(mt.start, mt.end, today);
-                      final startTime = (mt.isAllDay || clamp.fillsFullDay)
-                          ? 'Ganztägig '
-                          : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
-                      final endTime = (mt.isAllDay || clamp.fillsFullDay)
-                          ? ''
-                          : CalendarUtils.formatHHmm(clamp.displayEnd);
-
-                      final suffix = CalendarUtils.multiDaySuffix(mt.start, mt.end, today);
-
-                      return EventWidget(
-                        startTime: startTime,
-                        endTime: endTime,
-                        description: mt.description,
-                        eventName: '${mt.eventName}$suffix',
-                        function: () => editMeeting(meeting: mt, context: context),
-                        priority: mt.priority,
-                        labelColor: mt.labelColor,
-                        isAllDay: mt.isAllDay,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ],
-          );
-        },
-      ),
+      child: content,
     );
   }
 

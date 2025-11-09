@@ -29,7 +29,7 @@ void main() {
 
     dbService = DatabaseService(
       fireStore: mockFireStore,
-      authService: mockAuth
+      uid: ''
     );
   });
 

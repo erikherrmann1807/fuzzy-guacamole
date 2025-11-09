@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/data/models/user_model.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/data/services/auth_service.dart';
 import 'package:fuzzy_guacamole/data/services/database_service.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
@@ -18,7 +19,6 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final DatabaseService _databaseService = DatabaseService();
   final _formKey = GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -148,7 +148,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void register(AuthViewModel viewModel) async {
     await viewModel.createAccount(emailController.text, passwordController.text, usernameController.text);
-    _databaseService.createMember(Member(userName: usernameController.text, email: emailController.text));
+    final userRepo = ref.read(userRepositoryProvider);
+    if (userRepo != null) {
+      await userRepo.create(
+        Member(
+            userName: usernameController.text,
+            email: emailController.text
+        )
+      );
+    }
     popPage();
   }
 

@@ -2,18 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/data/services/database_service.dart';
 import 'package:fuzzy_guacamole/ui/screens/auth/login_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/calendar/calendar_screen.dart';
 
 class AuthLayout extends ConsumerWidget {
-  const AuthLayout({super.key, this.pageIfNotConnected});
-  final Widget? pageIfNotConnected;
+  const AuthLayout({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final db = ref.watch(databaseServiceProvider);
     final state = ref.watch(authViewModelProvider);
-    final databaseService = DatabaseService();
 
     /*
     if (state.isLoading) {
@@ -21,12 +21,12 @@ class AuthLayout extends ConsumerWidget {
     }
      */
 
-    if (state.user == null) {
+    if (state.user == null || db == null) {
       return const LoginScreen();
     }
 
-    return FutureBuilder<DocumentSnapshot>(
-      future: databaseService.userRef.doc(state.user!.uid).get(),
+    return FutureBuilder(
+      future: db.getMember(),
       builder: (context, snapshot) {
         /*
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -41,7 +41,7 @@ class AuthLayout extends ConsumerWidget {
           return const Text('Nutzerprofil wird erstellt...');
         }
          */
-        return pageIfNotConnected ?? const EventCalendarScreen();
+        return const EventCalendarScreen();
       },
     );
   }

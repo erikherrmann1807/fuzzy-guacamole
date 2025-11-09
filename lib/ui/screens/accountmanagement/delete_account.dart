@@ -1,13 +1,13 @@
 part of 'account_management_screen.dart';
 
 class DeleteAccount {
-  final DatabaseService _databaseService = DatabaseService();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool _isPasswordValid = false;
 
   Future<void> deleteAccountDialog(BuildContext ctx, WidgetRef ref) async {
     final viewModel = ref.read(authViewModelProvider.notifier);
+    final userRepo = ref.read(userRepositoryProvider);
     Size size = MediaQuery.sizeOf(ctx);
     return showDialog<void>(
       context: ctx,
@@ -110,7 +110,7 @@ class DeleteAccount {
                                     _isPasswordValid = ref.read(authViewModelProvider).isValid;
                                     setState(() {});
                                     if (_isPasswordValid) {
-                                      _databaseService.deleteMember();
+                                      await userRepo!.delete();
                                       await viewModel.deleteAccount(emailController.text, passwordController.text);
                                       Navigator.of(context).pushNamedAndRemoveUntil(
                                           Routes.auth,

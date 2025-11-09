@@ -2,10 +2,10 @@ part of 'account_management_screen.dart';
 
 class UpdateUsername {
   TextEditingController usernameController = TextEditingController();
-  final DatabaseService _databaseService = DatabaseService();
 
   Future<void> updateUsernameDialog(BuildContext ctx, WidgetRef ref) async {
     final viewModel = ref.read(authViewModelProvider.notifier);
+    final profileViewModel = ref.read(profileViewModelProvider.notifier);
     Size size = MediaQuery.sizeOf(ctx);
     return showDialog<void>(
       context: ctx,
@@ -71,7 +71,7 @@ class UpdateUsername {
                     ),
                 ),
                 ref.read(authViewModelProvider).isLoading ? CircularProgressIndicator() :
-                DefaultButton(onTap: () => _updateUsername(context, viewModel), title: 'Update Username'),
+                DefaultButton(onTap: () => _updateUsername(context, viewModel, profileViewModel), title: 'Update Username'),
               ],
             ),
           ),
@@ -80,12 +80,9 @@ class UpdateUsername {
     );
   }
 
-  void _updateUsername(BuildContext context, AuthViewModel viewModel) async {
+  void _updateUsername(BuildContext context, AuthViewModel viewModel, ProfileViewModel profileViewModel) async {
     await viewModel.updateUsername(usernameController.text);
-    await _databaseService.updateMemberName(usernameController.text);
-
-    if (context.mounted) {
-      Navigator.of(context).pop();
-    }
+    await profileViewModel.updateName(usernameController.text);
+    Navigator.of(context).pop();
   }
 }

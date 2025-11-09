@@ -388,17 +388,17 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
   }
 
   void _deleteMeeting(String? meetingId) {
-    final database = ref.read(fireStoreProvider)!;
-    database.deleteMeeting(meetingId);
+    final vm = ref.read(meetingsViewModelProvider.notifier);
+    vm.remove(meetingId!);
   }
 
   void _addMeeting(Meeting meeting) {
-    final database = ref.read(fireStoreProvider)!;
-    database.addMeeting(meeting);
+    final vm = ref.read(meetingsViewModelProvider.notifier);
+    vm.add(meeting);
   }
 
   void _updateMeeting(String? meetingId, Meeting meeting) {
-    final database = ref.read(fireStoreProvider)!;
-    database.updateMeeting(meetingId, meeting);
+    final vm = ref.read(meetingsViewModelProvider.notifier);
+    vm.update(meetingId!, meeting);
   }
 }
