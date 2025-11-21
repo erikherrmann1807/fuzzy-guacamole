@@ -7,6 +7,7 @@ import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/data/services/auth_service.dart';
 import 'package:fuzzy_guacamole/data/services/database_service.dart';
+import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/auth_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
@@ -121,22 +122,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: state.isLoading ? const CircularProgressIndicator() : DefaultButton(
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          register(viewModel);
-                        }
-                      },
-                      title: "Register",
-                    ),
+                    child: state.isLoading
+                        ? const CircularProgressIndicator()
+                        : DefaultButton(
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                register(viewModel);
+                              }
+                            },
+                            title: "Register",
+                          ),
                   ),
                 ),
                 SizedBox(height: 10),
                 if (state.error != null)
                   Center(
-                    child: Text(state.error!,
-                        style: TextStyle(color: Colors.redAccent)
-                    ),
+                    child: Text(state.error!, style: TextStyle(color: Colors.redAccent)),
                   ),
               ],
             ),
@@ -150,17 +151,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     await viewModel.createAccount(emailController.text, passwordController.text, usernameController.text);
     final userRepo = ref.read(userRepositoryProvider);
     if (userRepo != null) {
-      await userRepo.create(
-        Member(
-            userName: usernameController.text,
-            email: emailController.text
-        )
-      );
+      await userRepo.create(Member(userName: usernameController.text, email: emailController.text));
     }
     popPage();
   }
 
   void popPage() {
-    Navigator.pushReplacementNamed(context, '/eventCalendar');
+    Navigator.pushReplacementNamed(context, Routes.calendar);
   }
 }

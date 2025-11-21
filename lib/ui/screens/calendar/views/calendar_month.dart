@@ -40,7 +40,6 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     );
   }
 
-
   void editMeeting({required Meeting meeting}) {
     _selectedAppointment = meeting;
     _isAllDay = meeting.isAllDay;
@@ -52,7 +51,7 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
 
-    Navigator.pushNamed(context, '/meetingEditor');
+    Navigator.pushNamed(context, Routes.meetingEditor);
   }
 
   @override
@@ -61,11 +60,11 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
     Size size = MediaQuery.sizeOf(context);
 
     if (state.loading) {
-      return const Center(child: CircularProgressIndicator(),);
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (state.error != null) {
-      return Center(child: Text('Fehler beim Laden: ${state.error}'),);
+      return Center(child: Text('Fehler beim Laden: ${state.error}'));
     }
 
     final meetings = state.items;
@@ -81,7 +80,10 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
               IconButton(icon: const Icon(Icons.arrow_back_ios), onPressed: () => _changeMonth(-1)),
               TextButton(
                 onPressed: () => _selectMonth(),
-                child: Text('${CalendarUtils.monthName(currentMonth.month)} ${currentMonth.year}', style: calendarHeader),
+                child: Text(
+                  '${CalendarUtils.monthName(currentMonth.month)} ${currentMonth.year}',
+                  style: calendarHeader,
+                ),
               ),
               IconButton(icon: const Icon(Icons.arrow_forward_ios), onPressed: () => _changeMonth(1)),
             ],
@@ -183,12 +185,7 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                 color: MyColors.white,
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(1.5, 2),
-                    spreadRadius: 2,
-                    blurStyle: BlurStyle.solid,
-                  ),
+                  BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 2, blurStyle: BlurStyle.solid),
                 ],
               ),
               constraints: const BoxConstraints(maxHeight: 300),
@@ -246,6 +243,4 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
       ),
     );
   }
-
-
 }

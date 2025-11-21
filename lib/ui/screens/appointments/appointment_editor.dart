@@ -245,9 +245,10 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
 
                 if (_selectedAppointment == null) {
                   _addMeeting(meeting);
+                } else {
+                  _updateMeeting(_selectedAppointment?.meetingId, meeting);
+                  _selectedAppointment = null;
                 }
-                _updateMeeting(_selectedAppointment?.meetingId, meeting);
-                _selectedAppointment = null;
 
                 Navigator.pop(context);
               },
@@ -275,7 +276,6 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
     );
   }
 
-  // Custom Date Picker
   Future<DateTime?> _showCustomDatePicker(BuildContext context, DateTime initialDate) async {
     return showDialog<DateTime>(
       context: context,
@@ -323,7 +323,6 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
     );
   }
 
-  // Custom Time Picker
   Future<TimeOfDay?> _showCustomTimePicker(BuildContext context, TimeOfDay initialTime) async {
     Size size = MediaQuery.sizeOf(context);
 

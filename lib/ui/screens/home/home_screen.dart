@@ -47,12 +47,8 @@ class _TodayAgendaCard extends StatelessWidget {
     } else if (state.error != null) {
       content = Text('Fehler beim Laden: ${state.error}');
     } else {
-      final meetings = state.items; // <- Plain List<Meeting>
-      final byDay = CalendarUtils.buildMeetingsMapSpanning<Meeting>(
-        meetings,
-            (m) => m.start,
-            (m) => m.end,
-      );
+      final meetings = state.items;
+      final byDay = CalendarUtils.buildMeetingsMapSpanning<Meeting>(meetings, (m) => m.start, (m) => m.end);
       final today = DateTime.now();
       final dayKey = CalendarUtils.dateOnly(today);
       final todayEvents = byDay[dayKey] ?? [];
@@ -96,9 +92,7 @@ class _TodayAgendaCard extends StatelessWidget {
                   final startTime = (mt.isAllDay || clamp.fillsFullDay)
                       ? 'Ganztägig '
                       : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
-                  final endTime = (mt.isAllDay || clamp.fillsFullDay)
-                      ? ''
-                      : CalendarUtils.formatHHmm(clamp.displayEnd);
+                  final endTime = (mt.isAllDay || clamp.fillsFullDay) ? '' : CalendarUtils.formatHHmm(clamp.displayEnd);
                   final suffix = CalendarUtils.multiDaySuffix(mt.start, mt.end, today);
 
                   return EventWidget(
@@ -152,7 +146,7 @@ class _TodayAgendaCard extends StatelessWidget {
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
 
-    Navigator.pushNamed(context, '/meetingEditor');
+    Navigator.pushNamed(context, Routes.meetingEditor);
   }
 }
 
@@ -169,7 +163,7 @@ class _RoundBtn extends StatelessWidget {
       child: IconButton(
         icon: Icon(icon, color: MyColors.white),
         onPressed: () {
-          Navigator.pushNamed(context, '/meetingEditor');
+          Navigator.pushNamed(context, Routes.meetingEditor);
         },
       ),
     );

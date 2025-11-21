@@ -30,48 +30,52 @@ class UpdateUsername {
               children: [
                 Text('Update Username', style: Theme.of(context).textTheme.headlineSmall),
                 Flexible(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          'Geben Sie in folgendem Feld Ihren neuen Nutzernamen ein '
-                          'und bestätigen Sie die Änderung mit dem Button am Ende',
-                        ),
-                        TextFormField(
-                          controller: usernameController,
-                          validator: MultiValidator([
-                            RequiredValidator(errorText: 'Enter Username'),
-                            PatternValidator(
-                              r"^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",
-                              errorText:
-                                  'The Username needs to be 8-20 Characters long.\n'
-                                  'No "_" or "." at the beginning.\n'
-                                  'No "__" or "_." or "._" or ".." or " " inside.\n'
-                                  'No "_" or "." at the end.',
-                            ),
-                          ]).call,
-                          cursorColor: MyColors.raisinBlack,
-                          decoration: InputDecoration(
-                            hintText: 'Username',
-                            labelText: 'Username',
-                            prefixIcon: Icon(Icons.person),
-                            errorStyle: TextStyle(fontSize: 14.0),
-                            labelStyle: TextStyle(color: MyColors.raisinBlack),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: MyColors.raisinBlack),
-                              borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: MyColors.raisinBlack),
-                              borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                            ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        'Geben Sie in folgendem Feld Ihren neuen Nutzernamen ein '
+                        'und bestätigen Sie die Änderung mit dem Button am Ende',
+                      ),
+                      TextFormField(
+                        controller: usernameController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'Enter Username'),
+                          PatternValidator(
+                            r"^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",
+                            errorText:
+                                'The Username needs to be 8-20 Characters long.\n'
+                                'No "_" or "." at the beginning.\n'
+                                'No "__" or "_." or "._" or ".." or " " inside.\n'
+                                'No "_" or "." at the end.',
+                          ),
+                        ]).call,
+                        cursorColor: MyColors.raisinBlack,
+                        decoration: InputDecoration(
+                          hintText: 'Username',
+                          labelText: 'Username',
+                          prefixIcon: Icon(Icons.person),
+                          errorStyle: TextStyle(fontSize: 14.0),
+                          labelStyle: TextStyle(color: MyColors.raisinBlack),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: MyColors.raisinBlack),
+                            borderRadius: BorderRadius.all(Radius.circular(9.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: MyColors.raisinBlack),
+                            borderRadius: BorderRadius.all(Radius.circular(9.0)),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
                 ),
-                ref.read(authViewModelProvider).isLoading ? CircularProgressIndicator() :
-                DefaultButton(onTap: () => _updateUsername(context, viewModel, profileViewModel), title: 'Update Username'),
+                ref.read(authViewModelProvider).isLoading
+                    ? CircularProgressIndicator()
+                    : DefaultButton(
+                        onTap: () => _updateUsername(context, viewModel, profileViewModel),
+                        title: 'Update Username',
+                      ),
               ],
             ),
           ),

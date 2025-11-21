@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
-import 'package:fuzzy_guacamole/data/repositories/database/user_repository.dart';
 import 'package:fuzzy_guacamole/data/services/auth_service.dart';
-import 'package:fuzzy_guacamole/data/services/database_service.dart';
 import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/auth_viewmodel.dart';
@@ -27,7 +25,7 @@ class AccountManagementScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.read(authViewModelProvider.notifier);
     void popPage() {
-      Navigator.of(context).pushNamedAndRemoveUntil('/authLayout', (route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(Routes.auth, (route) => false);
     }
 
     Future<void> logout() async {
@@ -42,7 +40,10 @@ class AccountManagementScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            DefaultButton(onTap: () => ResetPassword().resetPasswordDialog(context, ref), title: 'Passwort zurücksetzen'),
+            DefaultButton(
+              onTap: () => ResetPassword().resetPasswordDialog(context, ref),
+              title: 'Passwort zurücksetzen',
+            ),
             SizedBox(height: 20.0),
             DefaultButton(onTap: () => UpdateUsername().updateUsernameDialog(context, ref), title: 'Update Username'),
             SizedBox(height: 20.0),

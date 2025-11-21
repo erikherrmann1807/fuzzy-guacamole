@@ -5,15 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
-import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/accountmanagement/account_management_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/auth/app_loading_page.dart';
 import 'package:fuzzy_guacamole/ui/screens/settings/settingsmenu.dart';
-import 'package:fuzzy_guacamole/ui/viewmodels/meetings_viewmodel.dart';
-import 'package:fuzzy_guacamole/ui/viewmodels/profile_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/app_bar.dart';
 import 'package:fuzzy_guacamole/ui/widgets/event_widget.dart';
 import 'package:fuzzy_guacamole/ui/widgets/home_widgets/weather_widget.dart';
@@ -84,7 +82,6 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
       return Center(child: Text('Fehler: ${profile.error}'));
     }
 
-    // Username aus dem geladenen Member ziehen (Fallback, falls null)
     final username = profile.member?.userName ?? "Nutzer";
 
     return Scaffold(
@@ -105,7 +102,11 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
                 children: [
                   IconButton(icon: const Icon(Icons.home), color: MyColors.white, onPressed: () => _onItemTapped(0)),
                   SizedBox(width: size.width * 0.05),
-                  IconButton(icon: const Icon(Icons.calendar_month), color: MyColors.white, onPressed: () => _onItemTapped(1)),
+                  IconButton(
+                    icon: const Icon(Icons.calendar_month),
+                    color: MyColors.white,
+                    onPressed: () => _onItemTapped(1),
+                  ),
                   SizedBox(width: size.width * 0.08),
                 ],
               ),
@@ -117,7 +118,11 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
                   SizedBox(width: size.width * 0.08),
                   IconButton(icon: const Icon(Icons.person), color: MyColors.white, onPressed: () => _onItemTapped(3)),
                   SizedBox(width: size.width * 0.05),
-                  IconButton(icon: const Icon(Icons.settings), color: MyColors.white, onPressed: () => _onItemTapped(4)),
+                  IconButton(
+                    icon: const Icon(Icons.settings),
+                    color: MyColors.white,
+                    onPressed: () => _onItemTapped(4),
+                  ),
                 ],
               ),
             ),
@@ -188,6 +193,6 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
 
-    Navigator.pushNamed(context, '/meetingEditor');
+    Navigator.pushNamed(context, Routes.meetingEditor);
   }
 }

@@ -12,11 +12,7 @@ class MeetingsState {
   const MeetingsState({this.loading = false, this.items = const [], this.error});
 
   MeetingsState copyWith({bool? loading, List<Meeting>? items, String? error}) {
-    return MeetingsState(
-      loading: loading ?? this.loading,
-      items: items ?? this.items,
-      error: error,
-    );
+    return MeetingsState(loading: loading ?? this.loading, items: items ?? this.items, error: error);
   }
 }
 
@@ -25,10 +21,9 @@ class MeetingsViewModel extends StateNotifier<MeetingsState> {
   StreamSubscription<List<Meeting>>? _sub;
 
   MeetingsViewModel(this.ref) : super(const MeetingsState()) {
-    // auf Repo-Änderungen (Login/Logout) reagieren und neu abonnieren
     ref.listen<MeetingRepository?>(
       meetingRepositoryProvider,
-          (prev, next) => _resubscribe(next),
+      (prev, next) => _resubscribe(next),
       fireImmediately: true,
     );
   }
@@ -36,17 +31,16 @@ class MeetingsViewModel extends StateNotifier<MeetingsState> {
   void _resubscribe(MeetingRepository? repo) {
     _sub?.cancel();
     if (repo == null) {
-      state = const MeetingsState(); // ausgeloggt → leer
+      state = const MeetingsState();
       return;
     }
     state = state.copyWith(loading: true, error: null);
     _sub = repo.watchAll().listen(
-          (items) => state = state.copyWith(loading: false, items: items),
+      (items) => state = state.copyWith(loading: false, items: items),
       onError: (e, st) => state = state.copyWith(loading: false, error: e.toString()),
     );
   }
 
-  // Optional: einmaliges Nachladen (falls du manuell refresht)
   Future<void> refresh() async {
     final repo = ref.read(meetingRepositoryProvider);
     if (repo == null) return;
@@ -59,7 +53,6 @@ class MeetingsViewModel extends StateNotifier<MeetingsState> {
     }
   }
 
-  // Aktionen – Stream aktualisiert danach automatisch die UI
   Future<void> add(Meeting m) async {
     final repo = ref.read(meetingRepositoryProvider);
     if (repo != null) await repo.add(m);
@@ -81,9 +74,3 @@ class MeetingsViewModel extends StateNotifier<MeetingsState> {
     super.dispose();
   }
 }
-
-// Provider
-final meetingsViewModelProvider =
-StateNotifierProvider<MeetingsViewModel, MeetingsState>(
-      (ref) => MeetingsViewModel(ref),
-);

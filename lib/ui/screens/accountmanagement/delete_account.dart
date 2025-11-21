@@ -103,23 +103,28 @@ class DeleteAccount {
                             SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: ref.read(authViewModelProvider).isLoading ? [CircularProgressIndicator()] : [
-                                DefaultButton(
-                                  onTap: () async {
-                                    await viewModel.validatePassword(passwordController.text);
-                                    _isPasswordValid = ref.read(authViewModelProvider).isValid;
-                                    setState(() {});
-                                    if (_isPasswordValid) {
-                                      await userRepo!.delete();
-                                      await viewModel.deleteAccount(emailController.text, passwordController.text);
-                                      Navigator.of(context).pushNamedAndRemoveUntil(
-                                          Routes.auth,
-                                          (route) => false);
-                                    }
-                                  },
-                                  title: 'Delete Account',
-                                ),
-                              ],
+                              children: ref.read(authViewModelProvider).isLoading
+                                  ? [CircularProgressIndicator()]
+                                  : [
+                                      DefaultButton(
+                                        onTap: () async {
+                                          await viewModel.validatePassword(passwordController.text);
+                                          _isPasswordValid = ref.read(authViewModelProvider).isValid;
+                                          setState(() {});
+                                          if (_isPasswordValid) {
+                                            await userRepo!.delete();
+                                            await viewModel.deleteAccount(
+                                              emailController.text,
+                                              passwordController.text,
+                                            );
+                                            Navigator.of(
+                                              context,
+                                            ).pushNamedAndRemoveUntil(Routes.auth, (route) => false);
+                                          }
+                                        },
+                                        title: 'Delete Account',
+                                      ),
+                                    ],
                             ),
                           ],
                         ),

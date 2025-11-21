@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 
@@ -52,9 +53,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       labelText: 'Email',
                       prefixIcon: Icon(Icons.email, color: MyColors.raisinBlack),
                       errorStyle: const TextStyle(fontSize: 18.0),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                      ),
+                      border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(9.0))),
                     ),
                   ),
                 ),
@@ -65,44 +64,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     controller: passwordController,
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Enter password'),
-                      PatternValidator(
-                        r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
-                        errorText: 'Wrong Password',
-                      ),
+                      PatternValidator(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", errorText: 'Wrong Password'),
                     ]).call,
                     decoration: InputDecoration(
                       hintText: 'Password',
                       labelText: 'Password',
                       prefixIcon: Icon(Icons.password, color: MyColors.raisinBlack),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(9)),
-                      ),
+                      border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(9))),
                     ),
                   ),
                 ),
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
-                    child: state.isLoading ? const CircularProgressIndicator() : DefaultButton(
-                      onTap: () async {
-                        if (_formKey.currentState!.validate()) {
-                          await viewModel.login(
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                          );
-                        }
-                      },
-                      title: "Login",
-                    ),
+                    child: state.isLoading
+                        ? const CircularProgressIndicator()
+                        : DefaultButton(
+                            onTap: () async {
+                              if (_formKey.currentState!.validate()) {
+                                await viewModel.login(emailController.text.trim(), passwordController.text.trim());
+                              }
+                            },
+                            title: "Login",
+                          ),
                   ),
                 ),
                 const SizedBox(height: 10),
                 if (state.error != null)
                   Center(
-                    child: Text(
-                      state.error!,
-                      style: const TextStyle(color: Colors.redAccent),
-                    ),
+                    child: Text(state.error!, style: const TextStyle(color: Colors.redAccent)),
                   ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const Text('Got no Account?', style: TextStyle(color: Colors.black)),
                     TextButton(
                       child: const Text('You can register here!'),
-                      onPressed: () => Navigator.pushReplacementNamed(context, '/registerScreen'),
+                      onPressed: () => Navigator.pushReplacementNamed(context, Routes.register),
                     ),
                   ],
                 ),

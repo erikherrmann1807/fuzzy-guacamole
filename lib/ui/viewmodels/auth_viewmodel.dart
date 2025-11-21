@@ -10,13 +10,12 @@ class AuthState {
 
   const AuthState({this.isLoading = false, this.user, this.error, this.isValid = false});
 
-  AuthState copyWith({bool? isLoading, User? user, String? error, bool? isValid}) =>
-      AuthState(
-        isLoading: isLoading ?? this.isLoading,
-        user: user ?? this.user,
-        error: error,
-        isValid: isValid ?? this.isValid
-      );
+  AuthState copyWith({bool? isLoading, User? user, String? error, bool? isValid}) => AuthState(
+    isLoading: isLoading ?? this.isLoading,
+    user: user ?? this.user,
+    error: error,
+    isValid: isValid ?? this.isValid,
+  );
 }
 
 class AuthViewModel extends StateNotifier<AuthState> {

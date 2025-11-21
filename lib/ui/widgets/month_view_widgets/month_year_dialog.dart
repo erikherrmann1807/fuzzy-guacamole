@@ -4,11 +4,7 @@ import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
 
 class MonthYearDialog extends StatefulWidget {
-  const MonthYearDialog({
-    super.key,
-    required this.initialMonth,
-    required this.onSelected,
-  });
+  const MonthYearDialog({super.key, required this.initialMonth, required this.onSelected});
 
   final DateTime initialMonth;
   final void Function(DateTime newDate) onSelected;
@@ -43,12 +39,7 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
           color: MyColors.white,
           borderRadius: BorderRadius.circular(8),
           boxShadow: const [
-            BoxShadow(
-              color: Colors.black,
-              offset: Offset(1.5, 2),
-              spreadRadius: 1,
-              blurStyle: BlurStyle.solid,
-            ),
+            BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 1, blurStyle: BlurStyle.solid),
           ],
         ),
         child: Material(
@@ -59,8 +50,7 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Monat und Jahr wählen",
-                      style: Theme.of(context).textTheme.titleLarge),
+                  Text("Monat und Jahr wählen", style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,10 +60,7 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
                           child: DropdownButton<int>(
                             value: selectedMonthIndex,
                             items: List.generate(months.length, (i) {
-                              return DropdownMenuItem<int>(
-                                value: i,
-                                child: Text(months[i]),
-                              );
+                              return DropdownMenuItem<int>(value: i, child: Text(months[i]));
                             }),
                             onChanged: (newIndex) {
                               if (newIndex != null) {
@@ -89,10 +76,7 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
                           child: DropdownButton<int>(
                             value: selectedYear,
                             items: years.map((y) {
-                              return DropdownMenuItem<int>(
-                                value: y,
-                                child: Text(y.toString()),
-                              );
+                              return DropdownMenuItem<int>(value: y, child: Text(y.toString()));
                             }).toList(),
                             onChanged: (newYear) {
                               if (newYear != null) {
@@ -113,10 +97,7 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
                         height: 40,
                         child: DefaultButton(
                           onTap: () {
-                            final newDate = DateTime(
-                              selectedYear,
-                              selectedMonthIndex + 1,
-                            );
+                            final newDate = DateTime(selectedYear, selectedMonthIndex + 1);
                             widget.onSelected(newDate);
                             Navigator.of(context).pop();
                           },
@@ -127,10 +108,7 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
                       SizedBox(
                         width: 100,
                         height: 40,
-                        child: DefaultButton(
-                          onTap: () => Navigator.of(context).pop(),
-                          title: 'Abbrechen',
-                        ),
+                        child: DefaultButton(onTap: () => Navigator.of(context).pop(), title: 'Abbrechen'),
                       ),
                     ],
                   ),

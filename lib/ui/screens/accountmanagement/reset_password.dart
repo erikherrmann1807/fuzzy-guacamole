@@ -27,17 +27,18 @@ class ResetPassword {
               children: [
                 Text('Reset Password', style: Theme.of(context).textTheme.headlineSmall),
                 Flexible(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          'Um ihr Passwort zurückzusetzen wird Ihnen eine E-Mail '
-                          'mit einem Link zum Zurücksetzen zugeschickt.',
-                        ),
-                       ref.read(authViewModelProvider).isLoading ? CircularProgressIndicator() :
-                       DefaultButton(onTap: () => _resetPassword(context, viewModel), title: 'Reset Password'),
-                      ],
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        'Um ihr Passwort zurückzusetzen wird Ihnen eine E-Mail '
+                        'mit einem Link zum Zurücksetzen zugeschickt.',
+                      ),
+                      ref.read(authViewModelProvider).isLoading
+                          ? CircularProgressIndicator()
+                          : DefaultButton(onTap: () => _resetPassword(context, viewModel), title: 'Reset Password'),
+                    ],
+                  ),
                 ),
               ],
             ),
