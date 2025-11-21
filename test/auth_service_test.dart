@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/data/services/auth_service.dart';
 import 'package:mocktail/mocktail.dart';
 
 class FakeUser extends Mock implements User {}

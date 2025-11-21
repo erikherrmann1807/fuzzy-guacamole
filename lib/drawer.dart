@@ -1,6 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/routes.dart';
 
 class MyDrawer extends StatefulWidget {
   final String? username;
@@ -65,13 +64,13 @@ class _MyDrawerState extends State<MyDrawer> {
             leading: const Icon(Icons.settings_outlined),
             title: const Text('Einstellung'),
             onTap: () {
-              Navigator.pushNamed(context, '/settingsScreen');
+              Navigator.pushNamed(context, Routes.settings);
             },
           ),
           ListTile(
             leading: const Icon(Icons.manage_accounts_outlined),
             title: const Text('Account Management'),
-            onTap: () => Navigator.pushNamed(context, '/accountManagementScreen'),
+            onTap: () => Navigator.pushNamed(context, Routes.accManagement),
           ),
           ListTile(leading: const Icon(Icons.help_outline_rounded), title: const Text('Hilfe'), onTap: () {}),
           const Divider(color: Colors.grey),

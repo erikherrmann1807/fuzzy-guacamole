@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzy_guacamole/constants.dart';
-import 'package:fuzzy_guacamole/models/appointment_model.dart';
-import 'package:fuzzy_guacamole/services/database_service.dart';
-import 'package:fuzzy_guacamole/services/auth_service.dart';
+import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
+import 'package:fuzzy_guacamole/data/services/auth_service.dart';
+import 'package:fuzzy_guacamole/data/services/database_service.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
@@ -29,7 +29,7 @@ void main() {
 
     dbService = DatabaseService(
       fireStore: mockFireStore,
-      authService: mockAuth
+      uid: ''
     );
   });
 
