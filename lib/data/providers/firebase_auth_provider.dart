@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/repositories/auth_repository.dart';
 import 'package:fuzzy_guacamole/data/services/auth_service.dart';
