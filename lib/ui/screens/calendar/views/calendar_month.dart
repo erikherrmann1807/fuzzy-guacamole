@@ -5,6 +5,7 @@ import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
+import 'package:fuzzy_guacamole/ui/screens/calendar/views/calendar_day.dart';
 import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_dialog.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/calendar_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/agenda_list.dart';
@@ -67,7 +68,14 @@ class MonthlyScreen extends ConsumerWidget {
             child: _MonthGrid(
               calendar: calendar,
               meetingsByDay: meetingsByDay,
-              onDateSelected: calendarVm.selectDate,
+              // Zweites Antippen des bereits ausgewählten Tages öffnet die Tagesansicht.
+              onDateSelected: (date) {
+                if (CalendarUtils.isSameDate(calendar.selectedDate, date)) {
+                  openDayView(context);
+                } else {
+                  calendarVm.selectDate(date);
+                }
+              },
             ),
           ),
           const Divider(),
@@ -95,6 +103,12 @@ class MonthlyScreen extends ConsumerWidget {
                           context.l10n.agendaForDate(DateFormat.yMd(locale).format(calendar.selectedDate)),
                           style: agendaDateText,
                         ),
+                      ),
+                      IconButton(
+                        tooltip: context.l10n.dayViewTooltip,
+                        visualDensity: VisualDensity.compact,
+                        icon: const Icon(Icons.calendar_view_day_outlined, color: MyColors.raisinBlack),
+                        onPressed: () => openDayView(context),
                       ),
                       IconButton(
                         tooltip: context.l10n.dailyTasksTooltip,

@@ -294,4 +294,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteTaskFailed => 'The task could not be deleted.';
+
+  @override
+  String get dayViewTooltip => 'Day view';
+
+  @override
+  String get previousDay => 'Previous day';
+
+  @override
+  String get nextDay => 'Next day';
 }

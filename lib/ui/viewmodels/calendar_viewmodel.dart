@@ -40,6 +40,17 @@ class CalendarViewModel extends StateNotifier<CalendarState> {
     state = state.copyWith(visibleMonth: DateTime(m.year, m.month + offset));
   }
 
+  void goToPreviousDay() => _shiftDay(-1);
+
+  void goToNextDay() => _shiftDay(1);
+
+  /// Verschiebt den ausgewählten Tag und hält den sichtbaren Monat synchron,
+  /// damit die Monatsansicht nach der Tagesnavigation zum Tag passt.
+  void _shiftDay(int offset) {
+    final newDate = state.selectedDate.add(Duration(days: offset));
+    state = CalendarState(visibleMonth: newDate, selectedDate: newDate);
+  }
+
   void showMonth(DateTime month) => state = state.copyWith(visibleMonth: month);
 
   void selectDate(DateTime date) => state = state.copyWith(selectedDate: date);

@@ -114,5 +114,9 @@
   "taskReminderAt": "Erinnerung um {time}",
   "@taskReminderAt": {"placeholders": {"time": {"type": "String"}}},
   "saveTaskFailed": "Die Aufgabe konnte nicht gespeichert werden.",
-  "deleteTaskFailed": "Die Aufgabe konnte nicht gelöscht werden."
+  "deleteTaskFailed": "Die Aufgabe konnte nicht gelöscht werden.",
+
+  "dayViewTooltip": "Tagesansicht",
+  "previousDay": "Vorheriger Tag",
+  "nextDay": "Nächster Tag"
 }

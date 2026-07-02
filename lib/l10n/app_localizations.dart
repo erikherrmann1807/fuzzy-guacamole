@@ -559,6 +559,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die Aufgabe konnte nicht gelöscht werden.'**
   String get deleteTaskFailed;
+
+  /// No description provided for @dayViewTooltip.
+  ///
+  /// In de, this message translates to:
+  /// **'Tagesansicht'**
+  String get dayViewTooltip;
+
+  /// No description provided for @previousDay.
+  ///
+  /// In de, this message translates to:
+  /// **'Vorheriger Tag'**
+  String get previousDay;
+
+  /// No description provided for @nextDay.
+  ///
+  /// In de, this message translates to:
+  /// **'Nächster Tag'**
+  String get nextDay;
 }
 
 class _AppLocalizationsDelegate
