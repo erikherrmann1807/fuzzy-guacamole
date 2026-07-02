@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/screens/accountmanagement/account_management_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
@@ -49,11 +50,11 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Fehler: ${profile.error}'),
+              Text(context.l10n.errorWithMessage(profile.error!)),
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () => ref.read(profileViewModelProvider.notifier).load(),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.retry),
               ),
             ],
           ),
@@ -61,7 +62,7 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
       );
     }
 
-    final username = profile.member?.userName ?? 'Nutzer';
+    final username = profile.member?.userName ?? context.l10n.defaultUsername;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -145,19 +146,20 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
   }
 
   AppBar _appBarForTab(String username) {
+    final l10n = context.l10n;
     switch (_selectedTab) {
       case _Tab.home:
-        return customAppBar('Hallo👋, $username!', showTodayButton: false);
+        return customAppBar(l10n.greeting(username), showTodayButton: false);
       case _Tab.calendar:
         return customAppBar(
-          'Hallo👋, $username!',
+          l10n.greeting(username),
           showTodayButton: true,
           onTodayPressed: () => ref.read(calendarViewModelProvider.notifier).resetToToday(),
         );
       case _Tab.account:
-        return customAppBar('Account Management', showTodayButton: false);
+        return customAppBar(l10n.accountManagementTitle, showTodayButton: false);
       case _Tab.settings:
-        return customAppBar('Settings', showTodayButton: false);
+        return customAppBar(l10n.settingsTitle, showTodayButton: false);
     }
   }
 

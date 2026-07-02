@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/auth_viewmodel.dart';
@@ -16,9 +18,9 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   void dispose() {
@@ -32,8 +34,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(authViewModelProvider);
     final viewModel = ref.read(authViewModelProvider.notifier);
+    final l10n = context.l10n;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Register')),
+      appBar: AppBar(title: Text(l10n.register)),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -47,22 +51,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   child: TextFormField(
                     controller: usernameController,
                     validator: MultiValidator([
-                      RequiredValidator(errorText: 'Enter Username'),
-                      PatternValidator(
-                        r"^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",
-                        errorText:
-                            'The Username needs to be 8-20 Characters long.\n'
-                            'No "_" or "." at the beginning.\n'
-                            'No "__" or "_." or "._" or ".." inside.\n'
-                            'No "_" or "." at the end.',
-                      ),
+                      RequiredValidator(errorText: l10n.enterUsername),
+                      PatternValidator(usernamePattern, errorText: l10n.invalidUsername),
                     ]).call,
                     decoration: InputDecoration(
-                      hintText: 'Username',
-                      labelText: 'Username',
-                      prefixIcon: Icon(Icons.person, color: MyColors.raisinBlack),
-                      errorStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
+                      hintText: l10n.username,
+                      labelText: l10n.username,
+                      prefixIcon: const Icon(Icons.person, color: MyColors.raisinBlack),
+                      errorStyle: const TextStyle(fontSize: 18.0),
+                      border: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.red),
                         borderRadius: BorderRadius.all(Radius.circular(9.0)),
                       ),
@@ -74,15 +71,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   child: TextFormField(
                     controller: emailController,
                     validator: MultiValidator([
-                      RequiredValidator(errorText: 'Enter email address'),
-                      EmailValidator(errorText: 'Please correct email filled'),
+                      RequiredValidator(errorText: l10n.enterEmail),
+                      EmailValidator(errorText: l10n.invalidEmail),
                     ]).call,
                     decoration: InputDecoration(
-                      hintText: 'Email',
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email, color: MyColors.raisinBlack),
-                      errorStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
+                      hintText: l10n.email,
+                      labelText: l10n.email,
+                      prefixIcon: const Icon(Icons.email, color: MyColors.raisinBlack),
+                      errorStyle: const TextStyle(fontSize: 18.0),
+                      border: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.red),
                         borderRadius: BorderRadius.all(Radius.circular(9.0)),
                       ),
@@ -95,19 +92,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     obscureText: true,
                     controller: passwordController,
                     validator: MultiValidator([
-                      RequiredValidator(errorText: 'Enter password'),
-                      PatternValidator(
-                        r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
-                        errorText:
-                            'Password muss contain minimum eight characters, '
-                            'at least one letter and one number',
-                      ),
+                      RequiredValidator(errorText: l10n.enterPassword),
+                      PatternValidator(passwordPattern, errorText: l10n.invalidPassword),
                     ]).call,
                     decoration: InputDecoration(
-                      hintText: 'Password',
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.password, color: MyColors.raisinBlack),
-                      border: OutlineInputBorder(
+                      hintText: l10n.password,
+                      labelText: l10n.password,
+                      prefixIcon: const Icon(Icons.password, color: MyColors.raisinBlack),
+                      border: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.red),
                         borderRadius: BorderRadius.all(Radius.circular(9)),
                       ),
@@ -125,14 +117,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 register(viewModel);
                               }
                             },
-                            title: "Register",
+                            title: l10n.register,
                           ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 if (state.error != null)
                   Center(
-                    child: Text(state.error!, style: TextStyle(color: Colors.redAccent)),
+                    child: Text(state.error!, style: const TextStyle(color: Colors.redAccent)),
                   ),
               ],
             ),

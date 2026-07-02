@@ -98,11 +98,359 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
-  /// Give as much context as possible
+  /// Titel und Button des Login-Screens
   ///
   /// In de, this message translates to:
-  /// **'Hallo Welt!'**
-  String get helloWorld;
+  /// **'Login'**
+  String get login;
+
+  /// Titel und Button des Registrierungs-Screens
+  ///
+  /// In de, this message translates to:
+  /// **'Registrieren'**
+  String get register;
+
+  /// No description provided for @email.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort'**
+  String get password;
+
+  /// No description provided for @username.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzername'**
+  String get username;
+
+  /// No description provided for @oldPassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Altes Passwort'**
+  String get oldPassword;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Passwort'**
+  String get newPassword;
+
+  /// No description provided for @enterEmail.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail-Adresse eingeben'**
+  String get enterEmail;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte eine gültige E-Mail-Adresse eingeben'**
+  String get invalidEmail;
+
+  /// No description provided for @enterPassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort eingeben'**
+  String get enterPassword;
+
+  /// No description provided for @invalidPassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Das Passwort muss mindestens acht Zeichen, davon mindestens einen Buchstaben und eine Zahl enthalten'**
+  String get invalidPassword;
+
+  /// No description provided for @enterUsername.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzernamen eingeben'**
+  String get enterUsername;
+
+  /// No description provided for @invalidUsername.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Nutzername muss 8–20 Zeichen lang sein.\nKein \"_\" oder \".\" am Anfang.\nKein \"__\", \"_.\", \"._\" oder \"..\" im Namen.\nKein \"_\" oder \".\" am Ende.'**
+  String get invalidUsername;
+
+  /// No description provided for @noAccountYet.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keinen Account?'**
+  String get noAccountYet;
+
+  /// No description provided for @registerHere.
+  ///
+  /// In de, this message translates to:
+  /// **'Hier registrieren!'**
+  String get registerHere;
+
+  /// Begrüßung in der AppBar
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo👋, {username}!'**
+  String greeting(String username);
+
+  /// No description provided for @defaultUsername.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzer'**
+  String get defaultUsername;
+
+  /// No description provided for @accountManagementTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Account-Verwaltung'**
+  String get accountManagementTitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellungen'**
+  String get settingsTitle;
+
+  /// No description provided for @retry.
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut versuchen'**
+  String get retry;
+
+  /// No description provided for @errorWithMessage.
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {message}'**
+  String errorWithMessage(String message);
+
+  /// No description provided for @loadingError.
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {message}'**
+  String loadingError(String message);
+
+  /// No description provided for @currentTasks.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Aufgaben'**
+  String get currentTasks;
+
+  /// No description provided for @loadingTodaysAppointments.
+  ///
+  /// In de, this message translates to:
+  /// **'Lade heutige Termine …'**
+  String get loadingTodaysAppointments;
+
+  /// No description provided for @loadingWeather.
+  ///
+  /// In de, this message translates to:
+  /// **'Wetter laden …'**
+  String get loadingWeather;
+
+  /// No description provided for @noAppointments.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Termine'**
+  String get noAppointments;
+
+  /// No description provided for @noAppointmentsToday.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Termine für heute'**
+  String get noAppointmentsToday;
+
+  /// Anzahl der heutigen Termine auf dem Home-Screen
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one{Du hast 1 Termin heute} other{Du hast {count} Termine heute}}'**
+  String appointmentsTodayCount(int count);
+
+  /// No description provided for @agendaForDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Agenda für {date}'**
+  String agendaForDate(String date);
+
+  /// No description provided for @allDay.
+  ///
+  /// In de, this message translates to:
+  /// **'Ganztägig'**
+  String get allDay;
+
+  /// Suffix hinter Terminnamen bei mehrtägigen Terminen
+  ///
+  /// In de, this message translates to:
+  /// **' (Tag {dayIndex}/{totalDays})'**
+  String multiDaySuffix(int dayIndex, int totalDays);
+
+  /// No description provided for @selectMonthAndYear.
+  ///
+  /// In de, this message translates to:
+  /// **'Monat und Jahr wählen'**
+  String get selectMonthAndYear;
+
+  /// No description provided for @ok.
+  ///
+  /// In de, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @cancel.
+  ///
+  /// In de, this message translates to:
+  /// **'Abbrechen'**
+  String get cancel;
+
+  /// No description provided for @newEvent.
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Termin'**
+  String get newEvent;
+
+  /// No description provided for @eventDetails.
+  ///
+  /// In de, this message translates to:
+  /// **'Termindetails'**
+  String get eventDetails;
+
+  /// No description provided for @addTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Titel hinzufügen'**
+  String get addTitle;
+
+  /// No description provided for @addDescription.
+  ///
+  /// In de, this message translates to:
+  /// **'Beschreibung hinzufügen'**
+  String get addDescription;
+
+  /// No description provided for @noTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'(Ohne Titel)'**
+  String get noTitle;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Datum auswählen'**
+  String get selectDate;
+
+  /// No description provided for @saveMeetingFailed.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Termin konnte nicht gespeichert werden.'**
+  String get saveMeetingFailed;
+
+  /// No description provided for @deleteMeetingFailed.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Termin konnte nicht gelöscht werden.'**
+  String get deleteMeetingFailed;
+
+  /// No description provided for @priorityHigh.
+  ///
+  /// In de, this message translates to:
+  /// **'Hoch'**
+  String get priorityHigh;
+
+  /// No description provided for @priorityLow.
+  ///
+  /// In de, this message translates to:
+  /// **'Niedrig'**
+  String get priorityLow;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort zurücksetzen'**
+  String get resetPassword;
+
+  /// No description provided for @resetPasswordInfo.
+  ///
+  /// In de, this message translates to:
+  /// **'Um Ihr Passwort zurückzusetzen, wird Ihnen eine E-Mail mit einem Link zum Zurücksetzen zugeschickt.'**
+  String get resetPasswordInfo;
+
+  /// No description provided for @updateUsername.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzernamen ändern'**
+  String get updateUsername;
+
+  /// No description provided for @updateUsernameInfo.
+  ///
+  /// In de, this message translates to:
+  /// **'Geben Sie in folgendem Feld Ihren neuen Nutzernamen ein und bestätigen Sie die Änderung mit dem Button am Ende.'**
+  String get updateUsernameInfo;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In de, this message translates to:
+  /// **'Account löschen'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountInfo.
+  ///
+  /// In de, this message translates to:
+  /// **'Um Ihren Account zu löschen, müssen Sie Ihre E-Mail und Ihr Passwort angeben.'**
+  String get deleteAccountInfo;
+
+  /// No description provided for @updatePassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort ändern'**
+  String get updatePassword;
+
+  /// No description provided for @updatePasswordInfo.
+  ///
+  /// In de, this message translates to:
+  /// **'Um Ihr Passwort zu ändern, benötigen Sie das aktuelle und ein neues Passwort.'**
+  String get updatePasswordInfo;
+
+  /// No description provided for @logout.
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden'**
+  String get logout;
+
+  /// No description provided for @wrongCurrentPassword.
+  ///
+  /// In de, this message translates to:
+  /// **'Das aktuelle Passwort ist nicht korrekt.'**
+  String get wrongCurrentPassword;
+
+  /// No description provided for @wrongEmailOrPassword.
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail oder Passwort ist nicht korrekt.'**
+  String get wrongEmailOrPassword;
+
+  /// No description provided for @noUserSignedIn.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Nutzer angemeldet.'**
+  String get noUserSignedIn;
+
+  /// No description provided for @deleteUserDataFailed.
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzerdaten konnten nicht gelöscht werden: {message}'**
+  String deleteUserDataFailed(String message);
+
+  /// No description provided for @languageGerman.
+  ///
+  /// In de, this message translates to:
+  /// **'Deutsch'**
+  String get languageGerman;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In de, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
 }
 
 class _AppLocalizationsDelegate

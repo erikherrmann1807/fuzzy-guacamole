@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/priority_picker.dart';
@@ -78,7 +79,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Event details' : 'New event', style: editorAppBarText),
+        title: Text(_isEditing ? context.l10n.eventDetails : context.l10n.newEvent, style: editorAppBarText),
         backgroundColor: MyColors.raisinBlack,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
@@ -105,12 +106,13 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
 
   Future<void> _save() async {
     final subject = _subjectController.text.trim();
+    final errorText = context.l10n.saveMeetingFailed;
     final meeting = Meeting(
       start: _startDate,
       end: _endDate,
       description: _notesController.text,
       isAllDay: _isAllDay,
-      eventName: subject.isEmpty ? '(No title)' : subject,
+      eventName: subject.isEmpty ? context.l10n.noTitle : subject,
       labelColor: labelColors[_selectedColorIndex],
       priority: labelNames[_selectedColorIndex],
     );
@@ -123,19 +125,20 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
     if (success) {
       Navigator.pop(context);
     } else {
-      _showError('Der Termin konnte nicht gespeichert werden.');
+      _showError(errorText);
     }
   }
 
   Future<void> _delete() async {
     final id = widget.meeting?.meetingId;
     if (id == null) return;
+    final errorText = context.l10n.deleteMeetingFailed;
     final success = await ref.read(meetingsViewModelProvider.notifier).remove(id);
     if (!mounted) return;
     if (success) {
       Navigator.pop(context);
     } else {
-      _showError('Der Termin konnte nicht gelöscht werden.');
+      _showError(errorText);
     }
   }
 
@@ -157,7 +160,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
               keyboardType: TextInputType.multiline,
               maxLines: null,
               style: const TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.w400),
-              decoration: const InputDecoration(border: InputBorder.none, hintText: 'Add title'),
+              decoration: InputDecoration(border: InputBorder.none, hintText: context.l10n.addTitle),
             ),
           ),
           const Divider(height: 1.0, thickness: 1),
@@ -166,7 +169,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
             leading: const Icon(Icons.access_time, color: Colors.black54),
             title: Row(
               children: <Widget>[
-                const Expanded(child: Text('All-day')),
+                Expanded(child: Text(context.l10n.allDay)),
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerRight,
@@ -193,7 +196,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
             contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
             leading: Chip(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              label: Text(labelNames[_selectedColorIndex], style: tagText),
+              label: Text(localizedPriorityName(context, labelNames[_selectedColorIndex]), style: tagText),
               backgroundColor: labelColors[_selectedColorIndex],
               side: BorderSide.none,
               shape: const RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -209,7 +212,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
               keyboardType: TextInputType.multiline,
               maxLines: null,
               style: const TextStyle(fontSize: 18, color: Colors.black87, fontWeight: FontWeight.w400),
-              decoration: const InputDecoration(border: InputBorder.none, hintText: 'Add description'),
+              decoration: InputDecoration(border: InputBorder.none, hintText: context.l10n.addDescription),
             ),
           ),
           const Divider(height: 1.0, thickness: 1),
@@ -234,7 +237,10 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
             flex: dateFlex,
             child: GestureDetector(
               onTap: onDatePicked,
-              child: Text(DateFormat('EEE, dd. MMM yyyy', 'de').format(date), textAlign: TextAlign.left),
+              child: Text(
+                DateFormat('EEE, dd. MMM yyyy', Localizations.maybeLocaleOf(context)?.toString()).format(date),
+                textAlign: TextAlign.left,
+              ),
             ),
           ),
           Expanded(
@@ -324,7 +330,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Datum auswählen', style: Theme.of(context).textTheme.headlineSmall),
+                Text(context.l10n.selectDate, style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 20),
                 Theme(
                   data: Theme.of(context).copyWith(

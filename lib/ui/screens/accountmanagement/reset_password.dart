@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/ui/widgets/app_dialog.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 
@@ -10,17 +11,15 @@ class ResetPasswordDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
+    final l10n = context.l10n;
 
     return AppDialog(
-      title: 'Reset Password',
+      title: l10n.resetPassword,
       maxHeight: 300,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          const Text(
-            'Um ihr Passwort zurückzusetzen wird Ihnen eine E-Mail '
-            'mit einem Link zum Zurücksetzen zugeschickt.',
-          ),
+          Text(l10n.resetPasswordInfo),
           const SizedBox(height: 16),
           if (authState.error != null)
             Padding(
@@ -29,7 +28,7 @@ class ResetPasswordDialog extends ConsumerWidget {
             ),
           authState.isLoading
               ? const CircularProgressIndicator()
-              : DefaultButton(onTap: () => _resetPassword(context, ref), title: 'Reset Password'),
+              : DefaultButton(onTap: () => _resetPassword(context, ref), title: l10n.resetPassword),
         ],
       ),
     );

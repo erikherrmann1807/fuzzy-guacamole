@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/providers/weather_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 
 class WeatherCard extends ConsumerWidget {
@@ -23,14 +24,14 @@ class WeatherCard extends ConsumerWidget {
         ],
       ),
       child: weatherAsync.when(
-        loading: () => const Row(
+        loading: () => Row(
           children: [
-            SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
-            SizedBox(width: 12),
-            Text('Wetter laden …'),
+            const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+            const SizedBox(width: 12),
+            Text(context.l10n.loadingWeather),
           ],
         ),
-        error: (err, _) => Text('Fehler beim Laden: $err'),
+        error: (err, _) => Text(context.l10n.loadingError(err.toString())),
         data: (w) => Row(
           children: [
             ClipRRect(

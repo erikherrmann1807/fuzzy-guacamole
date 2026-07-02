@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
@@ -21,13 +22,13 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(height: 16),
-              WeatherCard(),
-              SizedBox(height: 16),
-              _SectionTitle('Current tasks'),
-              SizedBox(height: 8),
-              _TodayAgendaCard(),
+            children: [
+              const SizedBox(height: 16),
+              const WeatherCard(),
+              const SizedBox(height: 16),
+              _SectionTitle(context.l10n.currentTasks),
+              const SizedBox(height: 8),
+              const _TodayAgendaCard(),
             ],
           ),
         ),
@@ -47,15 +48,15 @@ class _TodayAgendaCard extends ConsumerWidget {
 
     Widget content;
     if (state.loading) {
-      content = const Row(
+      content = Row(
         children: [
-          SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
-          SizedBox(width: 12),
-          Text('Lade heutige Termine …'),
+          const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+          const SizedBox(width: 12),
+          Text(context.l10n.loadingTodaysAppointments),
         ],
       );
     } else if (state.error != null) {
-      content = Text('Fehler beim Laden: ${state.error}');
+      content = Text(context.l10n.loadingError(state.error!));
     } else {
       final byDay = CalendarUtils.buildMeetingsMapSpanning<Meeting>(state.items, (m) => m.start, (m) => m.end);
       final today = DateTime.now();
@@ -75,10 +76,10 @@ class _TodayAgendaCard extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           if (todayEvents.isEmpty)
-            const Text('Keine Termine für Heute', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700))
+            Text(context.l10n.noAppointmentsToday, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700))
           else ...[
             Text(
-              'Du hast ${todayEvents.length} Termin${todayEvents.length == 1 ? '' : 'e'} Heute',
+              context.l10n.appointmentsTodayCount(todayEvents.length),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),

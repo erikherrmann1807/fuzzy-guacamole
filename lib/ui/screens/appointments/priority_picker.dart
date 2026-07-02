@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/constants.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 
 /// Dialog zur Auswahl der Priorität (Label-Farbe).
@@ -52,7 +53,7 @@ class PriorityPicker extends StatelessWidget {
               return ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(index == selectedIndex ? Icons.lens : Icons.trip_origin, color: labelColors[index]),
-                title: Text(labelNames[index]),
+                title: Text(localizedPriorityName(context, labelNames[index])),
                 onTap: () => Navigator.of(context).pop(index),
               );
             },

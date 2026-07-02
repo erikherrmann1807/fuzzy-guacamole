@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
@@ -28,7 +29,7 @@ class MonthlyScreen extends ConsumerWidget {
     }
 
     if (meetingsState.error != null) {
-      return Center(child: Text('Fehler beim Laden: ${meetingsState.error}'));
+      return Center(child: Text(context.l10n.loadingError(meetingsState.error!)));
     }
 
     final meetingsByDay = CalendarUtils.buildMeetingsMapSpanning(meetingsState.items, (m) => m.start, (m) => m.end);
@@ -86,11 +87,14 @@ class MonthlyScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Agenda für ${DateFormat.yMd(locale).format(calendar.selectedDate)}', style: agendaDateText),
+                  Text(
+                    context.l10n.agendaForDate(DateFormat.yMd(locale).format(calendar.selectedDate)),
+                    style: agendaDateText,
+                  ),
                   const Gap(4),
                   Expanded(
                     child: selectedDayMeetings.isEmpty
-                        ? const Center(child: Text('Keine Termine'))
+                        ? Center(child: Text(context.l10n.noAppointments))
                         : DayAgendaList(
                             meetings: selectedDayMeetings,
                             day: calendar.selectedDate,

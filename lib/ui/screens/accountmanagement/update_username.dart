@@ -4,6 +4,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/ui/widgets/app_dialog.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 
@@ -27,32 +28,23 @@ class _UpdateUsernameDialogState extends ConsumerState<UpdateUsernameDialog> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+    final l10n = context.l10n;
 
     return AppDialog(
-      title: 'Update Username',
+      title: l10n.updateUsername,
       child: Form(
         key: _formKey,
         child: Column(
           children: [
-            const Text(
-              'Geben Sie in folgendem Feld Ihren neuen Nutzernamen ein '
-              'und bestätigen Sie die Änderung mit dem Button am Ende',
-            ),
+            Text(l10n.updateUsernameInfo),
             const SizedBox(height: 16),
             TextFormField(
               controller: _usernameController,
               validator: MultiValidator([
-                RequiredValidator(errorText: 'Enter Username'),
-                PatternValidator(
-                  usernamePattern,
-                  errorText:
-                      'The Username needs to be 8-20 Characters long.\n'
-                      'No "_" or "." at the beginning.\n'
-                      'No "__" or "_." or "._" or ".." inside.\n'
-                      'No "_" or "." at the end.',
-                ),
+                RequiredValidator(errorText: l10n.enterUsername),
+                PatternValidator(usernamePattern, errorText: l10n.invalidUsername),
               ]).call,
-              decoration: dialogInputDecoration(label: 'Username', icon: Icons.person),
+              decoration: dialogInputDecoration(label: l10n.username, icon: Icons.person),
             ),
             const SizedBox(height: 16),
             if (authState.error != null)
@@ -62,7 +54,7 @@ class _UpdateUsernameDialogState extends ConsumerState<UpdateUsernameDialog> {
               ),
             authState.isLoading
                 ? const CircularProgressIndicator()
-                : DefaultButton(onTap: _updateUsername, title: 'Update Username'),
+                : DefaultButton(onTap: _updateUsername, title: l10n.updateUsername),
           ],
         ),
       ),

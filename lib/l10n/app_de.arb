@@ -1,6 +1,86 @@
 {
-  "helloWorld": "Hallo Welt!",
-  "@helloWorld": {
-    "description": "Give as much context as possible"
-  }
+  "@@locale": "de",
+
+  "login": "Login",
+  "@login": {"description": "Titel und Button des Login-Screens"},
+  "register": "Registrieren",
+  "@register": {"description": "Titel und Button des Registrierungs-Screens"},
+  "email": "E-Mail",
+  "password": "Passwort",
+  "username": "Nutzername",
+  "oldPassword": "Altes Passwort",
+  "newPassword": "Neues Passwort",
+  "enterEmail": "E-Mail-Adresse eingeben",
+  "invalidEmail": "Bitte eine gültige E-Mail-Adresse eingeben",
+  "enterPassword": "Passwort eingeben",
+  "invalidPassword": "Das Passwort muss mindestens acht Zeichen, davon mindestens einen Buchstaben und eine Zahl enthalten",
+  "enterUsername": "Nutzernamen eingeben",
+  "invalidUsername": "Der Nutzername muss 8–20 Zeichen lang sein.\nKein \"_\" oder \".\" am Anfang.\nKein \"__\", \"_.\", \"._\" oder \"..\" im Namen.\nKein \"_\" oder \".\" am Ende.",
+  "noAccountYet": "Noch keinen Account?",
+  "registerHere": "Hier registrieren!",
+
+  "greeting": "Hallo👋, {username}!",
+  "@greeting": {
+    "description": "Begrüßung in der AppBar",
+    "placeholders": {"username": {"type": "String"}}
+  },
+  "defaultUsername": "Nutzer",
+  "accountManagementTitle": "Account-Verwaltung",
+  "settingsTitle": "Einstellungen",
+  "retry": "Erneut versuchen",
+  "errorWithMessage": "Fehler: {message}",
+  "@errorWithMessage": {"placeholders": {"message": {"type": "String"}}},
+  "loadingError": "Fehler beim Laden: {message}",
+  "@loadingError": {"placeholders": {"message": {"type": "String"}}},
+
+  "currentTasks": "Aktuelle Aufgaben",
+  "loadingTodaysAppointments": "Lade heutige Termine …",
+  "loadingWeather": "Wetter laden …",
+  "noAppointments": "Keine Termine",
+  "noAppointmentsToday": "Keine Termine für heute",
+  "appointmentsTodayCount": "{count, plural, one{Du hast 1 Termin heute} other{Du hast {count} Termine heute}}",
+  "@appointmentsTodayCount": {
+    "description": "Anzahl der heutigen Termine auf dem Home-Screen",
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "agendaForDate": "Agenda für {date}",
+  "@agendaForDate": {"placeholders": {"date": {"type": "String"}}},
+  "allDay": "Ganztägig",
+  "multiDaySuffix": " (Tag {dayIndex}/{totalDays})",
+  "@multiDaySuffix": {
+    "description": "Suffix hinter Terminnamen bei mehrtägigen Terminen",
+    "placeholders": {"dayIndex": {"type": "int"}, "totalDays": {"type": "int"}}
+  },
+  "selectMonthAndYear": "Monat und Jahr wählen",
+  "ok": "OK",
+  "cancel": "Abbrechen",
+
+  "newEvent": "Neuer Termin",
+  "eventDetails": "Termindetails",
+  "addTitle": "Titel hinzufügen",
+  "addDescription": "Beschreibung hinzufügen",
+  "noTitle": "(Ohne Titel)",
+  "selectDate": "Datum auswählen",
+  "saveMeetingFailed": "Der Termin konnte nicht gespeichert werden.",
+  "deleteMeetingFailed": "Der Termin konnte nicht gelöscht werden.",
+  "priorityHigh": "Hoch",
+  "priorityLow": "Niedrig",
+
+  "resetPassword": "Passwort zurücksetzen",
+  "resetPasswordInfo": "Um Ihr Passwort zurückzusetzen, wird Ihnen eine E-Mail mit einem Link zum Zurücksetzen zugeschickt.",
+  "updateUsername": "Nutzernamen ändern",
+  "updateUsernameInfo": "Geben Sie in folgendem Feld Ihren neuen Nutzernamen ein und bestätigen Sie die Änderung mit dem Button am Ende.",
+  "deleteAccount": "Account löschen",
+  "deleteAccountInfo": "Um Ihren Account zu löschen, müssen Sie Ihre E-Mail und Ihr Passwort angeben.",
+  "updatePassword": "Passwort ändern",
+  "updatePasswordInfo": "Um Ihr Passwort zu ändern, benötigen Sie das aktuelle und ein neues Passwort.",
+  "logout": "Abmelden",
+  "wrongCurrentPassword": "Das aktuelle Passwort ist nicht korrekt.",
+  "wrongEmailOrPassword": "E-Mail oder Passwort ist nicht korrekt.",
+  "noUserSignedIn": "Kein Nutzer angemeldet.",
+  "deleteUserDataFailed": "Nutzerdaten konnten nicht gelöscht werden: {message}",
+  "@deleteUserDataFailed": {"placeholders": {"message": {"type": "String"}}},
+
+  "languageGerman": "Deutsch",
+  "languageEnglish": "English"
 }

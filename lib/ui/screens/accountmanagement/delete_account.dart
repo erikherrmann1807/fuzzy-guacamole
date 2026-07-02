@@ -4,6 +4,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/ui/widgets/app_dialog.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
@@ -31,40 +32,33 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+    final l10n = context.l10n;
 
     return AppDialog(
-      title: 'Delete Account',
+      title: l10n.deleteAccount,
       child: Form(
         key: _formKey,
         child: Column(
           children: [
-            const Text(
-              'Um Ihren Account zu löschen müssen Sie '
-              'Ihre E-Mail und Ihr Passwort angeben.',
-            ),
+            Text(l10n.deleteAccountInfo),
             const SizedBox(height: 16),
             TextFormField(
               controller: _emailController,
               validator: MultiValidator([
-                RequiredValidator(errorText: 'Enter email address'),
-                EmailValidator(errorText: 'Please enter a correct email'),
+                RequiredValidator(errorText: l10n.enterEmail),
+                EmailValidator(errorText: l10n.invalidEmail),
               ]).call,
-              decoration: dialogInputDecoration(label: 'Email', icon: Icons.email),
+              decoration: dialogInputDecoration(label: l10n.email, icon: Icons.email),
             ),
             const SizedBox(height: 16),
             TextFormField(
               obscureText: true,
               controller: _passwordController,
               validator: MultiValidator([
-                RequiredValidator(errorText: 'Enter password'),
-                PatternValidator(
-                  passwordPattern,
-                  errorText:
-                      'Password must contain minimum eight characters, '
-                      'at least one letter and one number',
-                ),
+                RequiredValidator(errorText: l10n.enterPassword),
+                PatternValidator(passwordPattern, errorText: l10n.invalidPassword),
               ]).call,
-              decoration: dialogInputDecoration(label: 'Password', icon: Icons.password),
+              decoration: dialogInputDecoration(label: l10n.password, icon: Icons.password),
             ),
             const SizedBox(height: 16),
             if (_errorMessage != null)
@@ -74,7 +68,7 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
               ),
             authState.isLoading
                 ? const CircularProgressIndicator()
-                : DefaultButton(onTap: _deleteAccount, title: 'Delete Account'),
+                : DefaultButton(onTap: _deleteAccount, title: l10n.deleteAccount, destructive: true),
           ],
         ),
       ),
@@ -85,25 +79,26 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final viewModel = ref.read(authViewModelProvider.notifier);
+    final l10n = context.l10n;
 
     // Erst re-authentifizieren, damit keine Daten gelöscht werden,
     // wenn das Passwort falsch ist.
     final isValid = await viewModel.validatePassword(_passwordController.text);
     if (!isValid || !ref.read(authViewModelProvider).isValid) {
-      setState(() => _errorMessage = 'E-Mail oder Passwort ist nicht korrekt.');
+      setState(() => _errorMessage = l10n.wrongEmailOrPassword);
       return;
     }
 
     final userRepo = ref.read(userRepositoryProvider);
     if (userRepo == null) {
-      setState(() => _errorMessage = 'Kein Nutzer angemeldet.');
+      setState(() => _errorMessage = l10n.noUserSignedIn);
       return;
     }
 
     try {
       await userRepo.delete();
     } catch (e) {
-      setState(() => _errorMessage = 'Nutzerdaten konnten nicht gelöscht werden: $e');
+      setState(() => _errorMessage = l10n.deleteUserDataFailed(e.toString()));
       return;
     }
 

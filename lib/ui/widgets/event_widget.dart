@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:gap/gap.dart';
@@ -65,7 +66,7 @@ class EventWidget extends StatelessWidget {
                           Chip(
                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                            label: Text(priority, style: tagText),
+                            label: Text(localizedPriorityName(context, priority), style: tagText),
                             backgroundColor: labelColor,
                             side: BorderSide.none,
                             shape: const RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(20))),

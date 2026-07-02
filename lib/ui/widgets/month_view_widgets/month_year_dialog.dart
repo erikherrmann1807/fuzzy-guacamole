@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 import 'package:intl/intl.dart';
@@ -52,7 +53,7 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Monat und Jahr wählen", style: Theme.of(context).textTheme.titleLarge),
+                  Text(context.l10n.selectMonthAndYear, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -103,14 +104,14 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
                             widget.onSelected(newDate);
                             Navigator.of(context).pop();
                           },
-                          title: 'OK',
+                          title: context.l10n.ok,
                         ),
                       ),
                       const SizedBox(width: 8),
                       SizedBox(
                         width: 100,
                         height: 40,
-                        child: DefaultButton(onTap: () => Navigator.of(context).pop(), title: 'Abbrechen'),
+                        child: DefaultButton(onTap: () => Navigator.of(context).pop(), title: context.l10n.cancel),
                       ),
                     ],
                   ),

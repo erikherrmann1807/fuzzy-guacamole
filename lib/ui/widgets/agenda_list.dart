@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
+import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/ui/widgets/event_widget.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
 import 'package:gap/gap.dart';
@@ -30,14 +31,14 @@ class DayAgendaList extends StatelessWidget {
         final meeting = meetings[idx];
         final clamp = CalendarUtils.clampToDay(meeting.start, meeting.end, day);
         final isFullDay = meeting.isAllDay || clamp.fillsFullDay;
-        final startTime = isFullDay ? 'Ganztägig ' : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
+        final startTime = isFullDay ? '${context.l10n.allDay} ' : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
         final endTime = isFullDay ? '' : CalendarUtils.formatHHmm(clamp.displayEnd);
 
         return EventWidget(
           startTime: startTime,
           endTime: endTime,
           description: meeting.description,
-          eventName: '${meeting.eventName}${_multiDaySuffix(meeting)}',
+          eventName: '${meeting.eventName}${_multiDaySuffix(context, meeting)}',
           onTap: () => onMeetingTap(meeting),
           priority: meeting.priority,
           labelColor: meeting.labelColor,
@@ -47,10 +48,10 @@ class DayAgendaList extends StatelessWidget {
     );
   }
 
-  String _multiDaySuffix(Meeting meeting) {
+  String _multiDaySuffix(BuildContext context, Meeting meeting) {
     final totalDays = CalendarUtils.totalDaysSpanned(meeting.start, meeting.end);
     if (totalDays <= 1) return '';
     final dayIndex = CalendarUtils.dayIndexWithinSpan(meeting.start, day);
-    return ' (Tag $dayIndex/$totalDays)';
+    return context.l10n.multiDaySuffix(dayIndex, totalDays);
   }
 }
