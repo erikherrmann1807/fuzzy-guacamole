@@ -8,6 +8,7 @@ import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart'
 import 'package:fuzzy_guacamole/ui/screens/calendar/views/calendar_day.dart';
 import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_dialog.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/calendar_viewmodel.dart';
+import 'package:fuzzy_guacamole/ui/viewmodels/settings_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/agenda_list.dart';
 import 'package:fuzzy_guacamole/ui/widgets/month_view_widgets/month_year_dialog.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
@@ -23,6 +24,7 @@ class MonthlyScreen extends ConsumerWidget {
     final meetingsState = ref.watch(meetingsViewModelProvider);
     final calendar = ref.watch(calendarViewModelProvider);
     final calendarVm = ref.read(calendarViewModelProvider.notifier);
+    final firstWeekday = ref.watch(settingsViewModelProvider.select((s) => s.firstWeekday));
     final size = MediaQuery.sizeOf(context);
     final locale = Localizations.maybeLocaleOf(context)?.toString();
 
@@ -53,7 +55,7 @@ class MonthlyScreen extends ConsumerWidget {
             ],
           ),
           Row(
-            children: _weekdayHeaders(locale)
+            children: _weekdayHeaders(locale, firstWeekday)
                 .map(
                   (day) => Expanded(
                     child: Container(
@@ -67,6 +69,7 @@ class MonthlyScreen extends ConsumerWidget {
           Expanded(
             child: _MonthGrid(
               calendar: calendar,
+              datesGrid: calendar.datesGrid(firstWeekday),
               meetingsByDay: meetingsByDay,
               // Zweites Antippen des bereits ausgewählten Tages öffnet die Tagesansicht.
               onDateSelected: (date) {
@@ -137,12 +140,15 @@ class MonthlyScreen extends ConsumerWidget {
     );
   }
 
-  /// Kurze Wochentagsnamen, beginnend bei Montag.
-  List<String> _weekdayHeaders(String? locale) {
+  /// Kurze Wochentagsnamen, beginnend beim eingestellten Wochenbeginn.
+  List<String> _weekdayHeaders(String? locale, int firstWeekday) {
     final format = DateFormat.E(locale);
     // 5.1.2026 ist ein Montag.
     final monday = DateTime(2026, 1, 5);
-    return List.generate(7, (i) => '${format.format(monday.add(Duration(days: i)))}.');
+    return List.generate(7, (i) {
+      final day = monday.add(Duration(days: (firstWeekday - DateTime.monday + i) % 7));
+      return '${format.format(day)}.';
+    });
   }
 
   Future<void> _showMonthPicker(BuildContext context, DateTime visibleMonth, CalendarViewModel vm) {
@@ -154,16 +160,21 @@ class MonthlyScreen extends ConsumerWidget {
 }
 
 class _MonthGrid extends StatelessWidget {
-  const _MonthGrid({required this.calendar, required this.meetingsByDay, required this.onDateSelected});
+  const _MonthGrid({
+    required this.calendar,
+    required this.datesGrid,
+    required this.meetingsByDay,
+    required this.onDateSelected,
+  });
 
   final CalendarState calendar;
+  final List<DateTime> datesGrid;
   final Map<DateTime, List<Object>> meetingsByDay;
   final void Function(DateTime) onDateSelected;
 
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final datesGrid = calendar.datesGrid;
 
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),

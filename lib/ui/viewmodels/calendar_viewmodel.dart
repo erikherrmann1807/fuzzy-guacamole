@@ -19,8 +19,10 @@ class CalendarState {
     return CalendarState(visibleMonth: now, selectedDate: now);
   }
 
-  /// 6x7-Raster der im Monat sichtbaren Kalendertage.
-  List<DateTime> get datesGrid => CalendarUtils.generateDatesGrid(visibleMonth);
+  /// 6x7-Raster der im Monat sichtbaren Kalendertage, beginnend mit dem
+  /// in den Einstellungen gewählten Wochentag.
+  List<DateTime> datesGrid(int firstDayOfWeek) =>
+      CalendarUtils.generateDatesGrid(visibleMonth, firstDayOfWeek: firstDayOfWeek);
 
   CalendarState copyWith({DateTime? visibleMonth, DateTime? selectedDate}) => CalendarState(
     visibleMonth: visibleMonth ?? this.visibleMonth,

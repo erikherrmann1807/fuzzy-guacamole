@@ -100,10 +100,11 @@ class CalendarUtils {
 
   /// 6x7-Raster der Kalendertage eines Monats, inklusive der angeschnittenen
   /// Tage des Vor- und Folgemonats. Alle Einträge sind reine Daten (00:00).
-  static List<DateTime> generateDatesGrid(DateTime month) {
+  /// [firstDayOfWeek] bestimmt, mit welchem Wochentag die Zeilen beginnen.
+  static List<DateTime> generateDatesGrid(DateTime month, {int firstDayOfWeek = DateTime.monday}) {
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
     final firstWeekday = DateTime(month.year, month.month, 1).weekday;
-    final leadingDays = firstWeekday - DateTime.monday;
+    final leadingDays = (firstWeekday - firstDayOfWeek + 7) % 7;
 
     final dates = <DateTime>[
       for (int i = leadingDays; i > 0; i--) DateTime(month.year, month.month, 1 - i),

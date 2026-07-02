@@ -118,5 +118,12 @@
 
   "dayViewTooltip": "Tagesansicht",
   "previousDay": "Vorheriger Tag",
-  "nextDay": "Nächster Tag"
+  "nextDay": "Nächster Tag",
+
+  "language": "Sprache",
+  "theme": "Design",
+  "themeSystem": "System",
+  "themeLight": "Hell",
+  "themeDark": "Dunkel",
+  "firstDayOfWeek": "Wochenbeginn"
 }

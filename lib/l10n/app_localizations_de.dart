@@ -303,4 +303,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get nextDay => 'Nächster Tag';
+
+  @override
+  String get language => 'Sprache';
+
+  @override
+  String get theme => 'Design';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Hell';
+
+  @override
+  String get themeDark => 'Dunkel';
+
+  @override
+  String get firstDayOfWeek => 'Wochenbeginn';
 }

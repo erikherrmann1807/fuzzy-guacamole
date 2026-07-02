@@ -88,5 +88,12 @@
 
   "dayViewTooltip": "Day view",
   "previousDay": "Previous day",
-  "nextDay": "Next day"
+  "nextDay": "Next day",
+
+  "language": "Language",
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "firstDayOfWeek": "First day of week"
 }

@@ -577,6 +577,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nächster Tag'**
   String get nextDay;
+
+  /// No description provided for @language.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprache'**
+  String get language;
+
+  /// No description provided for @theme.
+  ///
+  /// In de, this message translates to:
+  /// **'Design'**
+  String get theme;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In de, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In de, this message translates to:
+  /// **'Hell'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In de, this message translates to:
+  /// **'Dunkel'**
+  String get themeDark;
+
+  /// No description provided for @firstDayOfWeek.
+  ///
+  /// In de, this message translates to:
+  /// **'Wochenbeginn'**
+  String get firstDayOfWeek;
 }
 
 class _AppLocalizationsDelegate

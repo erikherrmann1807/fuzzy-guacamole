@@ -11,6 +11,7 @@ import 'package:fuzzy_guacamole/ui/screens/auth/auth_layout.dart';
 import 'package:fuzzy_guacamole/ui/screens/auth/register_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/calendar/calendar_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/settings/settingsmenu.dart';
+import 'package:fuzzy_guacamole/ui/viewmodels/settings_viewmodel.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -37,6 +38,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localeAsync = ref.watch(localeProvider);
+    final themeMode = ref.watch(settingsViewModelProvider.select((s) => s.themeMode));
 
     return localeAsync.when(
       data: (locale) {
@@ -45,6 +47,9 @@ class MyApp extends ConsumerWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: locale,
+          theme: ThemeData(brightness: Brightness.light),
+          darkTheme: ThemeData(brightness: Brightness.dark),
+          themeMode: themeMode,
           home: const AuthLayout(),
           routes: {
             Routes.settings: (context) => const SettingsMenu(),
