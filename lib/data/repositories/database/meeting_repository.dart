@@ -9,7 +9,8 @@ class MeetingRepository {
   Stream<List<Meeting>> watchAll() => db.meetingsStream;
   Future<List<Meeting>> fetchOnce() async => await db.meetingsStream.first;
 
-  Future<void> add(Meeting m) => db.addMeeting(m);
+  /// Liefert die generierte Dokument-ID des neuen Termins.
+  Future<String> add(Meeting m) => db.addMeeting(m);
   Future<void> update(String id, Meeting m) => db.updateMeeting(id, m);
   Future<void> remove(String id) => db.deleteMeeting(id);
 }

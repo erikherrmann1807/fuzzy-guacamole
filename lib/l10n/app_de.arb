@@ -82,5 +82,21 @@
   "@deleteUserDataFailed": {"placeholders": {"message": {"type": "String"}}},
 
   "languageGerman": "Deutsch",
-  "languageEnglish": "English"
+  "languageEnglish": "English",
+
+  "reminder": "Erinnerung",
+  "reminderNone": "Keine Erinnerung",
+  "reminderAtStart": "Zum Startzeitpunkt",
+  "reminderMinutesBefore": "{count, plural, one{1 Minute vorher} other{{count} Minuten vorher}}",
+  "@reminderMinutesBefore": {"placeholders": {"count": {"type": "int"}}},
+  "reminderHoursBefore": "{count, plural, one{1 Stunde vorher} other{{count} Stunden vorher}}",
+  "@reminderHoursBefore": {"placeholders": {"count": {"type": "int"}}},
+  "reminderDaysBefore": "{count, plural, one{1 Tag vorher} other{{count} Tage vorher}}",
+  "@reminderDaysBefore": {"placeholders": {"count": {"type": "int"}}},
+  "meetingReminderBody": "Beginnt um {time}",
+  "@meetingReminderBody": {
+    "description": "Text der Termin-Erinnerungs-Benachrichtigung",
+    "placeholders": {"time": {"type": "String"}}
+  },
+  "taskReminderBody": "Daily Task fällig"
 }

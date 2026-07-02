@@ -36,10 +36,14 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
   late final TextEditingController _subjectController;
   late final TextEditingController _notesController;
 
+  /// Auswahlwerte für die Erinnerung (Minuten vor Terminbeginn).
+  static const List<int> _reminderOptions = [0, 5, 10, 15, 30, 60, 1440];
+
   late DateTime _startDate;
   late DateTime _endDate;
   late bool _isAllDay;
   late int _selectedColorIndex;
+  int? _reminderMinutes;
 
   bool get _isEditing => widget.meeting != null;
 
@@ -53,6 +57,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
       _startDate = meeting.start;
       _endDate = meeting.end;
       _isAllDay = meeting.isAllDay;
+      _reminderMinutes = meeting.reminderMinutes;
       // Unbekannte Farben defensiv auf das erste Label abbilden.
       final colorIndex = labelColors.indexOf(meeting.labelColor);
       _selectedColorIndex = colorIndex < 0 ? 0 : colorIndex;
@@ -115,6 +120,7 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
       eventName: subject.isEmpty ? context.l10n.noTitle : subject,
       labelColor: labelColors[_selectedColorIndex],
       priority: labelNames[_selectedColorIndex],
+      reminderMinutes: _reminderMinutes,
     );
 
     final vm = ref.read(meetingsViewModelProvider.notifier);
@@ -205,6 +211,29 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
           ),
           const Divider(height: 1.0, thickness: 1),
           ListTile(
+            contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+            leading: const Icon(Icons.notifications_outlined, color: Colors.black54),
+            title: Row(
+              children: [
+                Expanded(child: Text(context.l10n.reminder)),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    // -1 steht für "keine Erinnerung", da DropdownButton
+                    // null als "nichts ausgewählt" interpretiert.
+                    value: _reminderMinutes ?? -1,
+                    items: [
+                      DropdownMenuItem(value: -1, child: Text(context.l10n.reminderNone)),
+                      for (final minutes in _reminderOptions)
+                        DropdownMenuItem(value: minutes, child: Text(_reminderLabel(context, minutes))),
+                    ],
+                    onChanged: (value) => setState(() => _reminderMinutes = (value == null || value < 0) ? null : value),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1.0, thickness: 1),
+          ListTile(
             contentPadding: const EdgeInsets.all(5),
             leading: const Icon(Icons.subject, color: Colors.black87),
             title: TextField(
@@ -255,6 +284,14 @@ class _MeetingEditorState extends ConsumerState<MeetingEditor> {
         ],
       ),
     );
+  }
+
+  String _reminderLabel(BuildContext context, int minutes) {
+    final l10n = context.l10n;
+    if (minutes == 0) return l10n.reminderAtStart;
+    if (minutes % Duration.minutesPerDay == 0) return l10n.reminderDaysBefore(minutes ~/ Duration.minutesPerDay);
+    if (minutes % Duration.minutesPerHour == 0) return l10n.reminderHoursBefore(minutes ~/ Duration.minutesPerHour);
+    return l10n.reminderMinutesBefore(minutes);
   }
 
   Future<void> _pickPriority() async {

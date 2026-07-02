@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/data/providers/notification_provider.dart';
 import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/screens/accountmanagement/account_management_screen.dart';
@@ -32,6 +33,8 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
     Future.microtask(() {
       if (mounted) {
         ref.read(profileViewModelProvider.notifier).load();
+        // Notification-Berechtigung (Android 13+/iOS) nach dem Login anfragen.
+        ref.read(notificationServiceProvider).requestPermissions();
       }
     });
   }

@@ -210,4 +210,54 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get reminder => 'Erinnerung';
+
+  @override
+  String get reminderNone => 'Keine Erinnerung';
+
+  @override
+  String get reminderAtStart => 'Zum Startzeitpunkt';
+
+  @override
+  String reminderMinutesBefore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Minuten vorher',
+      one: '1 Minute vorher',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reminderHoursBefore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stunden vorher',
+      one: '1 Stunde vorher',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reminderDaysBefore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tage vorher',
+      one: '1 Tag vorher',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String meetingReminderBody(String time) {
+    return 'Beginnt um $time';
+  }
+
+  @override
+  String get taskReminderBody => 'Daily Task fällig';
 }

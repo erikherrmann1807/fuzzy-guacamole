@@ -451,6 +451,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'English'**
   String get languageEnglish;
+
+  /// No description provided for @reminder.
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerung'**
+  String get reminder;
+
+  /// No description provided for @reminderNone.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Erinnerung'**
+  String get reminderNone;
+
+  /// No description provided for @reminderAtStart.
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Startzeitpunkt'**
+  String get reminderAtStart;
+
+  /// No description provided for @reminderMinutesBefore.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one{1 Minute vorher} other{{count} Minuten vorher}}'**
+  String reminderMinutesBefore(int count);
+
+  /// No description provided for @reminderHoursBefore.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one{1 Stunde vorher} other{{count} Stunden vorher}}'**
+  String reminderHoursBefore(int count);
+
+  /// No description provided for @reminderDaysBefore.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one{1 Tag vorher} other{{count} Tage vorher}}'**
+  String reminderDaysBefore(int count);
+
+  /// Text der Termin-Erinnerungs-Benachrichtigung
+  ///
+  /// In de, this message translates to:
+  /// **'Beginnt um {time}'**
+  String meetingReminderBody(String time);
+
+  /// No description provided for @taskReminderBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Daily Task fällig'**
+  String get taskReminderBody;
 }
 
 class _AppLocalizationsDelegate

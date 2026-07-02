@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/data/providers/notification_provider.dart';
 import 'package:fuzzy_guacamole/data/repositories/database/meeting_repository.dart';
 
 class MeetingsState {
@@ -53,11 +55,38 @@ class MeetingsViewModel extends StateNotifier<MeetingsState> {
     }
   }
 
-  Future<bool> add(Meeting m) => _mutate((repo) => repo.add(m));
+  Future<bool> add(Meeting m) => _mutate((repo) async {
+    final id = await repo.add(m);
+    await _syncReminder(m.copyWith(meetingId: id));
+  });
 
-  Future<bool> update(String id, Meeting m) => _mutate((repo) => repo.update(id, m));
+  Future<bool> update(String id, Meeting m) => _mutate((repo) async {
+    await repo.update(id, m);
+    await _syncReminder(m.copyWith(meetingId: id));
+  });
 
-  Future<bool> remove(String id) => _mutate((repo) => repo.remove(id));
+  Future<bool> remove(String id) => _mutate((repo) async {
+    await repo.remove(id);
+    await _cancelReminder(id);
+  });
+
+  /// Erinnerungen dürfen das Speichern nie scheitern lassen –
+  /// Notification-Fehler werden nur geloggt.
+  Future<void> _syncReminder(Meeting meeting) async {
+    try {
+      await ref.read(notificationServiceProvider).syncMeetingReminder(meeting);
+    } catch (e) {
+      debugPrint('Erinnerung konnte nicht geplant werden: $e');
+    }
+  }
+
+  Future<void> _cancelReminder(String meetingId) async {
+    try {
+      await ref.read(notificationServiceProvider).cancelMeetingReminder(meetingId);
+    } catch (e) {
+      debugPrint('Erinnerung konnte nicht abgebrochen werden: $e');
+    }
+  }
 
   /// Führt eine Schreiboperation mit einheitlichem Error-Handling aus.
   /// Die Datenaktualisierung selbst kommt über den Snapshot-Stream.

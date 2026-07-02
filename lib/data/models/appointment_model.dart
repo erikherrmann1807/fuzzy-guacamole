@@ -17,6 +17,9 @@ class Meeting {
   final String priority;
   final bool isAllDay;
 
+  /// Minuten vor [start], zu denen erinnert wird; `null` = keine Erinnerung.
+  final int? reminderMinutes;
+
   const Meeting({
     this.meetingId,
     required this.eventName,
@@ -26,7 +29,11 @@ class Meeting {
     required this.labelColor,
     required this.priority,
     required this.isAllDay,
+    this.reminderMinutes,
   });
+
+  /// Zeitpunkt, zu dem die Erinnerung ausgelöst werden soll.
+  DateTime? get reminderTime => reminderMinutes == null ? null : start.subtract(Duration(minutes: reminderMinutes!));
 
   Meeting copyWith({
     String? meetingId,
@@ -37,6 +44,8 @@ class Meeting {
     Color? labelColor,
     String? priority,
     bool? isAllDay,
+    int? reminderMinutes,
+    bool clearReminder = false,
   }) {
     return Meeting(
       meetingId: meetingId ?? this.meetingId,
@@ -47,6 +56,7 @@ class Meeting {
       labelColor: labelColor ?? this.labelColor,
       priority: priority ?? this.priority,
       isAllDay: isAllDay ?? this.isAllDay,
+      reminderMinutes: clearReminder ? null : (reminderMinutes ?? this.reminderMinutes),
     );
   }
 
@@ -58,6 +68,7 @@ class Meeting {
     'labelColor': labelColor.toARGB32(),
     'priority': priority,
     'isAllDay': isAllDay,
+    'reminderMinutes': reminderMinutes,
   };
 
   factory Meeting.fromJson(Map<String, dynamic> json, {String? id}) {
@@ -70,6 +81,7 @@ class Meeting {
       labelColor: Color(json['labelColor'] as int),
       priority: json['priority'] as String? ?? '',
       isAllDay: json['isAllDay'] as bool? ?? false,
+      reminderMinutes: json['reminderMinutes'] as int?,
     );
   }
 

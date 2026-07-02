@@ -31,7 +31,12 @@ class DatabaseService {
   Stream<List<Meeting>> get meetingsStream =>
       _meetingRef.snapshots().map((snap) => snap.docs.map((d) => d.data()).toList());
 
-  Future<void> addMeeting(Meeting meeting) => _meetingRef.add(meeting);
+  /// Legt den Termin an und liefert die generierte Dokument-ID zurück
+  /// (wird u. a. fürs Notification-Scheduling gebraucht).
+  Future<String> addMeeting(Meeting meeting) async {
+    final doc = await _meetingRef.add(meeting);
+    return doc.id;
+  }
 
   Future<void> deleteMeeting(String meetingId) => _meetingRef.doc(meetingId).delete();
 
