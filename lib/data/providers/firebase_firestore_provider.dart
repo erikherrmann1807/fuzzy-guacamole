@@ -5,6 +5,7 @@ import 'package:fuzzy_guacamole/data/repositories/database/meeting_repository.da
 import 'package:fuzzy_guacamole/data/repositories/database/task_repository.dart';
 import 'package:fuzzy_guacamole/data/repositories/database/user_repository.dart';
 import 'package:fuzzy_guacamole/data/services/database_service.dart';
+import 'package:fuzzy_guacamole/data/services/local_cache_service.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/daily_tasks_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/meetings_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/profile_viewmodel.dart';
@@ -19,19 +20,27 @@ final databaseServiceProvider = Provider<DatabaseService?>((ref) {
   return DatabaseService(fireStore: db, uid: uid);
 });
 
+/// Nutzergebundener lokaler Cache; `null` solange niemand angemeldet ist.
+final localCacheServiceProvider = Provider<LocalCacheService?>((ref) {
+  final uid = ref.watch(authViewModelProvider.select((s) => s.user?.uid));
+  return uid == null ? null : LocalCacheService(uid: uid);
+});
+
 final meetingRepositoryProvider = Provider<MeetingRepository?>((ref) {
   final db = ref.watch(databaseServiceProvider);
-  return db == null ? null : MeetingRepository(db);
+  final cache = ref.watch(localCacheServiceProvider);
+  return db == null || cache == null ? null : MeetingRepository(db, cache);
 });
 
 final taskRepositoryProvider = Provider<TaskRepository?>((ref) {
   final db = ref.watch(databaseServiceProvider);
-  return db == null ? null : TaskRepository(db);
+  final cache = ref.watch(localCacheServiceProvider);
+  return db == null || cache == null ? null : TaskRepository(db, cache);
 });
 
 final userRepositoryProvider = Provider<UserRepository?>((ref) {
   final db = ref.watch(databaseServiceProvider);
-  return db == null ? null : UserRepository(db);
+  return db == null ? null : UserRepository(db, cache: ref.watch(localCacheServiceProvider));
 });
 
 final meetingsViewModelProvider = StateNotifierProvider<MeetingsViewModel, MeetingsState>(

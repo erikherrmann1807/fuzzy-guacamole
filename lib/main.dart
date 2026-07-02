@@ -11,6 +11,7 @@ import 'package:fuzzy_guacamole/ui/screens/auth/auth_layout.dart';
 import 'package:fuzzy_guacamole/ui/screens/auth/register_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/calendar/calendar_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/settings/settingsmenu.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,8 @@ void main() async {
     ),
   );
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
+  // Lokaler Cache-Layer (Read-Through/Write-Back in den Repositories).
+  await Hive.initFlutter();
   runApp(const ProviderScope(child: MyApp()));
 }
 

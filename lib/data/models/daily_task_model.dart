@@ -58,11 +58,19 @@ class DailyTask {
     return DailyTask(
       taskId: id,
       title: json['title'] as String? ?? '',
-      date: (json['date'] as Timestamp).toDate(),
+      date: _parseDate(json['date'])!,
       isDone: json['isDone'] as bool? ?? false,
-      reminderTime: (json['reminderTime'] as Timestamp?)?.toDate(),
+      reminderTime: _parseDate(json['reminderTime']),
       // Bei serverTimestamp und ausstehendem lokalen Write kann null ankommen.
-      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      createdAt: _parseDate(json['createdAt']),
     );
+  }
+
+  /// Akzeptiert Firestore-`Timestamp` und ISO-String (lokaler Cache).
+  static DateTime? _parseDate(Object? value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is String) return DateTime.parse(value);
+    throw FormatException('Ungültiges Datumsformat: $value');
   }
 }

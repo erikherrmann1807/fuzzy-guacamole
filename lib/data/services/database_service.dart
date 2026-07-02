@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/data/models/daily_task_model.dart';
@@ -43,14 +44,20 @@ class DatabaseService {
 
   /// Legt den Termin an und liefert die generierte Dokument-ID zurück
   /// (wird u. a. fürs Notification-Scheduling gebraucht).
+  ///
+  /// Der Write wird nicht bis zur Server-Bestätigung abgewartet: offline
+  /// puffert Firestore ihn lokal und synchronisiert später ([_fireAndForget]).
   Future<String> addMeeting(Meeting meeting) async {
-    final doc = await _meetingRef.add(meeting);
+    final doc = _meetingRef.doc();
+    _fireAndForget(doc.set(meeting), 'addMeeting');
     return doc.id;
   }
 
-  Future<void> deleteMeeting(String meetingId) => _meetingRef.doc(meetingId).delete();
+  Future<void> deleteMeeting(String meetingId) async =>
+      _fireAndForget(_meetingRef.doc(meetingId).delete(), 'deleteMeeting');
 
-  Future<void> updateMeeting(String meetingId, Meeting meeting) => _meetingRef.doc(meetingId).update(meeting.toJson());
+  Future<void> updateMeeting(String meetingId, Meeting meeting) async =>
+      _fireAndForget(_meetingRef.doc(meetingId).update(meeting.toJson()), 'updateMeeting');
 
   // --- Daily Tasks ---
 
@@ -72,13 +79,23 @@ class DatabaseService {
 
   /// Legt die Aufgabe an und liefert die generierte Dokument-ID zurück.
   Future<String> addTask(DailyTask task) async {
-    final doc = await _taskRef.add(task);
+    final doc = _taskRef.doc();
+    _fireAndForget(doc.set(task), 'addTask');
     return doc.id;
   }
 
-  Future<void> updateTask(String taskId, DailyTask task) => _taskRef.doc(taskId).update(task.toJson());
+  Future<void> updateTask(String taskId, DailyTask task) async =>
+      _fireAndForget(_taskRef.doc(taskId).update(task.toJson()), 'updateTask');
 
-  Future<void> deleteTask(String taskId) => _taskRef.doc(taskId).delete();
+  Future<void> deleteTask(String taskId) async => _fireAndForget(_taskRef.doc(taskId).delete(), 'deleteTask');
+
+  /// Firestore-Futures für Meeting-/Task-Writes vervollständigen sich erst
+  /// mit der Server-Bestätigung – offline also gar nicht. Die UI verlässt
+  /// sich stattdessen auf die (lokal sofort feuernden) Snapshot-Streams;
+  /// Fehler werden hier nur geloggt.
+  void _fireAndForget(Future<void> write, String operation) {
+    unawaited(write.catchError((Object e) => debugPrint('Firestore-$operation fehlgeschlagen: $e')));
+  }
 
   // --- Member / User ---
   Future<void> createMember(Member member) => _userRef.doc(uid).set(member);
