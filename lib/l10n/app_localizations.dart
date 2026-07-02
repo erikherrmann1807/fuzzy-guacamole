@@ -499,6 +499,66 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Daily Task fällig'**
   String get taskReminderBody;
+
+  /// Titel des Daily-Tasks-Dialogs
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben am {date}'**
+  String dailyTasksTitle(String date);
+
+  /// No description provided for @dailyTasksTooltip.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben des Tages'**
+  String get dailyTasksTooltip;
+
+  /// No description provided for @noTasksForDay.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Aufgaben für diesen Tag.'**
+  String get noTasksForDay;
+
+  /// No description provided for @newTaskHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Aufgabe'**
+  String get newTaskHint;
+
+  /// No description provided for @addTask.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe hinzufügen'**
+  String get addTask;
+
+  /// No description provided for @deleteTask.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe löschen'**
+  String get deleteTask;
+
+  /// No description provided for @pickReminderTime.
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerungszeit wählen'**
+  String get pickReminderTime;
+
+  /// No description provided for @taskReminderAt.
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerung um {time}'**
+  String taskReminderAt(String time);
+
+  /// No description provided for @saveTaskFailed.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Aufgabe konnte nicht gespeichert werden.'**
+  String get saveTaskFailed;
+
+  /// No description provided for @deleteTaskFailed.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Aufgabe konnte nicht gelöscht werden.'**
+  String get deleteTaskFailed;
 }
 
 class _AppLocalizationsDelegate

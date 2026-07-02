@@ -5,6 +5,7 @@ import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
+import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_dialog.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/calendar_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/agenda_list.dart';
 import 'package:fuzzy_guacamole/ui/widgets/month_view_widgets/month_year_dialog.dart';
@@ -87,9 +88,21 @@ class MonthlyScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    context.l10n.agendaForDate(DateFormat.yMd(locale).format(calendar.selectedDate)),
-                    style: agendaDateText,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          context.l10n.agendaForDate(DateFormat.yMd(locale).format(calendar.selectedDate)),
+                          style: agendaDateText,
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: context.l10n.dailyTasksTooltip,
+                        visualDensity: VisualDensity.compact,
+                        icon: const Icon(Icons.checklist, color: MyColors.raisinBlack),
+                        onPressed: () => showDailyTasksDialog(context, calendar.selectedDate),
+                      ),
+                    ],
                   ),
                   const Gap(4),
                   Expanded(

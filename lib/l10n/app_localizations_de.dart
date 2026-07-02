@@ -260,4 +260,38 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get taskReminderBody => 'Daily Task fällig';
+
+  @override
+  String dailyTasksTitle(String date) {
+    return 'Aufgaben am $date';
+  }
+
+  @override
+  String get dailyTasksTooltip => 'Aufgaben des Tages';
+
+  @override
+  String get noTasksForDay => 'Keine Aufgaben für diesen Tag.';
+
+  @override
+  String get newTaskHint => 'Neue Aufgabe';
+
+  @override
+  String get addTask => 'Aufgabe hinzufügen';
+
+  @override
+  String get deleteTask => 'Aufgabe löschen';
+
+  @override
+  String get pickReminderTime => 'Erinnerungszeit wählen';
+
+  @override
+  String taskReminderAt(String time) {
+    return 'Erinnerung um $time';
+  }
+
+  @override
+  String get saveTaskFailed => 'Die Aufgabe konnte nicht gespeichert werden.';
+
+  @override
+  String get deleteTaskFailed => 'Die Aufgabe konnte nicht gelöscht werden.';
 }

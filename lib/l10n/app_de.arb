@@ -98,5 +98,21 @@
     "description": "Text der Termin-Erinnerungs-Benachrichtigung",
     "placeholders": {"time": {"type": "String"}}
   },
-  "taskReminderBody": "Daily Task fällig"
+  "taskReminderBody": "Daily Task fällig",
+
+  "dailyTasksTitle": "Aufgaben am {date}",
+  "@dailyTasksTitle": {
+    "description": "Titel des Daily-Tasks-Dialogs",
+    "placeholders": {"date": {"type": "String"}}
+  },
+  "dailyTasksTooltip": "Aufgaben des Tages",
+  "noTasksForDay": "Keine Aufgaben für diesen Tag.",
+  "newTaskHint": "Neue Aufgabe",
+  "addTask": "Aufgabe hinzufügen",
+  "deleteTask": "Aufgabe löschen",
+  "pickReminderTime": "Erinnerungszeit wählen",
+  "taskReminderAt": "Erinnerung um {time}",
+  "@taskReminderAt": {"placeholders": {"time": {"type": "String"}}},
+  "saveTaskFailed": "Die Aufgabe konnte nicht gespeichert werden.",
+  "deleteTaskFailed": "Die Aufgabe konnte nicht gelöscht werden."
 }

@@ -7,6 +7,7 @@ const List<String> labelNames = ['High', 'Low'];
 
 const String meetingCollectionRef = 'meetings';
 const String userCollectionRef = 'users';
+const String taskCollectionRef = 'tasks';
 
 /// Mindestens 8 Zeichen, mindestens ein Buchstabe und eine Ziffer.
 const String passwordPattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$';
