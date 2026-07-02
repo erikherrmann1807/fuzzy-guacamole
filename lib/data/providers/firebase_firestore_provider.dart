@@ -9,6 +9,7 @@ import 'package:fuzzy_guacamole/ui/viewmodels/profile_viewmodel.dart';
 
 final fireStoreProvider = Provider((_) => FirebaseFirestore.instance);
 
+/// Nutzergebundener Firestore-Zugriff; `null` solange niemand angemeldet ist.
 final databaseServiceProvider = Provider<DatabaseService?>((ref) {
   final uid = ref.watch(authViewModelProvider.select((s) => s.user?.uid));
   if (uid == null) return null;

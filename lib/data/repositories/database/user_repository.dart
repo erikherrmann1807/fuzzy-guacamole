@@ -9,5 +9,4 @@ class UserRepository {
   Future<void> updateName(String name) => db.updateMemberName(name);
   Future<void> create(Member member) => db.createMember(member);
   Future<void> delete() => db.deleteMember();
-  Future<String?> getUsername() => db.getUsername();
 }

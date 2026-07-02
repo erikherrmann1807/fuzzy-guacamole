@@ -1,92 +1,84 @@
-part of 'account_management_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:fuzzy_guacamole/constants.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/ui/widgets/app_dialog.dart';
+import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 
-class UpdateUsername {
-  TextEditingController usernameController = TextEditingController();
+class UpdateUsernameDialog extends ConsumerStatefulWidget {
+  const UpdateUsernameDialog({super.key});
 
-  Future<void> updateUsernameDialog(BuildContext ctx, WidgetRef ref) async {
-    final viewModel = ref.read(authViewModelProvider.notifier);
-    final profileViewModel = ref.read(profileViewModelProvider.notifier);
-    Size size = MediaQuery.sizeOf(ctx);
-    return showDialog<void>(
-      context: ctx,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: Container(
-            width: size.width,
-            height: size.height * 0.3,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            decoration: BoxDecoration(
-              border: Border.all(),
-              color: MyColors.white,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: const [
-                BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 2, blurStyle: BlurStyle.solid),
-              ],
+  @override
+  ConsumerState<UpdateUsernameDialog> createState() => _UpdateUsernameDialogState();
+}
+
+class _UpdateUsernameDialogState extends ConsumerState<UpdateUsernameDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+
+    return AppDialog(
+      title: 'Update Username',
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            const Text(
+              'Geben Sie in folgendem Feld Ihren neuen Nutzernamen ein '
+              'und bestätigen Sie die Änderung mit dem Button am Ende',
             ),
-            constraints: const BoxConstraints(maxHeight: 300),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text('Update Username', style: Theme.of(context).textTheme.headlineSmall),
-                Flexible(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        'Geben Sie in folgendem Feld Ihren neuen Nutzernamen ein '
-                        'und bestätigen Sie die Änderung mit dem Button am Ende',
-                      ),
-                      TextFormField(
-                        controller: usernameController,
-                        validator: MultiValidator([
-                          RequiredValidator(errorText: 'Enter Username'),
-                          PatternValidator(
-                            r"^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$",
-                            errorText:
-                                'The Username needs to be 8-20 Characters long.\n'
-                                'No "_" or "." at the beginning.\n'
-                                'No "__" or "_." or "._" or ".." or " " inside.\n'
-                                'No "_" or "." at the end.',
-                          ),
-                        ]).call,
-                        cursorColor: MyColors.raisinBlack,
-                        decoration: InputDecoration(
-                          hintText: 'Username',
-                          labelText: 'Username',
-                          prefixIcon: Icon(Icons.person),
-                          errorStyle: TextStyle(fontSize: 14.0),
-                          labelStyle: TextStyle(color: MyColors.raisinBlack),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: MyColors.raisinBlack),
-                            borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: MyColors.raisinBlack),
-                            borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _usernameController,
+              validator: MultiValidator([
+                RequiredValidator(errorText: 'Enter Username'),
+                PatternValidator(
+                  usernamePattern,
+                  errorText:
+                      'The Username needs to be 8-20 Characters long.\n'
+                      'No "_" or "." at the beginning.\n'
+                      'No "__" or "_." or "._" or ".." inside.\n'
+                      'No "_" or "." at the end.',
                 ),
-                ref.read(authViewModelProvider).isLoading
-                    ? CircularProgressIndicator()
-                    : DefaultButton(
-                        onTap: () => _updateUsername(context, viewModel, profileViewModel),
-                        title: 'Update Username',
-                      ),
-              ],
+              ]).call,
+              decoration: dialogInputDecoration(label: 'Username', icon: Icons.person),
             ),
-          ),
-        );
-      },
+            const SizedBox(height: 16),
+            if (authState.error != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(authState.error!, style: const TextStyle(color: Colors.redAccent)),
+              ),
+            authState.isLoading
+                ? const CircularProgressIndicator()
+                : DefaultButton(onTap: _updateUsername, title: 'Update Username'),
+          ],
+        ),
+      ),
     );
   }
 
-  void _updateUsername(BuildContext context, AuthViewModel viewModel, ProfileViewModel profileViewModel) async {
-    await viewModel.updateUsername(usernameController.text);
-    await profileViewModel.updateName(usernameController.text);
-    Navigator.of(context).pop();
+  Future<void> _updateUsername() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    final newName = _usernameController.text.trim();
+    final success = await ref.read(authViewModelProvider.notifier).updateUsername(newName);
+    if (!success) return;
+
+    await ref.read(profileViewModelProvider.notifier).updateName(newName);
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 }

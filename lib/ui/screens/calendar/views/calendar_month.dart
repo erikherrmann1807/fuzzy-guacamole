@@ -1,74 +1,38 @@
-part of '../calendar_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/styles/colors.dart';
+import 'package:fuzzy_guacamole/styles/styles.dart';
+import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
+import 'package:fuzzy_guacamole/ui/viewmodels/calendar_viewmodel.dart';
+import 'package:fuzzy_guacamole/ui/widgets/agenda_list.dart';
+import 'package:fuzzy_guacamole/ui/widgets/month_view_widgets/month_year_dialog.dart';
+import 'package:fuzzy_guacamole/utils/utils.dart';
+import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 
-class MonthlyScreen extends ConsumerStatefulWidget {
+/// Monatsansicht des Kalenders mit Agenda für den ausgewählten Tag.
+class MonthlyScreen extends ConsumerWidget {
   const MonthlyScreen({super.key});
 
   @override
-  ConsumerState<MonthlyScreen> createState() => _MonthlyScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meetingsState = ref.watch(meetingsViewModelProvider);
+    final calendar = ref.watch(calendarViewModelProvider);
+    final calendarVm = ref.read(calendarViewModelProvider.notifier);
+    final size = MediaQuery.sizeOf(context);
+    final locale = Localizations.maybeLocaleOf(context)?.toString();
 
-class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
-  late DateTime today;
-
-  @override
-  void initState() {
-    super.initState();
-    datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
-    selectedDate = DateTime.now();
-    today = DateTime.now();
-  }
-
-  void _changeMonth(int offset) {
-    setState(() {
-      currentMonth = DateTime(currentMonth.year, currentMonth.month + offset);
-      datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
-    });
-  }
-
-  void _selectMonth() async {
-    await showDialog(
-      context: context,
-      builder: (context) => MonthYearDialog(
-        initialMonth: currentMonth,
-        onSelected: (newDate) {
-          setState(() {
-            currentMonth = newDate;
-            datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
-          });
-        },
-      ),
-    );
-  }
-
-  void editMeeting({required Meeting meeting}) {
-    _selectedAppointment = meeting;
-    _isAllDay = meeting.isAllDay;
-    _selectedColorIndex = labelColors.indexOf(meeting.labelColor);
-    _subject = meeting.eventName;
-    _notes = meeting.description;
-    _startDate = meeting.start;
-    _endDate = meeting.end;
-    _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
-    _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
-
-    Navigator.pushNamed(context, Routes.meetingEditor);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final state = ref.watch(meetingsViewModelProvider);
-    Size size = MediaQuery.sizeOf(context);
-
-    if (state.loading) {
+    if (meetingsState.loading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.error != null) {
-      return Center(child: Text('Fehler beim Laden: ${state.error}'));
+    if (meetingsState.error != null) {
+      return Center(child: Text('Fehler beim Laden: ${meetingsState.error}'));
     }
 
-    final meetings = state.items;
-    final meetingsByDay = CalendarUtils.buildMeetingsMapSpanning(meetings, (m) => m.start, (m) => m.end);
+    final meetingsByDay = CalendarUtils.buildMeetingsMapSpanning(meetingsState.items, (m) => m.start, (m) => m.end);
+    final selectedDayMeetings = meetingsByDay[calendar.selectedDate] ?? [];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -77,19 +41,16 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(icon: const Icon(Icons.arrow_back_ios), onPressed: () => _changeMonth(-1)),
+              IconButton(icon: const Icon(Icons.arrow_back_ios), onPressed: calendarVm.goToPreviousMonth),
               TextButton(
-                onPressed: () => _selectMonth(),
-                child: Text(
-                  '${CalendarUtils.monthName(currentMonth.month)} ${currentMonth.year}',
-                  style: calendarHeader,
-                ),
+                onPressed: () => _showMonthPicker(context, calendar.visibleMonth, calendarVm),
+                child: Text(DateFormat.yMMMM(locale).format(calendar.visibleMonth), style: calendarHeader),
               ),
-              IconButton(icon: const Icon(Icons.arrow_forward_ios), onPressed: () => _changeMonth(1)),
+              IconButton(icon: const Icon(Icons.arrow_forward_ios), onPressed: calendarVm.goToNextMonth),
             ],
           ),
           Row(
-            children: ['Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.', 'So.']
+            children: _weekdayHeaders(locale)
                 .map(
                   (day) => Expanded(
                     child: Container(
@@ -101,77 +62,10 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
                 .toList(),
           ),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
-              itemCount: datesGrid.length,
-              itemBuilder: (context, index) {
-                DateTime date = datesGrid[index];
-                final bool isCurrentMonth = date.month == currentMonth.month;
-                final bool isSelected = DateUtils.isSameDay(selectedDate, date);
-                final bool isTodayCell = DateUtils.isSameDay(date, today);
-
-                final key = DateTime(date.year, date.month, date.day);
-                final todayMeetings = meetingsByDay[key] ?? [];
-
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedDate = date;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final size = constraints.maxWidth;
-                        final badgeSize = size * 0.4;
-                        final offset = size * 0.05;
-
-                        return Stack(
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: isSelected
-                                  ? MyColors.raisinBlack
-                                  : (isTodayCell
-                                        ? MyColors.todayColor
-                                        : (isCurrentMonth ? MyColors.grey : Colors.transparent)),
-                              child: Text(
-                                date.day.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                  color: isSelected ? Colors.white : (isCurrentMonth ? Colors.black : Colors.grey),
-                                ),
-                              ),
-                            ),
-                            if (todayMeetings.isNotEmpty)
-                              Positioned(
-                                bottom: offset,
-                                right: offset,
-                                child: Container(
-                                  width: badgeSize,
-                                  height: badgeSize,
-                                  decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(badgeSize / 2),
-                                  ),
-                                  child: Center(
-                                    child: FittedBox(
-                                      child: Text(
-                                        todayMeetings.length.toString(),
-                                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                );
-              },
+            child: _MonthGrid(
+              calendar: calendar,
+              meetingsByDay: meetingsByDay,
+              onDateSelected: calendarVm.selectDate,
             ),
           ),
           const Divider(),
@@ -192,48 +86,16 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Agenda für ${selectedDate.day}.${selectedDate.month}.${selectedDate.year}',
-                    style: agendaDateText,
-                  ),
+                  Text('Agenda für ${DateFormat.yMd(locale).format(calendar.selectedDate)}', style: agendaDateText),
                   const Gap(4),
                   Expanded(
-                    child: Builder(
-                      builder: (_) {
-                        final key = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-                        final today = meetingsByDay[key] ?? [];
-                        if (today.isEmpty) {
-                          return const Center(child: Text('Keine Termine'));
-                        }
-                        return ListView.separated(
-                          itemCount: today.length,
-                          separatorBuilder: (_, __) => Gap(14),
-                          itemBuilder: (context, idx) {
-                            final mt = today[idx];
-
-                            final clamp = CalendarUtils.clampToDay(mt.start, mt.end, selectedDate);
-                            final startTime = (mt.isAllDay || clamp.fillsFullDay)
-                                ? 'Ganztägig '
-                                : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
-                            final endTime = (mt.isAllDay || clamp.fillsFullDay)
-                                ? ''
-                                : CalendarUtils.formatHHmm(clamp.displayEnd);
-                            final suffix = CalendarUtils.multiDaySuffix(mt.start, mt.end, selectedDate);
-
-                            return EventWidget(
-                              startTime: startTime,
-                              endTime: endTime,
-                              description: mt.description,
-                              eventName: '${mt.eventName}$suffix',
-                              function: () => editMeeting(meeting: mt),
-                              priority: mt.priority,
-                              labelColor: mt.labelColor,
-                              isAllDay: mt.isAllDay,
-                            );
-                          },
-                        );
-                      },
-                    ),
+                    child: selectedDayMeetings.isEmpty
+                        ? const Center(child: Text('Keine Termine'))
+                        : DayAgendaList(
+                            meetings: selectedDayMeetings,
+                            day: calendar.selectedDate,
+                            onMeetingTap: (meeting) => openMeetingEditor(context, meeting: meeting),
+                          ),
                   ),
                 ],
               ),
@@ -241,6 +103,100 @@ class _MonthlyScreenState extends ConsumerState<MonthlyScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  /// Kurze Wochentagsnamen, beginnend bei Montag.
+  List<String> _weekdayHeaders(String? locale) {
+    final format = DateFormat.E(locale);
+    // 5.1.2026 ist ein Montag.
+    final monday = DateTime(2026, 1, 5);
+    return List.generate(7, (i) => '${format.format(monday.add(Duration(days: i)))}.');
+  }
+
+  Future<void> _showMonthPicker(BuildContext context, DateTime visibleMonth, CalendarViewModel vm) {
+    return showDialog(
+      context: context,
+      builder: (context) => MonthYearDialog(initialMonth: visibleMonth, onSelected: vm.showMonth),
+    );
+  }
+}
+
+class _MonthGrid extends StatelessWidget {
+  const _MonthGrid({required this.calendar, required this.meetingsByDay, required this.onDateSelected});
+
+  final CalendarState calendar;
+  final Map<DateTime, List<Object>> meetingsByDay;
+  final void Function(DateTime) onDateSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final today = DateTime.now();
+    final datesGrid = calendar.datesGrid;
+
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+      itemCount: datesGrid.length,
+      itemBuilder: (context, index) {
+        final date = datesGrid[index];
+        final isCurrentMonth = date.month == calendar.visibleMonth.month;
+        final isSelected = DateUtils.isSameDay(calendar.selectedDate, date);
+        final isTodayCell = DateUtils.isSameDay(date, today);
+        final dayMeetings = meetingsByDay[date] ?? [];
+
+        return GestureDetector(
+          onTap: () => onDateSelected(date),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final cellSize = constraints.maxWidth;
+                final badgeSize = cellSize * 0.4;
+                final offset = cellSize * 0.05;
+
+                return Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: isSelected
+                          ? MyColors.raisinBlack
+                          : (isTodayCell ? MyColors.todayColor : (isCurrentMonth ? MyColors.grey : Colors.transparent)),
+                      child: Text(
+                        date.day.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: isSelected ? Colors.white : (isCurrentMonth ? Colors.black : Colors.grey),
+                        ),
+                      ),
+                    ),
+                    if (dayMeetings.isNotEmpty)
+                      Positioned(
+                        bottom: offset,
+                        right: offset,
+                        child: Container(
+                          width: badgeSize,
+                          height: badgeSize,
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            borderRadius: BorderRadius.circular(badgeSize / 2),
+                          ),
+                          child: Center(
+                            child: FittedBox(
+                              child: Text(
+                                dayMeetings.length.toString(),
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

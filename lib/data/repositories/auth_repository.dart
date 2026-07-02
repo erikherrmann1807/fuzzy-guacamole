@@ -1,10 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fuzzy_guacamole/data/services/auth_service.dart';
 
+/// Vermittelt zwischen ViewModels und [AuthService].
 class AuthRepository {
   final AuthService authService;
 
   AuthRepository(this.authService);
+
+  User? get currentUser => authService.currentUser;
+
+  Stream<User?> get authStateChanges => authService.authStateChanges;
 
   Future<User?> login(String email, String password) async {
     final credential = await authService.signIn(email: email, password: password);
@@ -17,16 +22,15 @@ class AuthRepository {
 
   Future<void> updateUsername(String username) => authService.updateUsername(username: username);
 
-  Future<void> createAccount(String email, String password, String userName) =>
-      authService.createAccount(email: email, password: password, displayName: userName);
+  Future<User?> createAccount(String email, String password, String userName) async {
+    final credential = await authService.createAccount(email: email, password: password, displayName: userName);
+    return credential.user;
+  }
 
   Future<void> deleteAccount(String email, String password) =>
       authService.deleteAccount(email: email, password: password);
 
   Future<void> updatePassword(String newPassword) => authService.updateUserPassword(newPassword: newPassword);
 
-  Future<bool?> validatePassword(String password) async {
-    final isValid = await authService.validatePassword(password);
-    return isValid;
-  }
+  Future<bool> validatePassword(String password) => authService.validatePassword(password);
 }

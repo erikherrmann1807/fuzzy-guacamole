@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:fuzzy_guacamole/data/models/user_model.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
-import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
 import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/auth_viewmodel.dart';
@@ -144,16 +142,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  void register(AuthViewModel viewModel) async {
-    await viewModel.createAccount(emailController.text, passwordController.text, usernameController.text);
-    final userRepo = ref.read(userRepositoryProvider);
-    if (userRepo != null) {
-      await userRepo.create(Member(userName: usernameController.text, email: emailController.text));
+  Future<void> register(AuthViewModel viewModel) async {
+    final success = await viewModel.createAccount(
+      emailController.text.trim(),
+      passwordController.text,
+      usernameController.text.trim(),
+    );
+    // Bei Fehler bleibt der Screen offen und zeigt state.error an.
+    if (success && mounted) {
+      Navigator.pushReplacementNamed(context, Routes.calendar);
     }
-    popPage();
-  }
-
-  void popPage() {
-    Navigator.pushReplacementNamed(context, Routes.calendar);
   }
 }

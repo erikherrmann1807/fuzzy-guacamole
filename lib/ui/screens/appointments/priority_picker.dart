@@ -1,11 +1,22 @@
-part of '../calendar/calendar_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:fuzzy_guacamole/constants.dart';
+import 'package:fuzzy_guacamole/styles/colors.dart';
 
-class _PriorityPicker extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _PriorityPickerState();
-}
+/// Dialog zur Auswahl der Priorität (Label-Farbe).
+/// Gibt den gewählten Index über `Navigator.pop` zurück.
+class PriorityPicker extends StatelessWidget {
+  const PriorityPicker({super.key, required this.selectedIndex});
 
-class _PriorityPickerState extends State<_PriorityPicker> {
+  final int selectedIndex;
+
+  static Future<int?> show(BuildContext context, {required int selectedIndex}) {
+    return showDialog<int>(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => PriorityPicker(selectedIndex: selectedIndex),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -20,7 +31,7 @@ class _PriorityPickerState extends State<_PriorityPicker> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Container(
         width: size.width,
-        padding: EdgeInsets.only(left: 12),
+        padding: const EdgeInsets.only(left: 12),
         decoration: BoxDecoration(
           border: Border.all(),
           color: MyColors.white,
@@ -40,14 +51,9 @@ class _PriorityPickerState extends State<_PriorityPicker> {
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(index == _selectedColorIndex ? Icons.lens : Icons.trip_origin, color: labelColors[index]),
+                leading: Icon(index == selectedIndex ? Icons.lens : Icons.trip_origin, color: labelColors[index]),
                 title: Text(labelNames[index]),
-                onTap: () {
-                  setState(() => _selectedColorIndex = index);
-                  Future.delayed(const Duration(milliseconds: 200), () {
-                    Navigator.of(context).pop();
-                  });
-                },
+                onTap: () => Navigator.of(context).pop(index),
               );
             },
           ),

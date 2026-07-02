@@ -1,30 +1,18 @@
-library;
-
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fuzzy_guacamole/constants.dart';
-import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
-import 'package:fuzzy_guacamole/routes.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
-import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/accountmanagement/account_management_screen.dart';
+import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
 import 'package:fuzzy_guacamole/ui/screens/auth/app_loading_page.dart';
+import 'package:fuzzy_guacamole/ui/screens/calendar/views/calendar_month.dart';
+import 'package:fuzzy_guacamole/ui/screens/home/home_screen.dart';
 import 'package:fuzzy_guacamole/ui/screens/settings/settingsmenu.dart';
+import 'package:fuzzy_guacamole/ui/viewmodels/calendar_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/app_bar.dart';
-import 'package:fuzzy_guacamole/ui/widgets/event_widget.dart';
-import 'package:fuzzy_guacamole/ui/widgets/home_widgets/weather_widget.dart';
-import 'package:fuzzy_guacamole/ui/widgets/month_view_widgets/month_year_dialog.dart';
-import 'package:fuzzy_guacamole/utils/utils.dart';
-import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 
-part '../appointments/appointment_editor.dart';
-part '../appointments/priority_picker.dart';
-part 'views/calendar_month.dart';
-part '../home/home_screen.dart';
-
+/// Haupt-Shell der App: Bottom-Navigation zwischen Home, Monatsansicht,
+/// Account-Management und Settings.
 class EventCalendarScreen extends ConsumerStatefulWidget {
   const EventCalendarScreen({super.key});
 
@@ -32,41 +20,18 @@ class EventCalendarScreen extends ConsumerStatefulWidget {
   ConsumerState<EventCalendarScreen> createState() => _EventCalendarScreenState();
 }
 
-int _selectedColorIndex = 0;
-Meeting? _selectedAppointment;
-late DateTime _startDate;
-late TimeOfDay _startTime;
-late DateTime _endDate;
-late TimeOfDay _endTime;
-late bool _isAllDay;
-String _subject = '';
-String _notes = '';
-late DateTime selectedDate;
-DateTime currentMonth = DateTime.now();
-late List<DateTime> datesGrid;
+enum _Tab { home, calendar, account, settings }
 
 class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
-  int _selectedIndex = 0;
+  _Tab _selectedTab = _Tab.home;
 
   @override
   void initState() {
     super.initState();
-    _selectedAppointment = null;
-    _selectedColorIndex = 0;
-    _subject = '';
-    _notes = '';
-    _startDate = DateTime.now();
-    _endDate = DateTime.now();
-
     Future.microtask(() {
-      ref.read(profileViewModelProvider.notifier).load();
-    });
-  }
-
-  void _onItemTapped(int index) {
-    if (index == 2) return;
-    setState(() {
-      _selectedIndex = index;
+      if (mounted) {
+        ref.read(profileViewModelProvider.notifier).load();
+      }
     });
   }
 
@@ -79,15 +44,29 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
       return const AppLoadingPage();
     }
     if (profile.error != null) {
-      return Center(child: Text('Fehler: ${profile.error}'));
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Fehler: ${profile.error}'),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () => ref.read(profileViewModelProvider.notifier).load(),
+                child: const Text('Erneut versuchen'),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
-    final username = profile.member?.userName ?? "Nutzer";
+    final username = profile.member?.userName ?? 'Nutzer';
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: _getCurrentAppBar(username),
-      body: _getCurrentScreen(),
+      appBar: _appBarForTab(username),
+      body: _screenForTab(),
       bottomNavigationBar: BottomAppBar(
         height: size.height * 0.08,
         shape: const CircularNotchedRectangle(),
@@ -100,12 +79,16 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  IconButton(icon: const Icon(Icons.home), color: MyColors.white, onPressed: () => _onItemTapped(0)),
+                  IconButton(
+                    icon: const Icon(Icons.home),
+                    color: MyColors.white,
+                    onPressed: () => _selectTab(_Tab.home),
+                  ),
                   SizedBox(width: size.width * 0.05),
                   IconButton(
                     icon: const Icon(Icons.calendar_month),
                     color: MyColors.white,
-                    onPressed: () => _onItemTapped(1),
+                    onPressed: () => _selectTab(_Tab.calendar),
                   ),
                   SizedBox(width: size.width * 0.08),
                 ],
@@ -116,12 +99,16 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
               child: Row(
                 children: [
                   SizedBox(width: size.width * 0.08),
-                  IconButton(icon: const Icon(Icons.person), color: MyColors.white, onPressed: () => _onItemTapped(3)),
+                  IconButton(
+                    icon: const Icon(Icons.person),
+                    color: MyColors.white,
+                    onPressed: () => _selectTab(_Tab.account),
+                  ),
                   SizedBox(width: size.width * 0.05),
                   IconButton(
                     icon: const Icon(Icons.settings),
                     color: MyColors.white,
-                    onPressed: () => _onItemTapped(4),
+                    onPressed: () => _selectTab(_Tab.settings),
                   ),
                 ],
               ),
@@ -134,65 +121,48 @@ class _EventCalendarScreenState extends ConsumerState<EventCalendarScreen> {
         child: FloatingActionButton(
           shape: const CircleBorder(),
           backgroundColor: MyColors.raisinBlack,
-          onPressed: () => onButtonPress(),
-          child: Icon(Icons.add, color: MyColors.white),
+          onPressed: _createMeeting,
+          child: const Icon(Icons.add, color: MyColors.white),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
-  Widget _getCurrentScreen() {
-    switch (_selectedIndex) {
-      case 0:
-        return HomeScreen();
-      case 1:
-        return MonthlyScreen();
-      case 3:
+  void _selectTab(_Tab tab) => setState(() => _selectedTab = tab);
+
+  Widget _screenForTab() {
+    switch (_selectedTab) {
+      case _Tab.home:
+        return const HomeScreen();
+      case _Tab.calendar:
+        return const MonthlyScreen();
+      case _Tab.account:
         return AccountManagementScreen();
-      case 4:
-        return SettingsMenu();
-      default:
-        return MonthlyScreen();
+      case _Tab.settings:
+        return const SettingsMenu();
     }
   }
 
-  AppBar _getCurrentAppBar(String username) {
-    switch (_selectedIndex) {
-      case 0:
-        return customAppBar('Hallo👋, $username!', _selectedIndex, () => {});
-      case 1:
-        return customAppBar('Hallo👋, $username!', _selectedIndex, () => resetSelectedDate());
-      case 3:
-        return customAppBar('Account Management', _selectedIndex, () => {});
-      case 4:
-        return customAppBar('Settings', _selectedIndex, () => {});
-      default:
-        return customAppBar('Hallo👋, $username!', _selectedIndex, () => {});
+  AppBar _appBarForTab(String username) {
+    switch (_selectedTab) {
+      case _Tab.home:
+        return customAppBar('Hallo👋, $username!', showTodayButton: false);
+      case _Tab.calendar:
+        return customAppBar(
+          'Hallo👋, $username!',
+          showTodayButton: true,
+          onTodayPressed: () => ref.read(calendarViewModelProvider.notifier).resetToToday(),
+        );
+      case _Tab.account:
+        return customAppBar('Account Management', showTodayButton: false);
+      case _Tab.settings:
+        return customAppBar('Settings', showTodayButton: false);
     }
   }
 
-  void resetSelectedDate() {
-    setState(() {
-      selectedDate = DateTime.now();
-      currentMonth = DateTime.now();
-      datesGrid = CalendarUtils.generateDatesGrid(currentMonth);
-    });
-  }
-
-  void onButtonPress() {
-    _selectedAppointment = null;
-    _isAllDay = false;
-    _selectedColorIndex = 0;
-    _subject = '';
-    _notes = '';
-
-    _startDate = selectedDate;
-    _endDate = _startDate.add(Duration(hours: 1));
-
-    _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
-    _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
-
-    Navigator.pushNamed(context, Routes.meetingEditor);
+  void _createMeeting() {
+    final selectedDate = ref.read(calendarViewModelProvider).selectedDate;
+    openMeetingEditor(context, initialDate: selectedDate);
   }
 }

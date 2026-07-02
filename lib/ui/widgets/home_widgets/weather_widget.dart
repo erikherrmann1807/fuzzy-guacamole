@@ -3,12 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fuzzy_guacamole/data/providers/weather_provider.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 
-class WeatherCard extends StatelessWidget {
-  final WidgetRef ref;
-  const WeatherCard({super.key, required this.ref});
+class WeatherCard extends ConsumerWidget {
+  const WeatherCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final weatherAsync = ref.watch(weatherProvider);
     final size = MediaQuery.sizeOf(context);
 
@@ -24,8 +23,8 @@ class WeatherCard extends StatelessWidget {
         ],
       ),
       child: weatherAsync.when(
-        loading: () => Row(
-          children: const [
+        loading: () => const Row(
+          children: [
             SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
             SizedBox(width: 12),
             Text('Wetter laden …'),

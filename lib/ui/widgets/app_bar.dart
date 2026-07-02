@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 
-AppBar customAppBar(String title, int index, VoidCallback function) {
+AppBar customAppBar(String title, {bool showTodayButton = false, VoidCallback? onTodayPressed}) {
   return AppBar(
     actions: [
-      if (index == 1)
+      if (showTodayButton)
         IconButton(
-          onPressed: function,
-          icon: Icon(Icons.today, color: MyColors.white),
+          onPressed: onTodayPressed,
+          icon: const Icon(Icons.today, color: MyColors.white),
         ),
     ],
     title: Text(title, style: appBarText),

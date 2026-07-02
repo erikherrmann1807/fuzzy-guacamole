@@ -1,10 +1,9 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fuzzy_guacamole/data/providers/locale_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 /// Hilfsfunktionen rund um Kalendertage, Meetings und Agenda.
 class CalendarUtils {
   CalendarUtils._(); // static-only
+
+  /// Zellen im Monatsraster: 6 Wochen à 7 Tage.
+  static const int gridCellCount = 42;
 
   /// Nur Datum (00:00) – wichtig für Schlüssel in Maps.
   static DateTime dateOnly(DateTime x) => DateTime(x.year, x.month, x.day);
@@ -91,84 +90,32 @@ class CalendarUtils {
     return DayClamp(displayStart: displayStart, displayEnd: displayEnd, fillsFullDay: fillsFullDay);
   }
 
-  /// Liefert ein Suffix wie " (Tag 2/3)" für Mehrtages-Events – oder ''.
-  static String multiDaySuffix(DateTime start, DateTime end, DateTime selectedDay) {
-    final totalDays = effectiveLastDay(start, end).difference(dateOnly(start)).inDays + 1;
-    if (totalDays <= 1) return '';
-    final dayIndex = dateOnly(selectedDay).difference(dateOnly(start)).inDays + 1;
-    return ' (Tag $dayIndex/$totalDays)';
-  }
+  /// Gesamtzahl der Kalendertage, über die sich ein Event erstreckt.
+  static int totalDaysSpanned(DateTime start, DateTime end) =>
+      effectiveLastDay(start, end).difference(dateOnly(start)).inDays + 1;
 
-  /// Deutsche Wochentags-Kurzform (1=Mo … 7=So).
-  static String weekdayShortDe(int weekday) {
-    const map = {1: 'Mo', 2: 'Di', 3: 'Mi', 4: 'Do', 5: 'Fr', 6: 'Sa', 7: 'So'};
-    return map[weekday] ?? '';
-  }
+  /// 1-basierter Tag-Index eines Mehrtages-Events am [selectedDay].
+  static int dayIndexWithinSpan(DateTime start, DateTime selectedDay) =>
+      dateOnly(selectedDay).difference(dateOnly(start)).inDays + 1;
 
+  /// 6x7-Raster der Kalendertage eines Monats, inklusive der angeschnittenen
+  /// Tage des Vor- und Folgemonats. Alle Einträge sind reine Daten (00:00).
   static List<DateTime> generateDatesGrid(DateTime month) {
-    int numDays = DateTime(month.year, month.month + 1, 0).day;
-    int firstWeekday = DateTime(month.year, month.month, 1).weekday;
-    int prevDaysToShow = (firstWeekday - 1);
-    List<DateTime> dates = [];
+    final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
+    final firstWeekday = DateTime(month.year, month.month, 1).weekday;
+    final leadingDays = firstWeekday - DateTime.monday;
 
-    DateTime previousMonth = DateTime(month.year, month.month - 1);
-    int previousMonthLastDay = DateTime(previousMonth.year, previousMonth.month + 1, 0).day;
-    for (int i = prevDaysToShow; i > 0; i--) {
-      dates.add(
-        DateTime(
-          previousMonth.year,
-          previousMonth.month,
-          previousMonthLastDay - i + 1,
-          DateTime.now().hour,
-          DateTime.now().minute,
-        ),
-      );
-    }
+    final dates = <DateTime>[
+      for (int i = leadingDays; i > 0; i--) DateTime(month.year, month.month, 1 - i),
+      for (int day = 1; day <= daysInMonth; day++) DateTime(month.year, month.month, day),
+    ];
 
-    for (int day = 1; day <= numDays; day++) {
-      dates.add(DateTime(month.year, month.month, day, DateTime.now().hour, DateTime.now().minute));
-    }
-
-    int remainingBoxes = 42 - dates.length; // 6 weeks * 7 days
-    for (int day = 1; day <= remainingBoxes; day++) {
-      dates.add(DateTime(month.year, month.month + 1, day, DateTime.now().hour, DateTime.now().minute));
+    final trailingDays = gridCellCount - dates.length;
+    for (int day = 1; day <= trailingDays; day++) {
+      dates.add(DateTime(month.year, month.month + 1, day));
     }
 
     return dates;
-  }
-
-  static String monthName(int monthNumber) {
-    return [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ][monthNumber - 1];
-  }
-
-  static List<String> allMonths() {
-    return [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
   }
 }
 
@@ -177,21 +124,4 @@ class DayClamp {
   final DateTime displayEnd;
   final bool fillsFullDay;
   const DayClamp({required this.displayStart, required this.displayEnd, required this.fillsFullDay});
-}
-
-Future<void> setGerman(WidgetRef ref) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('locale', 'de');
-  ref.invalidate(localProvider);
-}
-
-Future<void> setEnglish(WidgetRef ref) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('locale', 'en');
-  ref.invalidate(localProvider);
-}
-
-Future<String> getLocale() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString('locale') ?? 'de';
 }

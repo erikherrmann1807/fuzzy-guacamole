@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 
-ValueNotifier<AuthService> authServiceGlobal = ValueNotifier(AuthService());
-
+/// Kapselt alle FirebaseAuth-Zugriffe.
 class AuthService {
   final FirebaseAuth firebaseAuthentication;
 
@@ -12,45 +10,62 @@ class AuthService {
 
   Stream<User?> get authStateChanges => firebaseAuthentication.authStateChanges();
 
-  Future<UserCredential> signIn({required String email, required String password}) async {
-    return await firebaseAuthentication.signInWithEmailAndPassword(email: email, password: password);
+  Future<UserCredential> signIn({required String email, required String password}) {
+    return firebaseAuthentication.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  Future<void> signOut() async {
-    await firebaseAuthentication.signOut();
-  }
+  Future<void> signOut() => firebaseAuthentication.signOut();
 
-  Future<void> resetPassword({required String email}) async {
-    await firebaseAuthentication.sendPasswordResetEmail(email: email);
-  }
+  Future<void> resetPassword({required String email}) => firebaseAuthentication.sendPasswordResetEmail(email: email);
 
   Future<void> updateUsername({required String username}) async {
-    await currentUser!.updateDisplayName(username);
+    final user = _requireUser();
+    await user.updateDisplayName(username);
   }
 
-  Future<void> createAccount({required String email, required String password, required String displayName}) async {
-    await firebaseAuthentication.createUserWithEmailAndPassword(email: email, password: password);
+  /// Legt den Account an und setzt direkt den Anzeigenamen.
+  /// Firebase meldet den Nutzer dabei automatisch an.
+  Future<UserCredential> createAccount({
+    required String email,
+    required String password,
+    required String displayName,
+  }) async {
+    final credential = await firebaseAuthentication.createUserWithEmailAndPassword(email: email, password: password);
     await updateUsername(username: displayName);
+    return credential;
   }
 
   Future<void> deleteAccount({required String email, required String password}) async {
-    AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
-    await currentUser!.reauthenticateWithCredential(credential);
-    await currentUser!.delete();
+    final user = _requireUser();
+    final credential = EmailAuthProvider.credential(email: email, password: password);
+    await user.reauthenticateWithCredential(credential);
+    await user.delete();
     await firebaseAuthentication.signOut();
   }
 
   Future<void> updateUserPassword({required String newPassword}) async {
-    await currentUser!.updatePassword(newPassword);
+    final user = _requireUser();
+    await user.updatePassword(newPassword);
   }
 
   Future<bool> validatePassword(String password) async {
-    AuthCredential credential = EmailAuthProvider.credential(email: currentUser!.email!, password: password);
+    final user = _requireUser();
+    final email = user.email;
+    if (email == null) return false;
+    final credential = EmailAuthProvider.credential(email: email, password: password);
     try {
-      var authResult = await currentUser!.reauthenticateWithCredential(credential);
+      final authResult = await user.reauthenticateWithCredential(credential);
       return authResult.user != null;
-    } catch (e) {
+    } on FirebaseAuthException {
       return false;
     }
+  }
+
+  User _requireUser() {
+    final user = currentUser;
+    if (user == null) {
+      throw StateError('Kein Nutzer angemeldet.');
+    }
+    return user;
   }
 }

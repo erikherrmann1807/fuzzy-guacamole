@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fuzzy_guacamole/l10n/app_localizations.dart';
+import 'package:fuzzy_guacamole/data/providers/locale_provider.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
-import 'package:fuzzy_guacamole/utils/utils.dart';
 
-class SettingsMenu extends ConsumerStatefulWidget {
+class SettingsMenu extends ConsumerWidget {
   const SettingsMenu({super.key});
 
   @override
-  _SettingsMenuState createState() => _SettingsMenuState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final localeController = ref.read(localeProvider.notifier);
 
-class _SettingsMenuState extends ConsumerState<SettingsMenu> {
-  @override
-  Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          DefaultButton(onTap: () => {}, title: AppLocalizations.of(context)!.helloWorld),
-          DefaultButton(onTap: () => {setGerman(ref)}, title: "Deutsch"),
-          DefaultButton(onTap: () => {setEnglish(ref)}, title: "Englisch"),
+          DefaultButton(onTap: () => localeController.setLocale('de'), title: 'Deutsch'),
+          DefaultButton(onTap: () => localeController.setLocale('en'), title: 'Englisch'),
         ],
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
-import 'package:fuzzy_guacamole/utils/utils.dart';
+import 'package:intl/intl.dart';
 
 class MonthYearDialog extends StatefulWidget {
   const MonthYearDialog({super.key, required this.initialMonth, required this.onSelected});
@@ -26,7 +26,9 @@ class _MonthYearDialogState extends State<MonthYearDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final months = CalendarUtils.allMonths();
+    final locale = Localizations.maybeLocaleOf(context)?.toString();
+    final monthFormat = DateFormat.MMMM(locale);
+    final months = List.generate(12, (i) => monthFormat.format(DateTime(2026, i + 1)));
     final currentYear = DateTime.now().year;
     final years = List.generate(41, (i) => currentYear - 20 + i);
 

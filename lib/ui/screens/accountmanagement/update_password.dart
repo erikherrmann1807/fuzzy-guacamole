@@ -1,140 +1,99 @@
-part of 'account_management_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:fuzzy_guacamole/constants.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_auth_provider.dart';
+import 'package:fuzzy_guacamole/ui/widgets/app_dialog.dart';
+import 'package:fuzzy_guacamole/ui/widgets/default_button.dart';
 
-class UpdatePassword {
-  TextEditingController newPasswordController = TextEditingController();
-  TextEditingController oldPasswordController = TextEditingController();
-  bool _isPasswordValid = false;
+class UpdatePasswordDialog extends ConsumerStatefulWidget {
+  const UpdatePasswordDialog({super.key});
 
-  Future<void> updatePasswordDialog(BuildContext ctx, WidgetRef ref) async {
-    final viewModel = ref.read(authViewModelProvider.notifier);
-    Size size = MediaQuery.sizeOf(ctx);
-    return showDialog<void>(
-      context: ctx,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              child: Container(
-                width: size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  color: MyColors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black, offset: Offset(1.5, 2), spreadRadius: 2, blurStyle: BlurStyle.solid),
-                  ],
+  @override
+  ConsumerState<UpdatePasswordDialog> createState() => _UpdatePasswordDialogState();
+}
+
+class _UpdatePasswordDialogState extends ConsumerState<UpdatePasswordDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _oldPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+
+    return AppDialog(
+      title: 'Update Password',
+      maxHeight: 450,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            const Text(
+              'Um Ihr Passwort zu ändern benötigen Sie '
+              'ein neues Passwort und das aktuelle Passwort.',
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              obscureText: true,
+              controller: _oldPasswordController,
+              validator: RequiredValidator(errorText: 'Enter password').call,
+              decoration: dialogInputDecoration(label: 'Old Password', icon: Icons.password),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              obscureText: true,
+              controller: _newPasswordController,
+              validator: MultiValidator([
+                RequiredValidator(errorText: 'Enter password'),
+                PatternValidator(
+                  passwordPattern,
+                  errorText:
+                      'Password must contain minimum eight characters, '
+                      'at least one letter and one number',
                 ),
-                constraints: const BoxConstraints(maxHeight: 450),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Update Password', style: Theme.of(context).textTheme.headlineSmall),
-                    SizedBox(height: 16),
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Text(
-                              'Um Ihr Passwort zu ändern benötigen Sie '
-                              'ein neues Passwort, das aktuelle Passwort '
-                              'und Ihre E-Mail Adresse.',
-                            ),
-                            SizedBox(height: 16),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                obscureText: true,
-                                controller: oldPasswordController,
-                                validator: MultiValidator([
-                                  RequiredValidator(errorText: 'Enter password'),
-                                  PatternValidator(
-                                    r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
-                                    errorText: _isPasswordValid
-                                        ? ''
-                                        : 'Password muss contain minimum eight characters, '
-                                              'at least one letter and one number',
-                                  ),
-                                ]).call,
-                                cursorColor: MyColors.raisinBlack,
-                                decoration: InputDecoration(
-                                  hintText: 'Old Password',
-                                  labelText: 'Old Password',
-                                  prefixIcon: Icon(Icons.password, color: MyColors.raisinBlack),
-                                  labelStyle: TextStyle(color: MyColors.raisinBlack),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: MyColors.raisinBlack),
-                                    borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: MyColors.raisinBlack),
-                                    borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                obscureText: true,
-                                controller: newPasswordController,
-                                validator: MultiValidator([
-                                  RequiredValidator(errorText: 'Enter password'),
-                                  PatternValidator(
-                                    r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
-                                    errorText:
-                                        'Password muss contain minimum eight characters, '
-                                        'at least one letter and one number',
-                                  ),
-                                ]).call,
-                                cursorColor: MyColors.raisinBlack,
-                                decoration: InputDecoration(
-                                  hintText: 'New Password',
-                                  labelText: 'New Password',
-                                  prefixIcon: Icon(Icons.password, color: MyColors.raisinBlack),
-                                  labelStyle: TextStyle(color: MyColors.raisinBlack),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: MyColors.raisinBlack),
-                                    borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: MyColors.raisinBlack),
-                                    borderRadius: BorderRadius.all(Radius.circular(9.0)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                DefaultButton(
-                                  onTap: () async {
-                                    await viewModel.validatePassword(oldPasswordController.text);
-                                    _isPasswordValid = ref.read(authViewModelProvider).isValid;
-                                    setState(() {});
-                                    if (_isPasswordValid) {
-                                      await viewModel.updatePassword(newPasswordController.text);
-                                      Navigator.of(context).pop();
-                                    }
-                                  },
-                                  title: 'Update Password',
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              ]).call,
+              decoration: dialogInputDecoration(label: 'New Password', icon: Icons.password),
+            ),
+            const SizedBox(height: 16),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
               ),
-            );
-          },
-        );
-      },
+            authState.isLoading
+                ? const CircularProgressIndicator()
+                : DefaultButton(onTap: _updatePassword, title: 'Update Password'),
+          ],
+        ),
+      ),
     );
+  }
+
+  Future<void> _updatePassword() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    final viewModel = ref.read(authViewModelProvider.notifier);
+    final isValid = await viewModel.validatePassword(_oldPasswordController.text);
+    if (!isValid || !ref.read(authViewModelProvider).isValid) {
+      setState(() => _errorMessage = 'Das aktuelle Passwort ist nicht korrekt.');
+      return;
+    }
+
+    final success = await viewModel.updatePassword(_newPasswordController.text);
+    if (!mounted) return;
+    if (success) {
+      Navigator.of(context).pop();
+    } else {
+      setState(() => _errorMessage = ref.read(authViewModelProvider).error);
+    }
   }
 }

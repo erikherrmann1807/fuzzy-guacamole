@@ -1,23 +1,33 @@
-part of '../calendar/calendar_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
+import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart';
+import 'package:fuzzy_guacamole/styles/colors.dart';
+import 'package:fuzzy_guacamole/styles/styles.dart';
+import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
+import 'package:fuzzy_guacamole/ui/widgets/agenda_list.dart';
+import 'package:fuzzy_guacamole/ui/widgets/home_widgets/weather_widget.dart';
+import 'package:fuzzy_guacamole/utils/utils.dart';
+import 'package:intl/intl.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              WeatherCard(ref: ref),
-              const SizedBox(height: 16),
+            children: const [
+              SizedBox(height: 16),
+              WeatherCard(),
+              SizedBox(height: 16),
               _SectionTitle('Current tasks'),
-              const SizedBox(height: 8),
-              _TodayAgendaCard(ref: ref),
+              SizedBox(height: 8),
+              _TodayAgendaCard(),
             ],
           ),
         ),
@@ -26,19 +36,19 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _TodayAgendaCard extends StatelessWidget {
-  final WidgetRef ref;
-  const _TodayAgendaCard({required this.ref});
+class _TodayAgendaCard extends ConsumerWidget {
+  const _TodayAgendaCard();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(meetingsViewModelProvider);
     final size = MediaQuery.sizeOf(context);
+    final locale = Localizations.maybeLocaleOf(context)?.toString();
 
     Widget content;
     if (state.loading) {
-      content = Row(
-        children: const [
+      content = const Row(
+        children: [
           SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
           SizedBox(width: 12),
           Text('Lade heutige Termine …'),
@@ -47,11 +57,9 @@ class _TodayAgendaCard extends StatelessWidget {
     } else if (state.error != null) {
       content = Text('Fehler beim Laden: ${state.error}');
     } else {
-      final meetings = state.items;
-      final byDay = CalendarUtils.buildMeetingsMapSpanning<Meeting>(meetings, (m) => m.start, (m) => m.end);
+      final byDay = CalendarUtils.buildMeetingsMapSpanning<Meeting>(state.items, (m) => m.start, (m) => m.end);
       final today = DateTime.now();
-      final dayKey = CalendarUtils.dateOnly(today);
-      final todayEvents = byDay[dayKey] ?? [];
+      final todayEvents = byDay[CalendarUtils.dateOnly(today)] ?? [];
 
       content = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,52 +68,26 @@ class _TodayAgendaCard extends StatelessWidget {
             children: [
               const Icon(Icons.calendar_today_outlined, size: 16),
               const SizedBox(width: 6),
-              Text('${_weekdayShortDe(today.weekday)} ${today.day}', style: currentTasksDateText),
+              Text('${DateFormat.E(locale).format(today)} ${today.day}', style: currentTasksDateText),
               const Spacer(),
-              const _RoundBtn(icon: Icons.add),
+              const _AddMeetingButton(),
             ],
           ),
           const SizedBox(height: 10),
-
           if (todayEvents.isEmpty)
             const Text('Keine Termine für Heute', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700))
           else ...[
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Du hast ${todayEvents.length} Termin${todayEvents.length == 1 ? '' : 'e'} Heute',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
+            Text(
+              'Du hast ${todayEvents.length} Termin${todayEvents.length == 1 ? '' : 'e'} Heute',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
             Flexible(
-              child: ListView.separated(
-                itemCount: todayEvents.length,
+              child: DayAgendaList(
+                meetings: todayEvents,
+                day: today,
                 shrinkWrap: true,
-                separatorBuilder: (_, __) => const Gap(14),
-                itemBuilder: (context, idx) {
-                  final mt = todayEvents[idx];
-                  final clamp = CalendarUtils.clampToDay(mt.start, mt.end, today);
-                  final startTime = (mt.isAllDay || clamp.fillsFullDay)
-                      ? 'Ganztägig '
-                      : '${CalendarUtils.formatHHmm(clamp.displayStart)}-';
-                  final endTime = (mt.isAllDay || clamp.fillsFullDay) ? '' : CalendarUtils.formatHHmm(clamp.displayEnd);
-                  final suffix = CalendarUtils.multiDaySuffix(mt.start, mt.end, today);
-
-                  return EventWidget(
-                    startTime: startTime,
-                    endTime: endTime,
-                    description: mt.description,
-                    eventName: '${mt.eventName}$suffix',
-                    function: () => editMeeting(meeting: mt, context: context),
-                    priority: mt.priority,
-                    labelColor: mt.labelColor,
-                    isAllDay: mt.isAllDay,
-                  );
-                },
+                onMeetingTap: (meeting) => openMeetingEditor(context, meeting: meeting),
               ),
             ),
           ],
@@ -129,42 +111,20 @@ class _TodayAgendaCard extends StatelessWidget {
       child: content,
     );
   }
-
-  static String _weekdayShortDe(int weekday) {
-    const map = {1: 'Mo', 2: 'Di', 3: 'Mi', 4: 'Do', 5: 'Fr', 6: 'Sa', 7: 'So'};
-    return map[weekday] ?? '';
-  }
-
-  void editMeeting({required Meeting meeting, required BuildContext context}) {
-    _selectedAppointment = meeting;
-    _isAllDay = meeting.isAllDay;
-    _selectedColorIndex = labelColors.indexOf(meeting.labelColor);
-    _subject = meeting.eventName;
-    _notes = meeting.description;
-    _startDate = meeting.start;
-    _endDate = meeting.end;
-    _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
-    _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
-
-    Navigator.pushNamed(context, Routes.meetingEditor);
-  }
 }
 
-class _RoundBtn extends StatelessWidget {
-  final IconData icon;
-  const _RoundBtn({required this.icon});
+class _AddMeetingButton extends StatelessWidget {
+  const _AddMeetingButton();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 44,
       height: 44,
-      decoration: BoxDecoration(color: MyColors.raisinBlack, shape: BoxShape.circle),
+      decoration: const BoxDecoration(color: MyColors.raisinBlack, shape: BoxShape.circle),
       child: IconButton(
-        icon: Icon(icon, color: MyColors.white),
-        onPressed: () {
-          Navigator.pushNamed(context, Routes.meetingEditor);
-        },
+        icon: const Icon(Icons.add, color: MyColors.white),
+        onPressed: () => openMeetingEditor(context, initialDate: DateTime.now()),
       ),
     );
   }

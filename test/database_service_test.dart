@@ -1,44 +1,26 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzy_guacamole/constants.dart';
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
-import 'package:fuzzy_guacamole/data/services/auth_service.dart';
 import 'package:fuzzy_guacamole/data/services/database_service.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-
-class FakeUser extends Mock implements User {}
-class FakeAuthService extends Mock implements AuthService {}
 
 void main() {
   late FakeFirebaseFirestore mockFireStore;
-  late FakeAuthService mockAuth;
   late DatabaseService dbService;
 
   const testUid = 'user_123';
 
   setUp(() {
     mockFireStore = FakeFirebaseFirestore();
-    mockAuth = FakeAuthService();
-
-    final fakeUser = FakeUser();
-    when(() => fakeUser.uid).thenReturn(testUid);
-    when(() => mockAuth.currentUser).thenReturn(fakeUser);
-
-    dbService = DatabaseService(
-      fireStore: mockFireStore,
-      uid: ''
-    );
+    dbService = DatabaseService(fireStore: mockFireStore, uid: testUid);
   });
 
-  group('Test database operations', (){
+  group('Test database operations', () {
     test('Get all Meetings from specific User', () async {
-      final ref = mockFireStore
-          .collection(USER_COLLECTION_REF)
-          .doc(testUid)
-          .collection(MEETING_COLLECTION_REF);
+      final ref = mockFireStore.collection(userCollectionRef).doc(testUid).collection(meetingCollectionRef);
 
+      // Altes Persistenzformat (Datum als String): muss weiterhin lesbar sein.
       await ref.add({
         'eventName': 'eventName',
         'description': 'description',
@@ -62,10 +44,22 @@ void main() {
       final meetings = await dbService.meetingsStream.first;
 
       expect(meetings, hasLength(2));
-      expect(
-        meetings.map((m) => m.eventName),
-        containsAll(['eventName', 'Test']),
-      );
+      expect(meetings.map((m) => m.eventName), containsAll(['eventName', 'Test']));
+    });
+
+    test('Meetings from another user are not visible', () async {
+      await mockFireStore.collection(userCollectionRef).doc('other_user').collection(meetingCollectionRef).add({
+        'eventName': 'Fremdtermin',
+        'description': '',
+        'start': DateTime(2025, 8, 21, 10, 30).toString(),
+        'end': DateTime(2025, 8, 21, 11, 30).toString(),
+        'labelColor': MyColors.lowLabel.toARGB32(),
+        'priority': 'Low',
+        'isAllDay': false,
+      });
+
+      final meetings = await dbService.meetingsStream.first;
+      expect(meetings, isEmpty);
     });
 
     test('Add a new Meeting', () async {
@@ -88,6 +82,8 @@ void main() {
 
       expect(updatedMeetings, hasLength(1));
       expect(updatedMeetings.first.eventName, 'New Meeting');
+      expect(updatedMeetings.first.start, DateTime(2025, 8, 8, 11, 30));
+      expect(updatedMeetings.first.end, DateTime(2025, 8, 8, 13, 30));
     });
 
     test('Delete an existing Meeting', () async {
@@ -105,7 +101,7 @@ void main() {
       final [addedMeeting] = await dbService.meetingsStream.first;
       expect(addedMeeting.eventName, 'New Meeting');
 
-      await dbService.deleteMeeting(addedMeeting.meetingId);
+      await dbService.deleteMeeting(addedMeeting.meetingId!);
       final updatedMeetings = await dbService.meetingsStream.first;
       expect(updatedMeetings, isEmpty);
     });
@@ -134,9 +130,11 @@ void main() {
         isAllDay: false,
       );
 
-      await dbService.updateMeeting(addedMeeting.meetingId, updatedMeeting);
+      await dbService.updateMeeting(addedMeeting.meetingId!, updatedMeeting);
       final [newMeeting] = await dbService.meetingsStream.first;
       expect(newMeeting.eventName, 'Updated Meeting');
+      expect(newMeeting.description, 'Meeting updated');
+      expect(newMeeting.priority, 'Low');
     });
   });
 }

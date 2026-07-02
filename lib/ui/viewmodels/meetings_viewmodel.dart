@@ -37,7 +37,7 @@ class MeetingsViewModel extends StateNotifier<MeetingsState> {
     state = state.copyWith(loading: true, error: null);
     _sub = repo.watchAll().listen(
       (items) => state = state.copyWith(loading: false, items: items),
-      onError: (e, st) => state = state.copyWith(loading: false, error: e.toString()),
+      onError: (Object e, StackTrace st) => state = state.copyWith(loading: false, error: e.toString()),
     );
   }
 
@@ -53,19 +53,24 @@ class MeetingsViewModel extends StateNotifier<MeetingsState> {
     }
   }
 
-  Future<void> add(Meeting m) async {
-    final repo = ref.read(meetingRepositoryProvider);
-    if (repo != null) await repo.add(m);
-  }
+  Future<bool> add(Meeting m) => _mutate((repo) => repo.add(m));
 
-  Future<void> update(String id, Meeting m) async {
-    final repo = ref.read(meetingRepositoryProvider);
-    if (repo != null) await repo.update(id, m);
-  }
+  Future<bool> update(String id, Meeting m) => _mutate((repo) => repo.update(id, m));
 
-  Future<void> remove(String id) async {
+  Future<bool> remove(String id) => _mutate((repo) => repo.remove(id));
+
+  /// Führt eine Schreiboperation mit einheitlichem Error-Handling aus.
+  /// Die Datenaktualisierung selbst kommt über den Snapshot-Stream.
+  Future<bool> _mutate(Future<void> Function(MeetingRepository repo) action) async {
     final repo = ref.read(meetingRepositoryProvider);
-    if (repo != null) await repo.remove(id);
+    if (repo == null) return false;
+    try {
+      await action(repo);
+      return true;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
   }
 
   @override
