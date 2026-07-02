@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fuzzy_guacamole/data/providers/locale_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Hilfsfunktionen rund um Kalendertage, Meetings und Agenda.
 class CalendarUtils {
@@ -175,4 +177,21 @@ class DayClamp {
   final DateTime displayEnd;
   final bool fillsFullDay;
   const DayClamp({required this.displayStart, required this.displayEnd, required this.fillsFullDay});
+}
+
+Future<void> setGerman(WidgetRef ref) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('locale', 'de');
+  ref.invalidate(localProvider);
+}
+
+Future<void> setEnglish(WidgetRef ref) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('locale', 'en');
+  ref.invalidate(localProvider);
+}
+
+Future<String> getLocale() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('locale') ?? 'de';
 }

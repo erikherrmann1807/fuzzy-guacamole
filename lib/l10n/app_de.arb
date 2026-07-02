@@ -1,0 +1,6 @@
+{
+  "helloWorld": "Hallo Welt!",
+  "@helloWorld": {
+    "description": "Give as much context as possible"
+  }
+}
