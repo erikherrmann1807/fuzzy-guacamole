@@ -25,7 +25,12 @@ class LocationService {
     }
 
     // 3) Position holen
-    return Geolocator.getCurrentPosition(locationSettings: AndroidSettings(accuracy: LocationAccuracy.medium));
+    return Geolocator.getCurrentPosition(
+      locationSettings: AndroidSettings(
+        accuracy: LocationAccuracy.medium,
+        timeLimit: Duration(seconds: 15),
+      ),
+    );
   }
 }
 
