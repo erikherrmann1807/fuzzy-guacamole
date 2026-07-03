@@ -1,56 +1,59 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-/// Eine Tagesaufgabe ("Daily Task"), die einem Kalendertag zugeordnet ist.
+/// Eine wiederkehrende Tagesaufgabe ("Daily Task"), die an jedem Tag erscheint.
 ///
-/// [date] wird auf Mitternacht normalisiert gespeichert, damit Firestore
-/// per Gleichheits-Query alle Aufgaben eines Tages liefern kann.
+/// Anders als ein Termin ist sie keinem festen Datum zugeordnet, sondern gehört
+/// zu einer festen Liste täglicher Aufgaben. Der Erledigt-Status wird pro Tag
+/// geführt: [lastCompletedDate] hält den (auf Mitternacht normalisierten) Tag
+/// fest, an dem die Aufgabe zuletzt abgehakt wurde. Am nächsten Tag erscheint
+/// sie dadurch automatisch wieder unerledigt.
 @immutable
 class DailyTask {
   final String? taskId;
   final String title;
-  final DateTime date;
-  final bool isDone;
 
-  /// Zeitpunkt der optionalen Erinnerung; `null` = keine Erinnerung.
+  /// Optionale tägliche Erinnerung; es zählen nur Stunde und Minute.
   final DateTime? reminderTime;
 
-  /// Erstellungszeitpunkt, dient der stabilen Sortierung innerhalb eines Tages.
+  /// Auf Mitternacht normalisierter Tag der letzten Erledigung; `null` = nie.
+  final DateTime? lastCompletedDate;
+
+  /// Erstellungszeitpunkt, dient der stabilen Sortierung der Liste.
   final DateTime? createdAt;
 
-  const DailyTask({
-    this.taskId,
-    required this.title,
-    required this.date,
-    this.isDone = false,
-    this.reminderTime,
-    this.createdAt,
-  });
+  const DailyTask({this.taskId, required this.title, this.reminderTime, this.lastCompletedDate, this.createdAt});
+
+  /// Ob die Aufgabe am (auf Mitternacht normalisierten) [day] erledigt ist.
+  bool isDoneOn(DateTime day) {
+    final done = lastCompletedDate;
+    return done != null && done.year == day.year && done.month == day.month && done.day == day.day;
+  }
 
   DailyTask copyWith({
     String? taskId,
     String? title,
-    DateTime? date,
-    bool? isDone,
     DateTime? reminderTime,
     bool clearReminder = false,
+    DateTime? lastCompletedDate,
+    bool clearCompleted = false,
     DateTime? createdAt,
   }) {
     return DailyTask(
       taskId: taskId ?? this.taskId,
       title: title ?? this.title,
-      date: date ?? this.date,
-      isDone: isDone ?? this.isDone,
       reminderTime: clearReminder ? null : (reminderTime ?? this.reminderTime),
+      lastCompletedDate: clearCompleted ? null : (lastCompletedDate ?? this.lastCompletedDate),
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'title': title,
-    'date': Timestamp.fromDate(DateTime(date.year, date.month, date.day)),
-    'isDone': isDone,
     'reminderTime': reminderTime == null ? null : Timestamp.fromDate(reminderTime!),
+    'lastCompletedDate': lastCompletedDate == null
+        ? null
+        : Timestamp.fromDate(DateTime(lastCompletedDate!.year, lastCompletedDate!.month, lastCompletedDate!.day)),
     'createdAt': createdAt == null ? FieldValue.serverTimestamp() : Timestamp.fromDate(createdAt!),
   };
 
@@ -58,9 +61,8 @@ class DailyTask {
     return DailyTask(
       taskId: id,
       title: json['title'] as String? ?? '',
-      date: _parseDate(json['date'])!,
-      isDone: json['isDone'] as bool? ?? false,
       reminderTime: _parseDate(json['reminderTime']),
+      lastCompletedDate: _parseDate(json['lastCompletedDate']),
       // Bei serverTimestamp und ausstehendem lokalen Write kann null ankommen.
       createdAt: _parseDate(json['createdAt']),
     );
@@ -73,4 +75,13 @@ class DailyTask {
     if (value is String) return DateTime.parse(value);
     throw FormatException('Ungültiges Datumsformat: $value');
   }
+}
+
+/// Stabile Sortierung der Aufgabenliste nach Erstellungszeit; noch nicht vom
+/// Server bestätigte Einträge (createdAt == null) rutschen ans Ende.
+int compareTasksByCreatedAt(DailyTask a, DailyTask b) {
+  final aTime = a.createdAt;
+  final bTime = b.createdAt;
+  if (aTime == null || bTime == null) return aTime == null ? (bTime == null ? 0 : 1) : -1;
+  return aTime.compareTo(bTime);
 }

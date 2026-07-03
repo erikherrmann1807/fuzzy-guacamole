@@ -6,7 +6,6 @@ import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
 import 'package:fuzzy_guacamole/ui/screens/calendar/views/calendar_day.dart';
-import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_dialog.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/calendar_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/settings_viewmodel.dart';
 import 'package:fuzzy_guacamole/ui/widgets/agenda_list.dart';
@@ -112,12 +111,6 @@ class MonthlyScreen extends ConsumerWidget {
                         visualDensity: VisualDensity.compact,
                         icon: const Icon(Icons.calendar_view_day_outlined, color: MyColors.raisinBlack),
                         onPressed: () => openDayView(context),
-                      ),
-                      IconButton(
-                        tooltip: context.l10n.dailyTasksTooltip,
-                        visualDensity: VisualDensity.compact,
-                        icon: const Icon(Icons.checklist, color: MyColors.raisinBlack),
-                        onPressed: () => showDailyTasksDialog(context, calendar.selectedDate),
                       ),
                     ],
                   ),

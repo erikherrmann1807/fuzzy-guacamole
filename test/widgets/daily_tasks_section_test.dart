@@ -8,7 +8,7 @@ import 'package:fuzzy_guacamole/data/repositories/database/task_repository.dart'
 import 'package:fuzzy_guacamole/data/services/database_service.dart';
 import 'package:fuzzy_guacamole/data/services/notification_service.dart';
 import 'package:fuzzy_guacamole/l10n/app_localizations.dart';
-import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_dialog.dart';
+import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_section.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'in_memory_cache.dart';
@@ -16,7 +16,6 @@ import 'in_memory_cache.dart';
 class MockNotificationService extends Mock implements NotificationService {}
 
 void main() {
-  final day = DateTime(2026, 7, 2);
   late MockNotificationService notifications;
   late TaskRepository repo;
 
@@ -34,7 +33,7 @@ void main() {
     repo = TaskRepository(DatabaseService(fireStore: FakeFirebaseFirestore(), uid: 'user_123'), InMemoryCache());
   });
 
-  Future<void> pumpDialog(WidgetTester tester) async {
+  Future<void> pumpCard(WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -45,7 +44,7 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('de'),
-          home: Scaffold(body: DailyTasksDialog(day: day)),
+          home: const Scaffold(body: DailyTasksCard()),
         ),
       ),
     );
@@ -54,39 +53,42 @@ void main() {
     await tester.pump();
   }
 
-  testWidgets('zeigt den Leer-Zustand für einen Tag ohne Aufgaben', (tester) async {
-    await pumpDialog(tester);
+  // Fügt über den Add-Dialog eine Aufgabe hinzu.
+  Future<void> addTask(WidgetTester tester, String title) async {
+    await tester.tap(find.byIcon(Icons.add_circle));
+    await tester.pumpAndSettle();
 
-    expect(find.text('Keine Aufgaben für diesen Tag.'), findsOneWidget);
-    expect(find.text('Aufgaben am 2.7.2026'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), title);
+    await tester.tap(find.descendant(of: find.byType(AddDailyTaskDialog), matching: find.byIcon(Icons.add_circle)));
+    // Aufgabe anlegen, Dialog schließen (inkl. Dismiss-Animation) und Stream verarbeiten.
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('zeigt den Leer-Zustand ohne Aufgaben', (tester) async {
+    await pumpCard(tester);
+
+    expect(find.text('Noch keine täglichen Aufgaben.'), findsOneWidget);
+    expect(find.text('Tägliche Aufgaben'), findsOneWidget);
   });
 
-  testWidgets('legt eine neue Aufgabe an', (tester) async {
-    await pumpDialog(tester);
+  testWidgets('legt eine neue tägliche Aufgabe an', (tester) async {
+    await pumpCard(tester);
 
-    await tester.enterText(find.byType(TextField), 'Einkaufen');
-    await tester.tap(find.byIcon(Icons.add_circle));
-    await tester.pump();
-    await tester.pump();
+    await addTask(tester, 'Zähne putzen');
 
-    expect(find.text('Einkaufen'), findsOneWidget);
-    expect(find.text('Keine Aufgaben für diesen Tag.'), findsNothing);
-    // Eingabefeld ist danach wieder leer.
-    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);
+    expect(find.text('Zähne putzen'), findsOneWidget);
+    expect(find.text('Noch keine täglichen Aufgaben.'), findsNothing);
   });
 
-  testWidgets('hakt eine Aufgabe ab (Durchstreichung) und wieder los', (tester) async {
-    await pumpDialog(tester);
-    await tester.enterText(find.byType(TextField), 'Einkaufen');
-    await tester.tap(find.byIcon(Icons.add_circle));
-    await tester.pump();
-    await tester.pump();
+  testWidgets('hakt eine Aufgabe für heute ab und wieder los', (tester) async {
+    await pumpCard(tester);
+    await addTask(tester, 'Zähne putzen');
 
     await tester.tap(find.byType(Checkbox));
     await tester.pump();
     await tester.pump();
 
-    final done = tester.widget<Text>(find.text('Einkaufen'));
+    final done = tester.widget<Text>(find.text('Zähne putzen'));
     expect(done.style?.decoration, TextDecoration.lineThrough);
     expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
 
@@ -94,33 +96,32 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    final undone = tester.widget<Text>(find.text('Einkaufen'));
+    final undone = tester.widget<Text>(find.text('Zähne putzen'));
     expect(undone.style?.decoration, isNull);
   });
 
   testWidgets('löscht eine Aufgabe', (tester) async {
-    await pumpDialog(tester);
-    await tester.enterText(find.byType(TextField), 'Einkaufen');
-    await tester.tap(find.byIcon(Icons.add_circle));
-    await tester.pump();
-    await tester.pump();
+    await pumpCard(tester);
+    await addTask(tester, 'Zähne putzen');
 
     await tester.tap(find.byIcon(Icons.delete_outline));
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Einkaufen'), findsNothing);
-    expect(find.text('Keine Aufgaben für diesen Tag.'), findsOneWidget);
+    expect(find.text('Zähne putzen'), findsNothing);
+    expect(find.text('Noch keine täglichen Aufgaben.'), findsOneWidget);
     verify(() => notifications.cancelTaskReminder(any())).called(1);
   });
 
   testWidgets('leerer Titel legt keine Aufgabe an', (tester) async {
-    await pumpDialog(tester);
+    await pumpCard(tester);
 
     await tester.tap(find.byIcon(Icons.add_circle));
-    await tester.pump();
+    await tester.pumpAndSettle();
+    // Ohne Text bleibt der Dialog offen und legt nichts an.
+    await tester.tap(find.descendant(of: find.byType(AddDailyTaskDialog), matching: find.byIcon(Icons.add_circle)));
     await tester.pump();
 
-    expect(find.text('Keine Aufgaben für diesen Tag.'), findsOneWidget);
+    expect(find.byType(AddDailyTaskDialog), findsOneWidget);
   });
 }

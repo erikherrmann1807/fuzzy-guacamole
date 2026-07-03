@@ -126,57 +126,69 @@ void main() {
     final day = DateTime(2026, 7, 2);
 
     test('add/toggleDone/remove aktualisieren den State über den Stream', () async {
-      final sub = container.listen(dailyTasksViewModelProvider(day), (_, _) {});
-      final vm = container.read(dailyTasksViewModelProvider(day).notifier);
+      final sub = container.listen(dailyTasksViewModelProvider, (_, _) {});
+      final vm = container.read(dailyTasksViewModelProvider.notifier);
 
       await vm.add('Einkaufen');
       await pumpEventQueue();
-      var state = container.read(dailyTasksViewModelProvider(day));
+      var state = container.read(dailyTasksViewModelProvider);
       expect(state.items.single.title, 'Einkaufen');
-      expect(state.items.single.isDone, isFalse);
+      expect(state.items.single.isDoneOn(day), isFalse);
 
-      await vm.toggleDone(state.items.single);
+      await vm.toggleDone(state.items.single, day);
       await pumpEventQueue();
-      state = container.read(dailyTasksViewModelProvider(day));
-      expect(state.items.single.isDone, isTrue);
+      state = container.read(dailyTasksViewModelProvider);
+      expect(state.items.single.isDoneOn(day), isTrue);
+      // An einem anderen Tag gilt sie wieder als unerledigt.
+      expect(state.items.single.isDoneOn(DateTime(2026, 7, 3)), isFalse);
 
-      await vm.remove(state.items.single);
+      await vm.toggleDone(state.items.single, day);
       await pumpEventQueue();
-      expect(container.read(dailyTasksViewModelProvider(day)).items, isEmpty);
+      expect(container.read(dailyTasksViewModelProvider).items.single.isDoneOn(day), isFalse);
+
+      await vm.remove(container.read(dailyTasksViewModelProvider).items.single);
+      await pumpEventQueue();
+      expect(container.read(dailyTasksViewModelProvider).items, isEmpty);
 
       sub.close();
     });
 
-    test('Erledigte Aufgabe bricht ihre Erinnerung ab (reminderTime null)', () async {
-      final sub = container.listen(dailyTasksViewModelProvider(day), (_, _) {});
-      final vm = container.read(dailyTasksViewModelProvider(day).notifier);
+    test('Erinnerung wird beim Anlegen geplant und bleibt beim Abhaken bestehen', () async {
+      final sub = container.listen(dailyTasksViewModelProvider, (_, _) {});
+      final vm = container.read(dailyTasksViewModelProvider.notifier);
 
       final reminderTime = DateTime(2026, 7, 2, 9);
       await vm.add('Einkaufen', reminderTime: reminderTime);
       await pumpEventQueue();
-      final task = container.read(dailyTasksViewModelProvider(day)).items.single;
+      final task = container.read(dailyTasksViewModelProvider).items.single;
 
       verify(
         () => notifications.syncTaskReminder(taskId: task.taskId!, title: 'Einkaufen', reminderTime: reminderTime),
       ).called(1);
 
-      await vm.toggleDone(task);
-      verify(
-        () => notifications.syncTaskReminder(taskId: task.taskId!, title: 'Einkaufen', reminderTime: null),
-      ).called(1);
+      // Abhaken plant die tägliche Erinnerung nicht neu und bricht sie nicht ab.
+      await vm.toggleDone(task, day);
+      await pumpEventQueue();
+      verifyNever(
+        () => notifications.syncTaskReminder(
+          taskId: any(named: 'taskId'),
+          title: any(named: 'title'),
+          reminderTime: any(named: 'reminderTime'),
+        ),
+      );
 
       sub.close();
     });
 
-    test('Aufgaben eines anderen Tages tauchen nicht auf', () async {
-      final otherDay = DateTime(2026, 7, 3);
-      final sub = container.listen(dailyTasksViewModelProvider(day), (_, _) {});
+    test('alle Aufgaben erscheinen tagesunabhängig in der Liste', () async {
+      final sub = container.listen(dailyTasksViewModelProvider, (_, _) {});
+      final vm = container.read(dailyTasksViewModelProvider.notifier);
 
-      await container.read(dailyTasksViewModelProvider(otherDay).notifier).add('Morgen');
-      await container.read(dailyTasksViewModelProvider(day).notifier).add('Heute');
+      await vm.add('Erste');
+      await vm.add('Zweite');
       await pumpEventQueue();
 
-      expect(container.read(dailyTasksViewModelProvider(day)).items.map((t) => t.title), ['Heute']);
+      expect(container.read(dailyTasksViewModelProvider).items.map((t) => t.title), ['Erste', 'Zweite']);
       sub.close();
     });
   });
@@ -212,13 +224,12 @@ void main() {
   test('DailyTask.fromJson akzeptiert Timestamps und ISO-Strings', () {
     final fromString = DailyTask.fromJson({
       'title': 'T',
-      'date': '2026-07-02T00:00:00.000',
-      'isDone': true,
+      'lastCompletedDate': '2026-07-02T00:00:00.000',
       'reminderTime': null,
       'createdAt': null,
     }, id: 't1');
-    expect(fromString.date, DateTime(2026, 7, 2));
-    expect(fromString.isDone, isTrue);
+    expect(fromString.lastCompletedDate, DateTime(2026, 7, 2));
+    expect(fromString.isDoneOn(DateTime(2026, 7, 2)), isTrue);
     expect(fromString.reminderTime, isNull);
   });
 }

@@ -500,23 +500,29 @@ abstract class AppLocalizations {
   /// **'Daily Task fällig'**
   String get taskReminderBody;
 
-  /// Titel des Daily-Tasks-Dialogs
+  /// No description provided for @dailyTasksSectionTitle.
   ///
   /// In de, this message translates to:
-  /// **'Aufgaben am {date}'**
-  String dailyTasksTitle(String date);
+  /// **'Tägliche Aufgaben'**
+  String get dailyTasksSectionTitle;
 
-  /// No description provided for @dailyTasksTooltip.
+  /// No description provided for @noDailyTasks.
   ///
   /// In de, this message translates to:
-  /// **'Aufgaben des Tages'**
-  String get dailyTasksTooltip;
+  /// **'Noch keine täglichen Aufgaben.'**
+  String get noDailyTasks;
 
-  /// No description provided for @noTasksForDay.
+  /// No description provided for @addDailyTask.
   ///
   /// In de, this message translates to:
-  /// **'Keine Aufgaben für diesen Tag.'**
-  String get noTasksForDay;
+  /// **'Tägliche Aufgabe hinzufügen'**
+  String get addDailyTask;
+
+  /// No description provided for @addDailyTaskTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue tägliche Aufgabe'**
+  String get addDailyTaskTitle;
 
   /// No description provided for @newTaskHint.
   ///

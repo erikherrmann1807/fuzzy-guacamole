@@ -75,9 +75,10 @@
   "meetingReminderBody": "Starts at {time}",
   "taskReminderBody": "Daily task due",
 
-  "dailyTasksTitle": "Tasks on {date}",
-  "dailyTasksTooltip": "Daily tasks",
-  "noTasksForDay": "No tasks for this day.",
+  "dailyTasksSectionTitle": "Daily tasks",
+  "noDailyTasks": "No daily tasks yet.",
+  "addDailyTask": "Add daily task",
+  "addDailyTaskTitle": "New daily task",
   "newTaskHint": "New task",
   "addTask": "Add task",
   "deleteTask": "Delete task",

@@ -96,7 +96,7 @@ class NotificationService {
       notificationId: notificationIdForMeeting(id),
       title: meeting.eventName,
       body: l10n.meetingReminderBody(CalendarUtils.formatHHmm(meeting.start)),
-      scheduledTime: reminderTime,
+      scheduledTime: tz.TZDateTime.from(reminderTime, tz.local),
     );
   }
 
@@ -107,17 +107,25 @@ class NotificationService {
 
   // --- Task-Erinnerungen ---
 
-  /// Plant bzw. aktualisiert die Erinnerung eines Daily Tasks.
+  /// Plant bzw. aktualisiert die tägliche Erinnerung eines Daily Tasks.
+  /// Von [reminderTime] zählen nur Stunde und Minute; die Benachrichtigung
+  /// wiederholt sich jeden Tag zur nächsten passenden Uhrzeit.
   Future<void> syncTaskReminder({required String taskId, required String title, required DateTime? reminderTime}) async {
     await cancelTaskReminder(taskId);
-    if (reminderTime == null || !reminderTime.isAfter(DateTime.now())) return;
+    if (reminderTime == null) return;
 
+    await init();
     final l10n = await _l10nResolver();
+    final now = tz.TZDateTime.now(tz.local);
+    var next = tz.TZDateTime(tz.local, now.year, now.month, now.day, reminderTime.hour, reminderTime.minute);
+    if (!next.isAfter(now)) next = next.add(const Duration(days: 1));
+
     await _schedule(
       notificationId: notificationIdForTask(taskId),
       title: title,
       body: l10n.taskReminderBody,
-      scheduledTime: reminderTime,
+      scheduledTime: next,
+      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 
@@ -137,7 +145,8 @@ class NotificationService {
     required int notificationId,
     required String title,
     required String body,
-    required DateTime scheduledTime,
+    required tz.TZDateTime scheduledTime,
+    DateTimeComponents? matchDateTimeComponents,
   }) async {
     await init();
 
@@ -152,16 +161,15 @@ class NotificationService {
       iOS: DarwinNotificationDetails(),
     );
 
-    final tzTime = tz.TZDateTime.from(scheduledTime, tz.local);
-
     try {
       await _plugin.zonedSchedule(
         id: notificationId,
         title: title,
         body: body,
-        scheduledDate: tzTime,
+        scheduledDate: scheduledTime,
         notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: matchDateTimeComponents,
       );
     } on PlatformException {
       // Keine Berechtigung für exakte Alarme (Android 12+):
@@ -170,9 +178,10 @@ class NotificationService {
         id: notificationId,
         title: title,
         body: body,
-        scheduledDate: tzTime,
+        scheduledDate: scheduledTime,
         notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: matchDateTimeComponents,
       );
     }
   }

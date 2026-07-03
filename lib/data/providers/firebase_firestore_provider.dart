@@ -49,7 +49,7 @@ final meetingsViewModelProvider = StateNotifierProvider<MeetingsViewModel, Meeti
 
 final profileViewModelProvider = StateNotifierProvider<ProfileViewModel, ProfileState>((ref) => ProfileViewModel(ref));
 
-/// Aufgaben eines Kalendertages; Parameter muss auf Mitternacht normalisiert sein
-/// (z. B. via [CalendarUtils.dateOnly]), damit gleiche Tage denselben Provider treffen.
-final dailyTasksViewModelProvider = StateNotifierProvider.autoDispose
-    .family<DailyTasksViewModel, DailyTasksState, DateTime>((ref, day) => DailyTasksViewModel(ref, day));
+/// Liste der wiederkehrenden Daily Tasks (tagesunabhängig).
+final dailyTasksViewModelProvider = StateNotifierProvider<DailyTasksViewModel, DailyTasksState>(
+  (ref) => DailyTasksViewModel(ref),
+);

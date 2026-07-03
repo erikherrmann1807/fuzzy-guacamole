@@ -11,16 +11,16 @@ class TaskRepository {
   final LocalCacheService cache;
   TaskRepository(this.db, this.cache);
 
-  /// Aufgaben eines Kalendertages (Cache sofort, danach live via Firestore).
-  Stream<List<DailyTask>> watchDay(DateTime day) async* {
+  /// Alle täglichen Aufgaben (Cache sofort, danach live via Firestore).
+  Stream<List<DailyTask>> watchTasks() async* {
     try {
-      final cached = await cache.readTasksForDay(day);
+      final cached = await cache.readTasks();
       if (cached.isNotEmpty) yield cached;
     } catch (e) {
       debugPrint('Task-Cache konnte nicht gelesen werden: $e');
     }
-    yield* db.tasksForDayStream(day).map((items) {
-      _guardCache(() => cache.writeTasksForDay(day, items));
+    yield* db.tasksStream.map((items) {
+      _guardCache(() => cache.writeTasks(items));
       return items;
     });
   }

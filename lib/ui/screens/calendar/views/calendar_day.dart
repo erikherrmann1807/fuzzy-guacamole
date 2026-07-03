@@ -5,7 +5,6 @@ import 'package:fuzzy_guacamole/data/providers/firebase_firestore_provider.dart'
 import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
-import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_dialog.dart';
 import 'package:fuzzy_guacamole/ui/viewmodels/calendar_viewmodel.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
 import 'package:intl/intl.dart';
@@ -61,11 +60,6 @@ class DailyScreen extends ConsumerWidget {
             tooltip: context.l10n.nextDay,
             icon: const Icon(Icons.chevron_right),
             onPressed: calendarVm.goToNextDay,
-          ),
-          IconButton(
-            tooltip: context.l10n.dailyTasksTooltip,
-            icon: const Icon(Icons.checklist),
-            onPressed: () => showDailyTasksDialog(context, day),
           ),
         ],
       ),

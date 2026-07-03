@@ -6,7 +6,7 @@ import 'package:fuzzy_guacamole/l10n/l10n_extensions.dart';
 import 'package:fuzzy_guacamole/styles/colors.dart';
 import 'package:fuzzy_guacamole/styles/styles.dart';
 import 'package:fuzzy_guacamole/ui/screens/appointments/appointment_editor.dart';
-import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_dialog.dart';
+import 'package:fuzzy_guacamole/ui/screens/tasks/daily_tasks_section.dart';
 import 'package:fuzzy_guacamole/ui/widgets/agenda_list.dart';
 import 'package:fuzzy_guacamole/ui/widgets/home_widgets/weather_widget.dart';
 import 'package:fuzzy_guacamole/utils/utils.dart';
@@ -26,6 +26,10 @@ class HomeScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 16),
               const WeatherCard(),
+              const SizedBox(height: 16),
+              _SectionTitle(context.l10n.dailyTasksSectionTitle),
+              const SizedBox(height: 8),
+              const DailyTasksCard(),
               const SizedBox(height: 16),
               _SectionTitle(context.l10n.currentTasks),
               const SizedBox(height: 8),
@@ -72,11 +76,6 @@ class _TodayAgendaCard extends ConsumerWidget {
               const SizedBox(width: 6),
               Text('${DateFormat.E(locale).format(today)} ${today.day}', style: currentTasksDateText),
               const Spacer(),
-              IconButton(
-                tooltip: context.l10n.dailyTasksTooltip,
-                icon: const Icon(Icons.checklist, color: MyColors.raisinBlack),
-                onPressed: () => showDailyTasksDialog(context, today),
-              ),
               const _AddMeetingButton(),
             ],
           ),

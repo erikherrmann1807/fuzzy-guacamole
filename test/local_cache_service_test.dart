@@ -77,56 +77,44 @@ void main() {
   });
 
   group('Tasks-Cache', () {
-    final day = DateTime(2026, 7, 2);
-
-    DailyTask task(String id, {DateTime? date, bool isDone = false, DateTime? createdAt}) {
-      return DailyTask(
-        taskId: id,
-        title: 'Task $id',
-        date: date ?? day,
-        isDone: isDone,
-        reminderTime: DateTime(2026, 7, 2, 9),
-        createdAt: createdAt,
-      );
+    DailyTask task(String id, {DateTime? createdAt}) {
+      return DailyTask(taskId: id, title: 'Task $id', reminderTime: DateTime(2026, 7, 2, 9), createdAt: createdAt);
     }
 
-    test('readTasksForDay liefert nur Aufgaben des Tages, sortiert nach createdAt', () async {
-      await cache.writeTasksForDay(day, [
+    test('readTasks liefert alle Aufgaben, sortiert nach createdAt', () async {
+      await cache.writeTasks([
         task('t2', createdAt: DateTime(2026, 7, 1, 12)),
         task('t1', createdAt: DateTime(2026, 7, 1, 8)),
       ]);
-      await cache.upsertTask('t3', task('t3', date: DateTime(2026, 7, 3)));
 
-      final tasks = await cache.readTasksForDay(day);
+      final tasks = await cache.readTasks();
 
       expect(tasks.map((t) => t.taskId), ['t1', 't2']);
       expect(tasks.first.reminderTime, DateTime(2026, 7, 2, 9));
     });
 
-    test('writeTasksForDay ersetzt nur die Aufgaben dieses Tages', () async {
-      await cache.upsertTask('anderer', task('anderer', date: DateTime(2026, 7, 3)));
-      await cache.writeTasksForDay(day, [task('t1')]);
-      await cache.writeTasksForDay(day, [task('t2')]);
+    test('writeTasks ersetzt den kompletten Bestand', () async {
+      await cache.writeTasks([task('t1')]);
+      await cache.writeTasks([task('t2')]);
 
-      expect((await cache.readTasksForDay(day)).map((t) => t.taskId), ['t2']);
-      expect((await cache.readTasksForDay(DateTime(2026, 7, 3))).map((t) => t.taskId), ['anderer']);
+      expect((await cache.readTasks()).map((t) => t.taskId), ['t2']);
     });
 
     test('clearAll entfernt Meetings und Tasks des Nutzers', () async {
       await cache.writeMeetings([testMeeting('m1')]);
-      await cache.writeTasksForDay(day, [task('t1')]);
+      await cache.writeTasks([task('t1')]);
 
       await cache.clearAll();
 
       expect(await cache.readMeetings(), isEmpty);
-      expect(await cache.readTasksForDay(day), isEmpty);
+      expect(await cache.readTasks(), isEmpty);
     });
 
     test('serverTimestamp-Platzhalter (FieldValue) wird als null gecacht', () async {
       // createdAt == null -> toJson enthält FieldValue.serverTimestamp().
       await cache.upsertTask('t1', task('t1'));
 
-      final tasks = await cache.readTasksForDay(day);
+      final tasks = await cache.readTasks();
       expect(tasks.single.createdAt, isNull);
     });
   });

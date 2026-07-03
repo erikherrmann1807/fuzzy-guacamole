@@ -262,15 +262,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskReminderBody => 'Daily task due';
 
   @override
-  String dailyTasksTitle(String date) {
-    return 'Tasks on $date';
-  }
+  String get dailyTasksSectionTitle => 'Daily tasks';
 
   @override
-  String get dailyTasksTooltip => 'Daily tasks';
+  String get noDailyTasks => 'No daily tasks yet.';
 
   @override
-  String get noTasksForDay => 'No tasks for this day.';
+  String get addDailyTask => 'Add daily task';
+
+  @override
+  String get addDailyTaskTitle => 'New daily task';
 
   @override
   String get newTaskHint => 'New task';

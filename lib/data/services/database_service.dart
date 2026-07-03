@@ -61,21 +61,13 @@ class DatabaseService {
 
   // --- Daily Tasks ---
 
-  /// Alle Aufgaben eines Kalendertages, stabil nach Erstellungszeit sortiert.
+  /// Alle wiederkehrenden Daily Tasks, stabil nach Erstellungszeit sortiert.
   /// Die Sortierung passiert clientseitig, damit kein Composite-Index nötig ist.
-  Stream<List<DailyTask>> tasksForDayStream(DateTime day) {
-    final normalized = Timestamp.fromDate(DateTime(day.year, day.month, day.day));
-    return _taskRef.where('date', isEqualTo: normalized).snapshots().map((snap) {
-      final tasks = snap.docs.map((d) => d.data()).toList();
-      tasks.sort((a, b) {
-        final aTime = a.createdAt;
-        final bTime = b.createdAt;
-        if (aTime == null || bTime == null) return aTime == null ? (bTime == null ? 0 : 1) : -1;
-        return aTime.compareTo(bTime);
-      });
-      return tasks;
-    });
-  }
+  Stream<List<DailyTask>> get tasksStream => _taskRef.snapshots().map((snap) {
+    final tasks = snap.docs.map((d) => d.data()).toList();
+    tasks.sort(compareTasksByCreatedAt);
+    return tasks;
+  });
 
   /// Legt die Aufgabe an und liefert die generierte Dokument-ID zurück.
   Future<String> addTask(DailyTask task) async {

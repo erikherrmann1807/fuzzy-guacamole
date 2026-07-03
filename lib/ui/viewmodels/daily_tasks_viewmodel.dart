@@ -18,13 +18,12 @@ class DailyTasksState {
   }
 }
 
-/// ViewModel für die Aufgaben eines einzelnen Kalendertages ([day]).
+/// ViewModel für die Liste der wiederkehrenden Daily Tasks.
 class DailyTasksViewModel extends StateNotifier<DailyTasksState> {
   final Ref ref;
-  final DateTime day;
   StreamSubscription<List<DailyTask>>? _sub;
 
-  DailyTasksViewModel(this.ref, this.day) : super(const DailyTasksState()) {
+  DailyTasksViewModel(this.ref) : super(const DailyTasksState()) {
     ref.listen<TaskRepository?>(
       taskRepositoryProvider,
       (prev, next) => _resubscribe(next),
@@ -39,28 +38,30 @@ class DailyTasksViewModel extends StateNotifier<DailyTasksState> {
       return;
     }
     state = state.copyWith(loading: true, error: null);
-    _sub = repo.watchDay(day).listen(
+    _sub = repo.watchTasks().listen(
       (items) => state = state.copyWith(loading: false, items: items),
       onError: (Object e, StackTrace st) => state = state.copyWith(loading: false, error: e.toString()),
     );
   }
 
   Future<bool> add(String title, {DateTime? reminderTime}) {
-    final task = DailyTask(title: title, date: day, reminderTime: reminderTime);
+    final task = DailyTask(title: title, reminderTime: reminderTime);
     return _mutate((repo) async {
       final id = await repo.add(task);
       await _syncReminder(task.copyWith(taskId: id));
     });
   }
 
-  Future<bool> toggleDone(DailyTask task) {
+  /// Hakt die Aufgabe für [day] ab bzw. hebt die Erledigung wieder auf.
+  /// Die tägliche Erinnerung bleibt davon unberührt – sie feuert unabhängig
+  /// vom Erledigt-Status jeden Tag erneut.
+  Future<bool> toggleDone(DailyTask task, DateTime day) {
     final id = task.taskId;
     if (id == null) return Future.value(false);
-    final updated = task.copyWith(isDone: !task.isDone);
-    return _mutate((repo) async {
-      await repo.update(id, updated);
-      await _syncReminder(updated);
-    });
+    final updated = task.isDoneOn(day)
+        ? task.copyWith(clearCompleted: true)
+        : task.copyWith(lastCompletedDate: DateTime(day.year, day.month, day.day));
+    return _mutate((repo) => repo.update(id, updated));
   }
 
   Future<bool> remove(DailyTask task) {
@@ -73,15 +74,15 @@ class DailyTasksViewModel extends StateNotifier<DailyTasksState> {
   }
 
   /// Erinnerungen dürfen die Schreiboperation nie scheitern lassen –
-  /// Notification-Fehler werden nur geloggt. Erledigte Aufgaben
-  /// bekommen keine Erinnerung mehr.
+  /// Notification-Fehler werden nur geloggt. Die Erinnerung feuert täglich
+  /// zur gewählten Uhrzeit, unabhängig vom Erledigt-Status.
   Future<void> _syncReminder(DailyTask task) async {
     final id = task.taskId;
     if (id == null) return;
     try {
       await ref
           .read(notificationServiceProvider)
-          .syncTaskReminder(taskId: id, title: task.title, reminderTime: task.isDone ? null : task.reminderTime);
+          .syncTaskReminder(taskId: id, title: task.title, reminderTime: task.reminderTime);
     } catch (e) {
       debugPrint('Task-Erinnerung konnte nicht geplant werden: $e');
     }

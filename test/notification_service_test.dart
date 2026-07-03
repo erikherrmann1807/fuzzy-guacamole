@@ -52,6 +52,7 @@ void main() {
         scheduledDate: any(named: 'scheduledDate'),
         notificationDetails: any(named: 'notificationDetails'),
         androidScheduleMode: any(named: 'androidScheduleMode'),
+        matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
       ),
     ).thenAnswer((_) async {});
 
@@ -107,6 +108,7 @@ void main() {
           scheduledDate: captureAny(named: 'scheduledDate'),
           notificationDetails: any(named: 'notificationDetails'),
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
         ),
       ).captured;
 
@@ -138,6 +140,7 @@ void main() {
           scheduledDate: any(named: 'scheduledDate'),
           notificationDetails: any(named: 'notificationDetails'),
           androidScheduleMode: any(named: 'androidScheduleMode'),
+          matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
         ),
       );
     });
@@ -155,6 +158,7 @@ void main() {
           scheduledDate: any(named: 'scheduledDate'),
           notificationDetails: any(named: 'notificationDetails'),
           androidScheduleMode: any(named: 'androidScheduleMode'),
+          matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
         ),
       );
     });
@@ -176,6 +180,7 @@ void main() {
           scheduledDate: any(named: 'scheduledDate'),
           notificationDetails: any(named: 'notificationDetails'),
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
         ),
       ).thenThrow(PlatformException(code: 'exact_alarms_not_permitted'));
 
@@ -190,6 +195,7 @@ void main() {
           scheduledDate: any(named: 'scheduledDate'),
           notificationDetails: any(named: 'notificationDetails'),
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
         ),
       ).called(1);
     });
@@ -209,6 +215,7 @@ void main() {
           scheduledDate: any(named: 'scheduledDate'),
           notificationDetails: any(named: 'notificationDetails'),
           androidScheduleMode: any(named: 'androidScheduleMode'),
+          matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
         ),
       ).called(1);
     });
@@ -225,6 +232,7 @@ void main() {
           scheduledDate: any(named: 'scheduledDate'),
           notificationDetails: any(named: 'notificationDetails'),
           androidScheduleMode: any(named: 'androidScheduleMode'),
+          matchDateTimeComponents: any(named: 'matchDateTimeComponents'),
         ),
       );
     });

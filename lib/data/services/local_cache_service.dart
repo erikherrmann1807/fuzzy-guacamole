@@ -55,29 +55,21 @@ class LocalCacheService {
 
   // --- Daily Tasks ---
 
-  Future<List<DailyTask>> readTasksForDay(DateTime day) async {
+  Future<List<DailyTask>> readTasks() async {
     final box = await _box(_tasksBoxName);
-    final normalized = DateTime(day.year, day.month, day.day);
     final tasks = box
         .toMap()
         .entries
         .map((e) => DailyTask.fromJson(Map<String, dynamic>.from(e.value), id: e.key as String))
-        .where((t) => t.date.year == normalized.year && t.date.month == normalized.month && t.date.day == normalized.day)
         .toList();
-    tasks.sort((a, b) {
-      final aTime = a.createdAt;
-      final bTime = b.createdAt;
-      if (aTime == null || bTime == null) return aTime == null ? (bTime == null ? 0 : 1) : -1;
-      return aTime.compareTo(bTime);
-    });
+    tasks.sort(compareTasksByCreatedAt);
     return tasks;
   }
 
-  /// Ersetzt alle Aufgaben eines Tages (nach einem Firestore-Snapshot).
-  Future<void> writeTasksForDay(DateTime day, List<DailyTask> tasks) async {
+  /// Ersetzt den kompletten Task-Bestand (nach einem Firestore-Snapshot).
+  Future<void> writeTasks(List<DailyTask> tasks) async {
     final box = await _box(_tasksBoxName);
-    final existing = await readTasksForDay(day);
-    await box.deleteAll(existing.map((t) => t.taskId).whereType<String>());
+    await box.clear();
     await box.putAll({
       for (final t in tasks)
         if (t.taskId != null) t.taskId!: _toCacheJson(t.toJson()),

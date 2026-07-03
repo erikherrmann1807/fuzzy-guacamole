@@ -1,7 +1,6 @@
 import 'package:fuzzy_guacamole/data/models/appointment_model.dart';
 import 'package:fuzzy_guacamole/data/models/daily_task_model.dart';
 import 'package:fuzzy_guacamole/data/services/local_cache_service.dart';
-import 'package:fuzzy_guacamole/utils/utils.dart';
 
 /// In-Memory-Ersatz für den Hive-Cache in Widget-Tests
 /// (echtes Datei-I/O läuft in der FakeAsync-Zone nicht zuverlässig).
@@ -31,16 +30,16 @@ class InMemoryCache extends LocalCacheService {
   Future<void> removeMeeting(String id) async => meetings.remove(id);
 
   @override
-  Future<List<DailyTask>> readTasksForDay(DateTime day) async =>
-      tasks.values.where((t) => CalendarUtils.isSameDate(t.date, day)).toList();
+  Future<List<DailyTask>> readTasks() async => tasks.values.toList();
 
   @override
-  Future<void> writeTasksForDay(DateTime day, List<DailyTask> items) async {
-    tasks.removeWhere((_, t) => CalendarUtils.isSameDate(t.date, day));
-    tasks.addEntries([
-      for (final t in items)
-        if (t.taskId != null) MapEntry(t.taskId!, t),
-    ]);
+  Future<void> writeTasks(List<DailyTask> items) async {
+    tasks
+      ..clear()
+      ..addEntries([
+        for (final t in items)
+          if (t.taskId != null) MapEntry(t.taskId!, t),
+      ]);
   }
 
   @override

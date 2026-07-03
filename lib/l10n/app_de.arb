@@ -100,13 +100,10 @@
   },
   "taskReminderBody": "Daily Task fällig",
 
-  "dailyTasksTitle": "Aufgaben am {date}",
-  "@dailyTasksTitle": {
-    "description": "Titel des Daily-Tasks-Dialogs",
-    "placeholders": {"date": {"type": "String"}}
-  },
-  "dailyTasksTooltip": "Aufgaben des Tages",
-  "noTasksForDay": "Keine Aufgaben für diesen Tag.",
+  "dailyTasksSectionTitle": "Tägliche Aufgaben",
+  "noDailyTasks": "Noch keine täglichen Aufgaben.",
+  "addDailyTask": "Tägliche Aufgabe hinzufügen",
+  "addDailyTaskTitle": "Neue tägliche Aufgabe",
   "newTaskHint": "Neue Aufgabe",
   "addTask": "Aufgabe hinzufügen",
   "deleteTask": "Aufgabe löschen",

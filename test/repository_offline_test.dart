@@ -96,12 +96,12 @@ void main() {
   group('TaskRepository (Read-Through/Write-Back)', () {
     final day = DateTime(2026, 7, 2);
 
-    test('watchDay liefert zuerst den Cache, dann die Firestore-Daten', () async {
-      await cache.writeTasksForDay(day, [DailyTask(taskId: 'cached', title: 'Aus dem Cache', date: day)]);
+    test('watchTasks liefert zuerst den Cache, dann die Firestore-Daten', () async {
+      await cache.writeTasks([DailyTask(taskId: 'cached', title: 'Aus dem Cache')]);
       final repo = TaskRepository(db, cache);
-      await repo.add(DailyTask(title: 'Live', date: day));
+      await repo.add(DailyTask(title: 'Live'));
 
-      final emissions = await repo.watchDay(day).take(2).toList();
+      final emissions = await repo.watchTasks().take(2).toList();
 
       // Erste Emission aus dem Cache (enthält durch das Write-Back auch 'Live'),
       // zweite aus Firestore (kennt den reinen Cache-Eintrag nicht).
@@ -111,24 +111,24 @@ void main() {
 
     test('add/update/remove halten den Cache konsistent', () async {
       final repo = TaskRepository(db, cache);
-      final id = await repo.add(DailyTask(title: 'Einkaufen', date: day));
+      final id = await repo.add(DailyTask(title: 'Einkaufen'));
 
-      expect((await cache.readTasksForDay(day)).single.title, 'Einkaufen');
+      expect((await cache.readTasks()).single.title, 'Einkaufen');
 
-      await repo.update(id, DailyTask(taskId: id, title: 'Einkaufen', date: day, isDone: true));
-      expect((await cache.readTasksForDay(day)).single.isDone, isTrue);
+      await repo.update(id, DailyTask(taskId: id, title: 'Einkaufen', lastCompletedDate: day));
+      expect((await cache.readTasks()).single.isDoneOn(day), isTrue);
 
       await repo.remove(id);
-      expect(await cache.readTasksForDay(day), isEmpty);
+      expect(await cache.readTasks(), isEmpty);
     });
 
-    test('watchDay filtert nach Kalendertag', () async {
+    test('watchTasks liefert alle Aufgaben tagesunabhängig', () async {
       final repo = TaskRepository(db, cache);
-      await repo.add(DailyTask(title: 'Heute', date: day));
-      await repo.add(DailyTask(title: 'Morgen', date: day.add(const Duration(days: 1))));
+      await repo.add(DailyTask(title: 'Erste'));
+      await repo.add(DailyTask(title: 'Zweite'));
 
-      final tasks = await repo.watchDay(day).take(2).last;
-      expect(tasks.map((t) => t.title), ['Heute']);
+      final tasks = await repo.watchTasks().take(2).last;
+      expect(tasks.map((t) => t.title), ['Erste', 'Zweite']);
     });
   });
 }
